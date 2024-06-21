@@ -45,5 +45,25 @@ dependencies:
   - xz=5.4.6=h80987f9_1
   - zlib=1.2.13=h18a0788_1
   - pip:
+      - akracer==0.0.13
+      - akshare==1.14.11
+      - beautifulsoup4==4.12.3
+      - certifi==2024.6.2
+      - charset-normalizer==3.3.2
+      - decorator==5.1.1
+      - et-xmlfile==1.1.0
+      - html5lib==1.1
+      - idna==3.7
+      - jsonpath==0.82.2
+      - lxml==5.2.2
+      - openpyxl==3.1.4
       - pip==24.1
+      - py-mini-racer==0.6.0
+      - requests==2.32.3
+      - soupsieve==2.5
+      - tabulate==0.9.0
+      - tqdm==4.66.4
+      - urllib3==2.2.2
+      - webencodings==0.5.1
+      - xlrd==2.0.1
 prefix: /Users/huangyuan/miniconda3/envs/kairos_312
