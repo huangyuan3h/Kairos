@@ -1,6 +1,7 @@
 
 import pandas as pd
 
+from data.raw import get_stock_data_since
 
 
 def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
@@ -38,6 +39,10 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     stock_data['ma5'] = stock_data['close'].rolling(window=5).mean()  # 5日移动平均线
     stock_data['ma10'] = stock_data['close'].rolling(window=10).mean()  # 10日移动平均线
     stock_data['rsi'] = calculate_rsi(stock_data['close'], 14)  # 计算 RSI 指标
+
+    # 5. 统一日期格式
+    stock_data['date'] = pd.to_datetime(stock_data['date'])
+    stock_data['date'] = stock_data['date'].dt.strftime('%Y%m%d')
 
     return stock_data
 
@@ -95,3 +100,11 @@ def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
     return rsi
+
+
+
+# list = get_stock_data_since('600000', '20230101', 100)
+#
+# cleaned_list = clean_stock_data(list)
+#
+# print(cleaned_list)

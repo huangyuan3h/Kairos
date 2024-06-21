@@ -41,6 +41,7 @@ def clean_index_data(index_data: pd.DataFrame) -> pd.DataFrame:
 
     # 转换日期列为 datetime 类型
     index_data['date'] = pd.to_datetime(index_data['date'])
+    index_data['date'] = index_data['date'].dt.strftime('%Y%m%d')
 
     # 处理成交量和成交额的异常值
     index_data['volume'] = clean_outliers(index_data['volume'])
@@ -71,10 +72,10 @@ def clean_outliers(data: pd.Series) -> pd.Series:
 
     return data
 
-index_data = get_sse_composite_index(start_date='20230101', n_days=100)
-
-# 清洗数据
-cleaned_data = clean_index_data(index_data.copy())
-
-# 打印清洗后的数据
-print(cleaned_data.head())
+# index_data = get_sse_composite_index(start_date='20230101', n_days=100)
+#
+# # 清洗数据
+# cleaned_data = clean_index_data(index_data.copy())
+#
+# # 打印清洗后的数据
+# print(cleaned_data.head())

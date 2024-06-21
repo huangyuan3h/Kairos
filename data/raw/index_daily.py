@@ -101,3 +101,8 @@ def get_index_data(index_code: str, start_date: str, n_days: int) -> pd.DataFram
         print(f"获取指数数据时发生错误：{e}")
         return None
 
+
+
+# list = get_sse_composite_index('20230101', 100)
+#
+# print(list)

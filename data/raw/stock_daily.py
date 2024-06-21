@@ -50,3 +50,7 @@ def get_stock_data_since(stock_code: str, start_date: str, n_days: int, adjust: 
     except Exception as e:
         print(f"获取股票数据时发生错误：{e}")
         return None
+
+
+# list = get_stock_data_since('600000', '20230101', 100)
+# print(list)

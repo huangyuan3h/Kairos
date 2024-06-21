@@ -1,5 +1,7 @@
 import pandas as pd
 
+from data.raw import get_currency_exchange_rates
+
 
 def clean_currency_exchange_rates(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -25,8 +27,13 @@ def clean_currency_exchange_rates(df: pd.DataFrame) -> pd.DataFrame:
 
     # 3. 数据类型转换：将日期列转换为 datetime 类型
     df['date'] = pd.to_datetime(df['date'])
+    df['date'] = df['date'].dt.strftime('%Y%m%d')
 
     # 4. 特征工程：可以考虑计算汇率的移动平均线、波动率等指标
 
     return df
 
+list = get_currency_exchange_rates('20230101', 100)
+
+cleaned_list = clean_currency_exchange_rates(list)
+print(cleaned_list)
