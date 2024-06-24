@@ -1,5 +1,7 @@
 import pandas as pd
 
+import datetime
+
 from data.raw import (
     get_stock_data_since,
     get_stock_profit_sheet_data,
@@ -17,7 +19,41 @@ from data.data_preprocessing import (
     clean_financial_data,
 )
 
-def get_stock_prediction_data(stock_code: str, start_date: str, n_days: int) -> pd.DataFrame:
+def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    对财务数据进行线性插值，填充到日线数据中。
+
+    Args:
+        df (pd.DataFrame): 包含日线数据的 DataFrame，必须包含 'date' 列。
+        financial_data (pd.DataFrame): 财务数据 DataFrame，必须包含 'report_date' 列。
+
+    Returns:
+        pd.DataFrame: 填充了插值后财务数据的 DataFrame。
+    """
+    # 将财务数据的 'report_date' 列设置为索引
+    financial_data = financial_data.set_index('report_date')
+
+    # 创建一个空 DataFrame 用于存储插值后的财务数据
+    interpolated_data = pd.DataFrame(index=df.index, columns=financial_data.columns)
+
+    # 遍历每条日线数据
+    for i, row in df.iterrows():
+        current_date = row['date']
+        current_date = datetime.datetime.strptime(current_date, "%Y%m%d")
+        # 找到当前日期所属的季度区间
+        try:
+            current_report_date = financial_data.index[financial_data.index < current_date][0]
+        except IndexError:
+            current_report_date = current_date
+
+        quarter_data = financial_data.loc[current_report_date]
+
+        interpolated_data.loc[i] = quarter_data
+
+    return df.join(interpolated_data.reset_index(drop=True), how='left')
+
+
+def get_stock_total_data(stock_code: str, start_date: str, n_days: int) -> pd.DataFrame:
     """
     获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
 
@@ -60,15 +96,38 @@ def get_stock_prediction_data(stock_code: str, start_date: str, n_days: int) -> 
         cleaned_szse_index_data = clean_index_data(szse_index_data.copy())
 
         # 合并所有数据
-        merged_data = pd.merge(cleaned_stock_data, cleaned_financial_data, on='report_date', how='left')
         merged_data = pd.merge(cleaned_stock_data, cleaned_currency_data, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_sse_index_data, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
+        merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
         return merged_data
     except Exception as e:
         print(f"获取股票预测数据时发生错误：{e}")
         return None
 
-stock_data = get_stock_prediction_data(stock_code='600000', start_date='20230101', n_days=30)
-print(stock_data)
+
+columns_to_remove = [
+    'code', 'ma5', 'ma10', 'rsi', 'year', 'quarter', 'date'
+]
+
+
+def drop_columns_and_reset_index(df: pd.DataFrame) -> pd.DataFrame:
+    """删除指定的列并重置索引.
+
+    Args:
+    df (pd.DataFrame): 输入的 DataFrame.
+    columns_to_remove (list): 要删除的列名列表.
+
+    Returns:
+    pd.DataFrame: 删除指定列并重置索引后的 DataFrame.
+    """
+    df = df.drop(columns=columns_to_remove)
+    df = df.reset_index(drop=True)
+    return df
+
+
+stock_data = get_stock_total_data(stock_code='600000', start_date='20230101', n_days=200)
+
+removed_data = drop_columns_and_reset_index(stock_data)
+print(removed_data)

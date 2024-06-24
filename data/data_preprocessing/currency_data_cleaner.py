@@ -1,6 +1,6 @@
 import pandas as pd
 
-from data.raw import get_currency_exchange_rates
+# from data.raw import get_currency_exchange_rates
 
 
 def clean_currency_exchange_rates(df: pd.DataFrame) -> pd.DataFrame:
@@ -33,7 +33,7 @@ def clean_currency_exchange_rates(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-list = get_currency_exchange_rates('20230101', 100)
-
-cleaned_list = clean_currency_exchange_rates(list)
-print(cleaned_list)
+# list = get_currency_exchange_rates('20230101', 100)
+#
+# cleaned_list = clean_currency_exchange_rates(list)
+# print(cleaned_list)

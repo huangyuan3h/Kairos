@@ -1,5 +1,7 @@
 import pandas as pd
 
+# from data.raw import get_stock_profit_sheet_data, get_stock_balance_sheet_data, get_stock_cash_flow_sheet_data
+
 
 def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, cash_flow_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -61,3 +63,15 @@ def clean_financial_data(merged_data: pd.DataFrame) -> pd.DataFrame:
         1)) / merged_data['net_profit_atsopc'].shift(1)  # 归母净利润同比增长率
 
     return merged_data
+
+# code = "600000"
+#
+# profit = get_stock_profit_sheet_data(code)
+# balance = get_stock_balance_sheet_data(code)
+# cash_flow = get_stock_cash_flow_sheet_data(code)
+#
+# merged = merge_financial_data(profit, balance, cash_flow)
+#
+# result = clean_financial_data(merged)
+#
+# print(result)
