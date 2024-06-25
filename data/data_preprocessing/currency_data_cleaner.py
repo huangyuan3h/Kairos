@@ -21,7 +21,7 @@ def clean_currency_exchange_rates(df: pd.DataFrame) -> pd.DataFrame:
     """
 
     # 1. 处理缺失值：使用前一日数据填充
-    df.fillna(method='ffill', inplace=True)
+    df.ffill().bfill()
 
     # 2. 处理异常值：汇率一般不会出现极端异常值，可以不做处理
 

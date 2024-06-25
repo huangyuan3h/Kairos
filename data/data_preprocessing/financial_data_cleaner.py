@@ -23,8 +23,6 @@ def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, 
     merged_data = pd.merge(profit_data, balance_data, on=['report_date', 'year', 'quarter'], how='left')
     merged_data = pd.merge(merged_data, cash_flow_data, on=['report_date', 'year', 'quarter'], how='left')
 
-    merged_data = merged_data.fillna(method='ffill').fillna(method='bfill')
-
     return merged_data
 
 

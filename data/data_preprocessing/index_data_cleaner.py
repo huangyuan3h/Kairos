@@ -67,6 +67,11 @@ def clean_outliers(data: pd.Series) -> pd.Series:
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
 
+    # 将边界值转换为与数据列兼容的类型
+    data_type = data.dtype
+    lower_bound = data_type.type(lower_bound)
+    upper_bound = data_type.type(upper_bound)
+
     data[data < lower_bound] = lower_bound
     data[data > upper_bound] = upper_bound
 

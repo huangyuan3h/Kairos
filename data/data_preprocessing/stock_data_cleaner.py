@@ -25,7 +25,7 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     """
 
     # 1. 处理缺失值：使用前一日数据填充
-    stock_data.fillna(method='ffill', inplace=True)
+    stock_data.ffill().bfill()
 
     # 2. 处理异常值：使用 3σ 原则处理价格和成交量数据
     for col in ['open', 'close', 'high', 'low', 'volume', 'amount']:

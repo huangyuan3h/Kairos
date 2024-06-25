@@ -1,7 +1,10 @@
 import torch
+from torch.utils.data import DataLoader
+
+from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 
 
-def train_model(model, dataloader, criterion, optimizer, num_epochs, save_path):
+def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int, save_path: str):
     model.train()
     for epoch in range(num_epochs):
         for x, y in dataloader:
