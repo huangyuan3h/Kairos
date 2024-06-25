@@ -1,6 +1,8 @@
 import pandas as pd
 
 import datetime
+from datetime import date, timedelta
+import random
 
 from data.raw import (
     get_stock_data_since,
@@ -9,7 +11,7 @@ from data.raw import (
     get_stock_cash_flow_sheet_data,
     get_sse_composite_index,
     get_szse_component_index,
-    get_currency_exchange_rates,
+    get_currency_exchange_rates, get_random_code,
 )
 from data.data_preprocessing import (
     clean_stock_data,
@@ -18,6 +20,7 @@ from data.data_preprocessing import (
     merge_financial_data,
     clean_financial_data,
 )
+
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -127,7 +130,25 @@ def drop_columns_and_reset_index(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-stock_data = get_stock_total_data(stock_code='600000', start_date='20230101', n_days=200)
+def get_random_available_date() -> str:
+    today = date.today()
+    five_years_ago = today - timedelta(days=365 * 5)
+    half_year_ago = today - timedelta(days=365 // 2)
+    date_range = (five_years_ago, half_year_ago)
+    random_days = random.randint(date_range[0].toordinal(), date_range[1].toordinal())
+    random_date = date.fromordinal(random_days)
+    return random_date.strftime("%Y%m%d")
 
-removed_data = drop_columns_and_reset_index(stock_data)
-print(removed_data)
+
+def get_random_valid_data() -> pd.DataFrame:
+    code = get_random_code()
+    start_date = get_random_available_date()
+    stock_data = get_stock_total_data(stock_code=code, start_date=start_date, n_days=180)
+    removed_data = drop_columns_and_reset_index(stock_data)
+
+    return removed_data
+
+# stock_data = get_stock_total_data(stock_code='600000', start_date='20230101', n_days=200)
+#
+# removed_data = drop_columns_and_reset_index(stock_data)
+# print(removed_data)

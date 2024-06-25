@@ -1,6 +1,7 @@
 import akshare as ak
 import pandas as pd
 
+
 def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
     """
     获取指定股票代码的所有年份和季度的利润表数据，保留重要列并转换为英文列名。
@@ -15,7 +16,6 @@ def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
                           - revenue: 营业收入
                           - operating_profit: 营业利润
                           - net_profit: 净利润
-                          - net_profit_atsopc: 归属于母公司所有者的净利润
                           - basic_eps: 基本每股收益
                           - year: 年份
                           - quarter: 季度
@@ -34,13 +34,12 @@ def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
         profit_data['quarter'] = profit_data['报告日'].str[4:6].astype(int) // 3
 
         # 保留重要列并重命名
-        profit_data = profit_data[['报告日', '营业收入', '营业利润', '净利润', '归属于母公司的净利润', '基本每股收益', 'year', 'quarter']]
+        profit_data = profit_data[['报告日', '营业收入', '营业利润', '净利润', '基本每股收益', 'year', 'quarter']]
         profit_data.rename(columns={
             '报告日': 'report_date',
             '营业收入': 'revenue',
             '营业利润': 'operating_profit',
             '净利润': 'net_profit',
-            '归属于母公司的净利润': 'net_profit_atsopc',
             '基本每股收益': 'basic_eps'
         }, inplace=True)
 
@@ -65,7 +64,6 @@ def get_stock_balance_sheet_data(stock_code: str) -> pd.DataFrame:
                           - total_assets: 资产总计
                           - total_liabilities: 负债合计
                           - total_equity: 股东权益合计
-                          - total_equity_atsopc: 归属于母公司股东的权益
                           - year: 年份
                           - quarter: 季度
     """
@@ -82,17 +80,13 @@ def get_stock_balance_sheet_data(stock_code: str) -> pd.DataFrame:
         balance_data['year'] = balance_data['报告日'].str[:4].astype(int)
         balance_data['quarter'] = balance_data['报告日'].str[4:6].astype(int) // 3
 
-        # 计算股东权益合计
-        balance_data['股东权益合计'] = balance_data['归属于母公司股东的权益'] + balance_data['少数股东权益']
 
         # 保留重要列并重命名
-        balance_data = balance_data[['报告日', '资产总计', '负债合计', '股东权益合计', '归属于母公司股东的权益', 'year', 'quarter']]
+        balance_data = balance_data[['报告日', '资产总计', '负债合计', 'year', 'quarter']]
         balance_data.rename(columns={
             '报告日': 'report_date',
             '资产总计': 'total_assets',
             '负债合计': 'total_liabilities',
-            '股东权益合计': 'total_equity',
-            '归属于母公司股东的权益': 'total_equity_atsopc'
         }, inplace=True)
 
         return balance_data
