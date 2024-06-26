@@ -11,7 +11,6 @@ import torch.optim as optim
 from models.LSTMTransformer.load_model import load_model
 from models.LSTMTransformer.predict import predict
 from models.LSTMTransformer.train_model import train_model
-import os
 
 # 模型参数
 input_dim = 47

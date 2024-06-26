@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 
 # 梯度裁剪
-clip_value = 1.0  # 梯度裁剪值
+clip_value = 0.5  # 梯度裁剪值
 
 
 def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int, save_path: str):
@@ -26,7 +26,11 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
             loss.backward()
             optimizer.step()
 
+            # 检查输出值
+            if torch.isnan(outputs).any() or torch.isinf(outputs).any():
+                print("Outputs contain NaN or Inf values. Skipping this batch.")
+                continue
+
             print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
 
-    # 保存模型
     torch.save(model.state_dict(), save_path)
