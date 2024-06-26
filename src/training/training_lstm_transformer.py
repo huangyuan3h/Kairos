@@ -12,17 +12,17 @@ from models.LSTMTransformer.predict import predict
 from models.LSTMTransformer.train_model import train_model
 
 # 模型参数
-input_dim = 47  # 输入特征维度
-hidden_dim = 64  # LSTM隐藏层维度，需要与Transformer的d_model一致
-num_layers = 2  # LSTM层数，与TransformerEncoder的num_layers一致
-num_heads = 4  # Transformer注意力头数
-target_days = 10  # 预测未来天数
+input_dim = 47  # 输入特征维度 (保持不变)
+hidden_dim = 128  # LSTM隐藏层维度，扩大一倍
+num_layers = 3   # LSTM层数，增加一层
+num_heads = 8   # Transformer注意力头数，扩大一倍
+target_days = 10  # 预测未来天数 (保持不变)
 
 # 训练参数
-batch_size = 32
-learning_rate = 0.001
-num_epochs = 100
-model_save_path = "lstm_transformer_model.pth"
+batch_size = 32 # 可以尝试稍微调大，例如 64 或 128，但要根据你的硬件条件
+learning_rate = 0.001 # 可以尝试稍微调小，例如 5e-4 或 1e-4
+num_epochs = 200  # 训练轮数增加
+model_save_path = "../../model_files/lstm_transformer_model.pth"
 
 # 数据参数
 feature_columns = [i for i in range(input_dim)]  # 特征列索引
@@ -30,8 +30,6 @@ target_column = 1  # 目标列索引
 
 
 def main():
-    data = get_random_valid_data()
-
     dataset = StockDataset(target_days, feature_columns, target_column)
     data_loader = DataLoader(dataset, batch_size, shuffle=True)
     model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads, target_days)
@@ -39,7 +37,7 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     train_model(model, data_loader, criterion, optimizer, num_epochs, model_save_path)
 
-
+    data = get_random_valid_data()
     predict_data = data[0:60]
     expected_data = data[60:70]
     scaler = StandardScaler()
