@@ -12,7 +12,8 @@ from src.training.parameter import get_model_params, get_training_params, get_da
 
 learning_batch = 10
 
-def main():
+
+def training():
     # 获取模型参数
     input_dim, hidden_dim, num_layers, num_heads, target_days = get_model_params()
 
@@ -36,5 +37,3 @@ def main():
         print(f"batch: {i + 1}/{learning_batch}")
 
 
-if __name__ == "__main__":
-    main()
