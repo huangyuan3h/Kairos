@@ -104,7 +104,7 @@ def get_stock_total_data(stock_code: str, start_date: str, n_days: int) -> pd.Da
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
-        return merged_data
+        return merged_data.fillna(method='ffill').fillna(method='bfill')
     except Exception as e:
         print(f"获取股票预测数据时发生错误：{e}")
         return None
@@ -142,7 +142,7 @@ def get_random_available_date() -> str:
 
 def get_random_full_data() -> pd.DataFrame:
     result = None
-    while result is None:
+    while result is None or len(result) <= 70:
         code = get_random_code()
         start_date = get_random_available_date()
         result = get_stock_total_data(stock_code=code, start_date=start_date, n_days=365)
@@ -156,7 +156,7 @@ def get_random_valid_data() -> pd.DataFrame:
     return removed_data
 
 
-# stock_data = get_stock_total_data(stock_code='600000', start_date='20230101', n_days=200)
+# stock_data = get_stock_total_data(stock_code='600000', start_date='20220101', n_days=200)
 #
 # removed_data = drop_columns_and_reset_index(stock_data)
 # print(removed_data)
