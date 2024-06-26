@@ -25,4 +25,4 @@ class StockDataset(Dataset):
     def __getitem__(self, idx: int) -> (torch.Tensor, torch.Tensor):
         x = self.data[idx:idx + 60, self.feature_columns]
         y = self.data[idx + 60:idx + 60 + self.target_days, self.target_column]
-        return torch.tensor(x, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
+        return x.clone().detach(), y.clone().detach()  # 使用 .clone().detach()

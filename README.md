@@ -2,13 +2,13 @@
 
 ## install environment
 
-This project is developed and tested with Python 3.12. To create a virtual environment and install the required packages, follow these steps:
+This project is developed and tested with Python 3.8. To create a virtual environment and install the required packages, follow these steps:
 
 1. Create a Conda environment (recommended):
 
    ```bash
-   conda create -n stock_pred_312 python=3.12
-   conda activate stock_pred_312
+   conda create -n kairos_38 python=3.8
+   conda activate kairos_38
    ```
    
 ps: deactivate environment:
@@ -24,31 +24,21 @@ conda env create -f environment.yml
 
 pip install -r requirements.txt
 
-
 ```
 
-
-
------ in developing
-
-
+if install some packages, remember to freeze:
 
 ```bash
-conda create -n kairos_312 python=3.12
-
-conda activate kairos_312
-
-conda deactivate
-
-
-conda install akshare pandas 
-
-
-conda env remove <env name>
 
 conda env export > environment.yml
 
+pip freeze > requirements.txt
 ```
 
 
-conda create -n stock_prediction python=3.8
+
+
+
+
+
+

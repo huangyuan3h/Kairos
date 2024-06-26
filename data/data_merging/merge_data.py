@@ -140,10 +140,17 @@ def get_random_available_date() -> str:
     return random_date.strftime("%Y%m%d")
 
 
+def get_random_full_data() -> pd.DataFrame:
+    result = None
+    while result is None:
+        code = get_random_code()
+        start_date = get_random_available_date()
+        result = get_stock_total_data(stock_code=code, start_date=start_date, n_days=365)
+    return result
+
+
 def get_random_valid_data() -> pd.DataFrame:
-    code = get_random_code()
-    start_date = get_random_available_date()
-    stock_data = get_stock_total_data(stock_code=code, start_date=start_date, n_days=250)
+    stock_data = get_random_full_data()
     removed_data = drop_columns_and_reset_index(stock_data)
 
     return removed_data
