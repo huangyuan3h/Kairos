@@ -33,17 +33,17 @@ def get_stock_data_since(stock_code: str, start_date: str, n_days: int, adjust: 
 
         stock_data.rename(columns={
             '日期': 'date',
-            '股票代码': 'code',
-            '开盘': 'open',
-            '收盘': 'close',
-            '最高': 'high',
-            '最低': 'low',
-            '成交量': 'volume',
-            '成交额': 'amount',
-            '振幅': 'amplitude',
-            '涨跌幅': 'change_percent',
-            '涨跌额': 'change',
-            '换手率': 'turnover_rate'
+            '股票代码': 'stock_code',
+            '开盘': 'stock_open',
+            '收盘': 'stock_close',
+            '最高': 'stock_high',
+            '最低': 'stock_low',
+            '成交量': 'stock_volume',
+            '成交额': 'stock_amount',
+            '振幅': 'stock_amplitude',
+            '涨跌幅': 'stock_change_percent',
+            '涨跌额': 'stock_change',
+            '换手率': 'stock_turnover_rate'
         }, inplace=True)
         return stock_data
 

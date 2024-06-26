@@ -13,14 +13,14 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
         for x, y in dataloader:
             optimizer.zero_grad()
             outputs = model(x)
+
+            # 计算四个时间窗口的均值损失
             loss = criterion(outputs, y)
 
-            # 检查loss是否为nan
             if torch.isnan(loss):
                 print("Loss is nan. Skipping this batch.")
                 continue
 
-            # 梯度裁剪
             torch.nn.utils.clip_grad_norm_(model.parameters(), clip_value)
 
             loss.backward()

@@ -28,17 +28,12 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     stock_data.ffill().bfill()
 
     # 2. 处理异常值：使用 3σ 原则处理价格和成交量数据
-    for col in ['open', 'close', 'high', 'low', 'volume', 'amount']:
+    for col in ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
         stock_data = remove_outliers_by_std(stock_data, col)
 
     # 3. 数据标准化：对价格和成交量数据进行 Min-Max 标准化
-    for col in ['open', 'close', 'high', 'low', 'volume', 'amount']:
+    for col in ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
         stock_data[col] = min_max_scaling(stock_data[col])
-
-    # 4. 特征工程：计算技术指标
-    stock_data['ma5'] = stock_data['close'].rolling(window=5).mean()  # 5日移动平均线
-    stock_data['ma10'] = stock_data['close'].rolling(window=10).mean()  # 10日移动平均线
-    stock_data['rsi'] = calculate_rsi(stock_data['close'], 14)  # 计算 RSI 指标
 
     # 5. 统一日期格式
     stock_data['date'] = pd.to_datetime(stock_data['date'])

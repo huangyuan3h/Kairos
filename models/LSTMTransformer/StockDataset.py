@@ -30,5 +30,13 @@ class StockDataset(Dataset):
 
     def __getitem__(self, idx: int) -> (torch.Tensor, torch.Tensor):
         x = self.data[idx:idx + 60, self.feature_columns]
-        y = self.data[idx + 60:idx + 60 + self.target_days, self.target_column]
-        return x.clone().detach(), y.clone().detach()
+
+        # 计算1天、3天、5天和10天的涨跌幅均值
+        y_1d = self.data[idx + 60 + 1 - 1, self.target_column]
+        y_3d = self.data[idx + 60 + 3 - 1, self.target_column]
+        y_5d = self.data[idx + 60 + 5 - 1, self.target_column]
+        y_10d = self.data[idx + 60 + 10 - 1, self.target_column]
+
+        y_mean = torch.tensor([y_1d, y_3d, y_5d, y_10d]).mean()
+
+        return x.clone().detach(), y_mean.clone().detach()

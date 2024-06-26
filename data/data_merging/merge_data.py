@@ -111,7 +111,7 @@ def get_stock_total_data(stock_code: str, start_date: str, n_days: int) -> pd.Da
 
 
 columns_to_remove = [
-    'code', 'ma5', 'ma10', 'rsi', 'year', 'quarter', 'date'
+    'stock_code', 'year', 'quarter', 'date'
 ]
 
 
@@ -154,6 +154,7 @@ def get_random_valid_data() -> pd.DataFrame:
     removed_data = drop_columns_and_reset_index(stock_data)
 
     return removed_data
+
 
 # stock_data = get_stock_total_data(stock_code='600000', start_date='20230101', n_days=200)
 #
