@@ -142,7 +142,7 @@ def get_random_available_date() -> str:
 
 def get_random_full_data() -> pd.DataFrame:
     result = None
-    while result is None or len(result) <= 70:
+    while result is None or len(result) <= 200:
         code = get_random_code()
         start_date = get_random_available_date()
         result = get_stock_total_data(stock_code=code, start_date=start_date, n_days=365)

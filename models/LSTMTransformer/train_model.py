@@ -31,6 +31,6 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
 
-            print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
+        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
 
     torch.save(model.state_dict(), save_path)

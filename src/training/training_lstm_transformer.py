@@ -10,9 +10,6 @@ from models.LSTMTransformer.load_model import load_model
 from models.LSTMTransformer.train_model import train_model
 from src.training.parameter import get_model_params, get_training_params, get_data_params
 
-# 接下来的训练次数
-next_training_batch = 10
-
 
 def main():
     # 获取模型参数
@@ -31,10 +28,9 @@ def main():
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    for i in range(next_training_batch):
-        dataset = StockDataset(target_days, feature_columns, target_column)
-        data_loader = DataLoader(dataset, batch_size, shuffle=True)
-        train_model(model, data_loader, criterion, optimizer, num_epochs, model_save_path)
+    dataset = StockDataset(target_days, feature_columns, target_column)
+    data_loader = DataLoader(dataset, batch_size, shuffle=True)
+    train_model(model, data_loader, criterion, optimizer, num_epochs, model_save_path)
 
 
 if __name__ == "__main__":
