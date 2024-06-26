@@ -1,4 +1,5 @@
 from torch.utils.data import DataLoader
+import torch
 
 from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 from models.LSTMTransformer.StockDataset import StockDataset
@@ -11,6 +12,18 @@ from models.LSTMTransformer.train_model import train_model
 from src.training.parameter import get_model_params, get_training_params, get_data_params
 
 learning_batch = 10
+
+
+def evaluate_model(model, data_loader, criterion):
+    model.eval()
+    total_loss = 0
+    with torch.no_grad():
+        for inputs, targets in data_loader:
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            total_loss += loss.item()
+    average_loss = total_loss / len(data_loader)
+    print(f"Average loss: {average_loss}")
 
 
 def training():
@@ -34,6 +47,6 @@ def training():
         dataset = StockDataset(target_days, feature_columns, target_column)
         data_loader = DataLoader(dataset, batch_size, shuffle=True)
         train_model(model, data_loader, criterion, optimizer, num_epochs, model_save_path)
+        # 评估模型性能
+        evaluate_model(model, data_loader)
         print(f"batch: {i + 1}/{learning_batch}")
-
-
