@@ -9,6 +9,29 @@ from models.LSTMTransformer.predict import predict
 
 from src.training.parameter import get_model_params, get_training_params, get_data_params
 
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+import numpy as np
+
+def evaluate_predictions(expected, predictions):
+    """
+    评估预测值和预期值之间的差异。
+
+    Args:
+        expected (list): 预期值列表。
+        predictions (list): 预测值列表。
+
+    Returns:
+        dict: 包含MSE、RMSE和MAE的字典。
+    """
+    mse = mean_squared_error(expected, predictions)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(expected, predictions)
+
+    return {
+        'MSE': mse,
+        'RMSE': rmse,
+        'MAE': mae
+    }
 
 def main():
     # 获取模型参数
@@ -34,6 +57,9 @@ def main():
     expected_list = data['stock_change_percent'][60:70]
     expected = [expected_list[60], expected_list[:3].mean(), expected_list[:5].mean(), expected_list[:10].mean()]
     print(expected)
+    # 评估预测值和预期值之间的差异
+    evaluation_results = evaluate_predictions(expected, predictions)
+    print("评估结果：", evaluation_results)
 
 
 if __name__ == "__main__":
