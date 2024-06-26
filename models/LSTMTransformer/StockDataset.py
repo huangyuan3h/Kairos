@@ -32,11 +32,11 @@ class StockDataset(Dataset):
         x = self.data[idx:idx + 60, self.feature_columns]
 
         # 计算1天、3天、5天和10天的涨跌幅均值
-        y_1d = self.data[idx + 60 + 1 - 1, self.target_column]
-        y_3d = self.data[idx + 60 + 3 - 1, self.target_column]
-        y_5d = self.data[idx + 60 + 5 - 1, self.target_column]
-        y_10d = self.data[idx + 60 + 10 - 1, self.target_column]
+        y_1d = self.data[idx + 60, self.target_column]
+        y_3d = self.data[idx + 60: idx + 60 + 3, self.target_column].mean()
+        y_5d = self.data[idx + 60: idx + 60 + 5, self.target_column].mean()
+        y_10d = self.data[idx + 60: idx + 60 + 10, self.target_column].mean()
 
-        y_mean = torch.tensor([y_1d, y_3d, y_5d, y_10d]).mean()
+        y = torch.tensor([y_1d, y_3d, y_5d, y_10d])
 
-        return x.clone().detach(), y_mean.clone().detach()
+        return x.clone().detach(), y.clone().detach()

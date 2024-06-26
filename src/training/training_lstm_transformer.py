@@ -34,7 +34,7 @@ next_training_batch = 10
 
 
 def main():
-    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads, target_days)
+    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads)
     model = load_model(model, model_save_path)
 
     # 优化器

@@ -17,7 +17,6 @@ input_dim = 47
 hidden_dim = 128
 num_layers = 3
 num_heads = 8
-target_days = 10
 
 # 训练参数
 batch_size = 32
@@ -34,7 +33,7 @@ next_training_batch = 10
 
 
 def main():
-    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads, target_days)
+    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads)
     model = load_model(model, model_save_path)
 
     data = get_random_valid_data()
