@@ -11,7 +11,7 @@ from models.LSTMTransformer.load_model import load_model
 from models.LSTMTransformer.train_model import train_model
 from src.training.parameter import get_model_params, get_training_params, get_data_params
 
-learning_batch = 10
+learning_batch = 20
 
 
 def evaluate_model(model, data_loader, criterion):
@@ -48,5 +48,5 @@ def training():
         data_loader = DataLoader(dataset, batch_size, shuffle=True)
         train_model(model, data_loader, criterion, optimizer, num_epochs, model_save_path)
         # 评估模型性能
-        evaluate_model(model, data_loader)
+        evaluate_model(model, data_loader, criterion)
         print(f"batch: {i + 1}/{learning_batch}")
