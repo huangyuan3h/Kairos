@@ -7,6 +7,7 @@ from data.data_merging import get_random_valid_data
 
 length_of_records = 100
 
+
 def load_and_preprocess_data() -> torch.Tensor:
     data = get_random_valid_data()
     scaler = StandardScaler()
@@ -19,7 +20,7 @@ def load_and_preprocess_data() -> torch.Tensor:
     return torch.tensor(data_scaled, dtype=torch.float32)
 
 
-stock_list_num = 3
+stock_list_num = 500
 
 
 class StockDataset(Dataset):
@@ -45,11 +46,11 @@ class StockDataset(Dataset):
             raise IndexError("Index out of range")
 
         x = current_data[index:index + 60, self.feature_columns]
-        # 计算1天、3天、5天和10天的涨跌幅均值
+        # 计算1天、3天、5天和10天的涨跌幅
         y_1d = current_data[index + 60, self.target_column]
-        y_3d = current_data[index + 60: index + 60 + 3, self.target_column].mean()
-        y_5d = current_data[index + 60: index + 60 + 5, self.target_column].mean()
-        y_10d = current_data[index + 60: index + 60 + 10, self.target_column].mean()
+        y_3d = current_data[index + 60: index + 60 + 3, self.target_column].sum()
+        y_5d = current_data[index + 60: index + 60 + 5, self.target_column].sum()
+        y_10d = current_data[index + 60: index + 60 + 10, self.target_column].sum()
 
         y = torch.tensor([y_1d, y_3d, y_5d, y_10d])
 

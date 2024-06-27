@@ -41,6 +41,13 @@ def get_sh_a_stock_list() -> pd.DataFrame:
     return sh_stock_list
 
 
+def get_sh_a_stock_list_in_range() -> pd.DataFrame:
+    stock_list = get_sh_a_stock_list()
+    filtered_df = stock_list.loc[stock_list['total_market_cap'] > 2 * 10 ** 10]  # 200 亿以下
+    filtered_df = filtered_df.loc[filtered_df['total_market_cap'] < 10 ** 12]  # 1万亿以上
+    return filtered_df
+
+
 def get_sz_a_stock_list() -> pd.DataFrame:
     """
     获取深圳交易所 A 股列表，列名转换为英文。

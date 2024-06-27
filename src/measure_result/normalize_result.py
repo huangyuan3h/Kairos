@@ -35,10 +35,8 @@ def make_decision(predicted_returns: list, risk_tolerance: str = 'moderate') -> 
         return "买入（Buy）"
     elif short_term_return < sell_threshold and medium_term_return < sell_threshold and long_term_return < sell_threshold:
         return "卖出（Sell）"
-    elif short_term_return > 0 and medium_term_return > 0 and long_term_return > 0:
-        return "持有（Hold）"
     else:
-        return "观望（Wait）"
+        return "持有（Hold）"
 
 
 # 平均法
@@ -64,17 +62,17 @@ def majority_vote_decision(predicted_returns: list) -> str:
 
 
 
-# 假设预测结果为：
-predicted_returns =[0.9197320938110352, 0.8447604179382324, 0.6181734800338745, 0.05447008088231087]  # 1天，3天，5天，10天
-
-# 用户的风险偏好
-risk_tolerance = 'moderate'
-
-# 调用决策函数
-decision = make_decision(predicted_returns, risk_tolerance)
-
-# 输出决策结果
-print(decision)  # 输出结果: 买入（Buy）
+# # 假设预测结果为：
+# predicted_returns =[0.9197320938110352, 0.8447604179382324, 0.6181734800338745, 0.05447008088231087]  # 1天，3天，5天，10天
+#
+# # 用户的风险偏好
+# risk_tolerance = 'moderate'
+#
+# # 调用决策函数
+# decision = make_decision(predicted_returns, risk_tolerance)
+#
+# # 输出决策结果
+# print(decision)  # 输出结果: 买入（Buy）
 
 # predicted_returns = [predicted_return_1, predicted_return_3, predicted_return_5]
 
