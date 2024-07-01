@@ -1,4 +1,4 @@
-from data.raw import get_stock_data_since
+from data.raw import get_stock_data_since, get_sh_a_stock_list, get_sz_a_stock_list
 from db.database import get_db_session, create_table
 from db.stock_daily import bulk_insert_stock_daily_data, get_last_stock_data_date
 from datetime import datetime, timedelta, date
@@ -32,9 +32,28 @@ def import_single_stock_by_code(code: str):
     offset = calculate_day_diff(cursor, end_date_obj)
     stock_list = get_stock_data_since(code, cursor.strftime('%Y%m%d'), end_date)
 
-    # mean get all the data for this stock
-    if stock_list is None or len(stock_list) > offset:
+    # handle all the error here
+    if stock_list.empty or stock_list is None or len(stock_list) > offset:
         return
 
     with get_db_session() as db:
         bulk_insert_stock_daily_data(db, stock_list)
+
+
+def import_sh_stocks_daily():
+    stock_list = get_sh_a_stock_list()
+    for index, row in stock_list.iterrows():
+        import_single_stock_by_code(row["code"])
+        print("sh"+str(row["index"]) +"stock code:"+row["code"] + " imported...")
+
+
+def import_sz_stocks_daily():
+    stock_list = get_sz_a_stock_list()
+    for index, row in stock_list.iterrows():
+        import_single_stock_by_code(row["code"])
+        print("sz" + str(row["index"]) + "stock code:" + row["code"] + " imported...")
+
+
+def import_all_stocks_daily():
+    import_sh_stocks_daily()
+    import_sz_stocks_daily()

@@ -21,11 +21,6 @@ def get_stock_data_since(stock_code: str, start_date: str, end_date: str, adjust
         stock_data = ak.stock_zh_a_hist(symbol=stock_code, period="daily", start_date=start_date, end_date=end_date,
                                         adjust=adjust)
 
-        # 检查是否成功获取数据
-        if stock_data is None or stock_data.empty:
-            print(f"未能获取股票 {stock_code} 的数据，请检查股票代码和日期是否正确。")
-            return None
-
         stock_data.rename(columns={
             '日期': 'date',
             '股票代码': 'stock_code',

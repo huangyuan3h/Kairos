@@ -1,11 +1,9 @@
-
-from import_2_db import import_single_stock_by_code
+from import_2_db.import_stock_daily import import_all_stocks_daily
 
 start_date = '20190101'
 
 def main():
-    code = "600519"
-    import_single_stock_by_code(code)
+    import_all_stocks_daily()
 
 
 
