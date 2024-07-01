@@ -2,13 +2,13 @@ import akshare as ak
 import pandas as pd
 
 
-def get_currency_exchange_rates(start_date: str, n_days: int) -> pd.DataFrame:
+def get_currency_exchange_rates(start_date: str, end_date: str) -> pd.DataFrame:
     """
     获取一段时间内美元和欧元对人民币的汇率。
 
     Args:
         start_date (str): 开始日期，格式为 'YYYYMMDD'，例如 '20230101'。
-        n_days (int): 获取的天数。
+        end_date (str): 结束日期，格式为 'YYYYMMDD'，例如 '20230101'。
 
     Returns:
         pd.DataFrame: 包含美元和欧元汇率数据的 DataFrame，如果获取失败则返回 None。
@@ -19,10 +19,6 @@ def get_currency_exchange_rates(start_date: str, n_days: int) -> pd.DataFrame:
     """
 
     try:
-        # 计算结束日期
-        start_date_obj = pd.to_datetime(start_date, format='%Y%m%d')
-        end_date_obj = start_date_obj + pd.Timedelta(days=n_days - 1)
-        end_date = end_date_obj.strftime('%Y%m%d')
 
         # 获取美元汇率
         usd_rates = ak.currency_boc_sina(symbol="美元", start_date=start_date, end_date=end_date)
