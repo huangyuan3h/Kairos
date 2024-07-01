@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine, Column, String, Integer, Float, Date
+from decorator import contextmanager
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
@@ -10,7 +11,6 @@ load_dotenv()
 # 从环境变量中获取数据库连接信息
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print(DATABASE_URL)
 # 检查数据库连接字符串是否为空
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable not set.")
@@ -25,6 +25,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+@contextmanager
 def get_db_session():
     """
     获取数据库会话
@@ -40,7 +41,6 @@ def get_db_session():
 
 
 #  基础方法
-
 def create_table(engine=engine):
     """
     创建所有数据库表

@@ -4,7 +4,7 @@ from import_2_db import import_single_stock_by_code
 start_date = '20190101'
 
 def main():
-    code = "002594"
+    code = "600519"
     import_single_stock_by_code(code)
 
 
