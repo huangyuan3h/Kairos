@@ -1,10 +1,11 @@
-from data.raw import get_sh_a_stock_list
-from data.raw.stock_list import get_sh_a_stock_list_in_range
 
+from import_2_db import import_single_stock_by_code
+
+start_date = '20190101'
 
 def main():
-    list = get_sh_a_stock_list_in_range()
-    print(list)
+    code = "002594"
+    import_single_stock_by_code(code)
 
 
 

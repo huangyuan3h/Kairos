@@ -24,8 +24,7 @@ stock_list_num = 500
 
 
 class StockDataset(Dataset):
-    def __init__(self, target_days: int, feature_columns: list, target_column: int):
-        self.target_days = target_days
+    def __init__(self,  feature_columns: list, target_column: int):
         self.feature_columns = feature_columns
         self.target_column = target_column
         self.data = []

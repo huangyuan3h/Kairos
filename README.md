@@ -2,13 +2,13 @@
 
 ## install environment
 
-This project is developed and tested with Python 3.8. To create a virtual environment and install the required packages, follow these steps:
+This project is developed and tested with Python 3.9. To create a virtual environment and install the required packages, follow these steps:
 
 1. Create a Conda environment (recommended):
 
    ```bash
-   conda create -n kairos_38 python=3.8
-   conda activate kairos_38
+   conda create -n kairos_39 python=3.9
+   conda activate kairos_39
    ```
    
 ps: deactivate environment:
