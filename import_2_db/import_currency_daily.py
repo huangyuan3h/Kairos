@@ -5,7 +5,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from import_2_db.utils import get_next_day, calculate_day_diff
+from import_2_db.utils import get_next_day
 
 currency_start_date = datetime(2019, 1, 1)
 
@@ -21,11 +21,10 @@ def import_exchange_rates():
     end_date_obj = datetime.now()
     end_date = end_date_obj.strftime('%Y%m%d')
 
-    offset = calculate_day_diff(cursor, end_date_obj)
     exchange_rate_df = get_currency_exchange_rates(cursor.strftime('%Y%m%d'), end_date)
 
     # handle all the error here
-    if exchange_rate_df.empty or exchange_rate_df is None or len(exchange_rate_df) > offset:
+    if exchange_rate_df.empty or exchange_rate_df is None:
         return
 
     exchange_rate_df['date'] = pd.to_datetime(exchange_rate_df['date']).dt.strftime('%Y-%m-%d')

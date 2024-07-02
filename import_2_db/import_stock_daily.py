@@ -1,9 +1,9 @@
 from data.raw import get_stock_data_since, get_sh_a_stock_list, get_sz_a_stock_list
-from db.database import get_db_session, create_table
+from db.database import get_db_session
 from db.stock_daily import bulk_insert_stock_daily_data, get_last_stock_data_date
 from datetime import datetime
 
-from import_2_db.utils import get_next_day, calculate_day_diff
+from import_2_db.utils import get_next_day
 
 stock_start_date = datetime(2019, 1, 1)
 
@@ -18,12 +18,10 @@ def import_single_stock_by_code(code: str):
     # 计算结束日期
     end_date_obj = datetime.now()
     end_date = end_date_obj.strftime('%Y%m%d')
-
-    offset = calculate_day_diff(cursor, end_date_obj)
     stock_list = get_stock_data_since(code, cursor.strftime('%Y%m%d'), end_date)
 
     # handle all the error here
-    if stock_list.empty or stock_list is None or len(stock_list) > offset:
+    if stock_list.empty or stock_list is None:
         return
 
     with get_db_session() as db:
