@@ -13,12 +13,12 @@ def main():
     # create_table()
     # import_sz_index_daily()
     code = '002594'
-    # profit = get_stock_profit_sheet_data(code)
-    # balance = get_stock_balance_sheet_data(code)
+    profit = get_stock_profit_sheet_data(code)
+    balance = get_stock_balance_sheet_data(code)
     cash_flow = get_stock_cash_flow_sheet_data(code)
 
-    # merged = merge_financial_data(profit, balance, cash_flow)
-    # print(merged)
+    merged = merge_financial_data(profit, balance, cash_flow, code)
+    print(merged)
 
 
 if __name__ == "__main__":

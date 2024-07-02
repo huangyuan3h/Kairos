@@ -17,7 +17,6 @@ class ExchangeRate(Base):
     EUR_CNY = Column(Float)
 
 
-
 def bulk_insert_exchange_rate_data(db: Session, df: pd.DataFrame):
     """
     将 Pandas DataFrame 中的汇率数据批量插入到数据库
@@ -43,8 +42,8 @@ def get_exchange_rate_by_date_range(db: Session, start_date: str, end_date: str)
 
     Args:
         db (Session): 数据库会话对象
-        start_date (str): 开始日期 (YYYY-MM-DD)
-        end_date (str): 结束日期 (YYYY-MM-DD)
+        start_date (str): 开始日期，格式为 'YYYYMMDD'
+        end_date (str): 结束日期，格式为 'YYYYMMDD'
 
     Returns:
         pd.DataFrame: 包含汇率数据的 DataFrame，如果未找到则返回 None
@@ -53,6 +52,8 @@ def get_exchange_rate_by_date_range(db: Session, start_date: str, end_date: str)
                           - USD_CNY: 美元兑人民币汇率 (float64)
                           - EUR_CNY: 欧元兑人民币汇率 (float64)
     """
+    start_date = datetime.strptime(start_date, '%Y%m%d')
+    end_date = datetime.strptime(end_date, '%Y%m%d')
 
     stmt = select(ExchangeRate).where(
         ExchangeRate.date >= start_date,

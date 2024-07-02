@@ -3,7 +3,7 @@ import pandas as pd
 # from data.raw import get_stock_profit_sheet_data, get_stock_balance_sheet_data, get_stock_cash_flow_sheet_data
 
 
-def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, cash_flow_data: pd.DataFrame) -> pd.DataFrame:
+def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, cash_flow_data: pd.DataFrame, stock_code:str) -> pd.DataFrame:
     """
     合并利润表、资产负债表和现金流量表数据。
 
@@ -22,6 +22,11 @@ def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, 
     # 使用 merge 方法按 'report_date', 'year', 'quarter' 三列进行合并
     merged_data = pd.merge(profit_data, balance_data, on=['report_date', 'year', 'quarter'], how='left')
     merged_data = pd.merge(merged_data, cash_flow_data, on=['report_date', 'year', 'quarter'], how='left')
+
+    # basic process
+    columns_to_delete = ['year', 'quarter']
+    merged_data = merged_data.drop(columns_to_delete, axis=1)
+    merged_data['stock_code'] = stock_code
 
     return merged_data
 
