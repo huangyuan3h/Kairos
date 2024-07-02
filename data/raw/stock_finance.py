@@ -34,13 +34,23 @@ def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
         profit_data['quarter'] = profit_data['报告日'].str[4:6].astype(int) // 3
 
         # 保留重要列并重命名
-        profit_data = profit_data[['报告日', '营业收入', '营业利润', '净利润', '基本每股收益', 'year', 'quarter']]
+        profit_data = profit_data[[
+            '报告日', '营业收入', '营业总成本', '营业利润', '利润总额', '净利润', '基本每股收益',
+            '研发费用', '利息收入', '利息支出', '投资收益', 'year', 'quarter'
+        ]]
+
         profit_data.rename(columns={
             '报告日': 'report_date',
             '营业收入': 'revenue',
+            '营业总成本': 'total_operating_cost',
             '营业利润': 'operating_profit',
+            '利润总额': 'gross_profit',
             '净利润': 'net_profit',
-            '基本每股收益': 'basic_eps'
+            '基本每股收益': 'basic_eps',
+            '研发费用': 'rd_expenses',
+            '利息收入': 'interest_income',
+            '利息支出': 'interest_expense',
+            '投资收益': 'investment_income'
         }, inplace=True)
 
         return profit_data
@@ -82,11 +92,23 @@ def get_stock_balance_sheet_data(stock_code: str) -> pd.DataFrame:
 
 
         # 保留重要列并重命名
-        balance_data = balance_data[['报告日', '资产总计', '负债合计', 'year', 'quarter']]
+        balance_data = balance_data[[
+            '报告日', '货币资金', '应收票据及应收账款', '存货',
+            '固定资产净额', '短期借款', '长期借款',
+            '所有者权益(或股东权益)合计', '资产总计', '负债合计', 'year', 'quarter'
+        ]]
+
         balance_data.rename(columns={
             '报告日': 'report_date',
+            '货币资金': 'cash_and_equivalents',
+            '应收票据及应收账款': 'accounts_receivable',
+            '存货': 'inventory',
+            '固定资产净额': 'net_fixed_assets',
+            '短期借款': 'short_term_borrowings',
+            '长期借款': 'long_term_borrowings',
+            '所有者权益(或股东权益)合计': 'total_equity',
             '资产总计': 'total_assets',
-            '负债合计': 'total_liabilities',
+            '负债合计': 'total_liabilities'
         }, inplace=True)
 
         return balance_data
@@ -128,15 +150,19 @@ def get_stock_cash_flow_sheet_data(stock_code: str) -> pd.DataFrame:
         cash_flow_data['quarter'] = cash_flow_data['报告日'].str[4:6].astype(int) // 3
 
         # 保留重要列并重命名
-        cash_flow_data = cash_flow_data[
-            ['报告日', '经营活动产生的现金流量净额', '投资活动产生的现金流量净额', '筹资活动产生的现金流量净额', '现金及现金等价物净增加额',
-             'year', 'quarter']]
+        cash_flow_data = cash_flow_data[[
+            '报告日', '经营活动产生的现金流量净额', '投资活动产生的现金流量净额',
+            '筹资活动产生的现金流量净额', '现金及现金等价物净增加额',
+            '期末现金及现金等价物余额', 'year', 'quarter'
+        ]]
+
         cash_flow_data.rename(columns={
             '报告日': 'report_date',
             '经营活动产生的现金流量净额': 'net_cash_from_operating',
             '投资活动产生的现金流量净额': 'net_cash_from_investing',
             '筹资活动产生的现金流量净额': 'net_cash_from_financing',
-            '现金及现金等价物净增加额': 'net_increase_in_cce'
+            '现金及现金等价物净增加额': 'net_increase_in_cce',
+            '期末现金及现金等价物余额': 'end_cash_and_cash_equivalents'
         }, inplace=True)
 
         return cash_flow_data
