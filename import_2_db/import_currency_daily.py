@@ -5,9 +5,9 @@ from datetime import datetime
 
 import pandas as pd
 
-from import_2_db.utils import get_next_day
+from import_2_db.utils import get_next_day, default_start_date
 
-currency_start_date = datetime(2019, 1, 1)
+currency_start_date = default_start_date
 
 
 def import_exchange_rates():

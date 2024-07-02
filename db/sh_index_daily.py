@@ -41,7 +41,7 @@ def bulk_insert_index_daily_data(db: Session, df: pd.DataFrame):
     db.commit()
 
 
-def get_last_index_daily_date(db: Session, ) -> datetime:
+def get_last_index_daily_date(db: Session) -> datetime:
     """
     查询最近一条记录的时间
 
@@ -58,7 +58,7 @@ def get_last_index_daily_date(db: Session, ) -> datetime:
     return result
 
 
-def get_stock_data_by_date_range(db: Session, start_date: str, end_date: str) -> pd.DataFrame:
+def get_index_daily_by_date_range(db: Session, start_date: str, end_date: str) -> pd.DataFrame:
     """获取指定日期范围内的股票数据
 
     Args:

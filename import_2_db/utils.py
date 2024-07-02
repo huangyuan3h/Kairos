@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+default_start_date = datetime(2019, 1, 1)
+
 
 def calculate_day_diff(start_date: datetime, end_date: datetime) -> int:
     return (end_date - start_date).days

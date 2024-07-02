@@ -3,9 +3,9 @@ from db.database import get_db_session
 from db.stock_daily import bulk_insert_stock_daily_data, get_last_stock_data_date
 from datetime import datetime
 
-from import_2_db.utils import get_next_day
+from import_2_db.utils import get_next_day, default_start_date
 
-stock_start_date = datetime(2019, 1, 1)
+stock_start_date = default_start_date
 
 
 def import_single_stock_by_code(code: str):
