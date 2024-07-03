@@ -13,6 +13,9 @@ start_date = '20190101'
 def main():
     create_table()
     # import_sz_index_daily()
+    # code = '601456'
+    #
+    # import_single_financial_by_code(code)
     import_all_financial_daily()
 
 

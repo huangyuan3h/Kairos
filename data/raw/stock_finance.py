@@ -2,6 +2,24 @@ import akshare as ak
 import pandas as pd
 
 
+def add_missing_columns(df, cols_to_add):
+    """
+    向DataFrame中添加缺失的列
+
+    Args:
+      df: 输入的DataFrame
+      cols_to_add: 要添加的列名列表
+
+    Returns:
+      添加列后的DataFrame
+    """
+
+    for col in cols_to_add:
+        if col not in df.columns:
+            df[col] = [None] * len(df)
+    return df
+
+
 def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
     """
     获取指定股票代码的所有年份和季度的利润表数据，保留重要列并转换为英文列名。
@@ -33,11 +51,15 @@ def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
         profit_data['year'] = profit_data['报告日'].str[:4].astype(int)
         profit_data['quarter'] = profit_data['报告日'].str[4:6].astype(int) // 3
 
-        # 保留重要列并重命名
-        profit_data = profit_data[[
+        keep_list = [
             '报告日', '营业收入', '营业总成本', '营业利润', '利润总额', '净利润', '基本每股收益',
             '研发费用', '利息收入', '利息支出', '投资收益', 'year', 'quarter'
-        ]]
+        ]
+
+        add_missing_columns(profit_data, keep_list)
+
+        # 保留重要列并重命名
+        profit_data = profit_data[keep_list]
 
         profit_data.rename(columns={
             '报告日': 'report_date',
@@ -56,7 +78,7 @@ def get_stock_profit_sheet_data(stock_code: str) -> pd.DataFrame:
         return profit_data
 
     except Exception as e:
-        print(f"获取利润表数据时发生错误：{e}")
+        print(f"获取利润表数据时发生错误：{e} stock_code：{stock_code}")
         return None
 
 
@@ -90,13 +112,15 @@ def get_stock_balance_sheet_data(stock_code: str) -> pd.DataFrame:
         balance_data['year'] = balance_data['报告日'].str[:4].astype(int)
         balance_data['quarter'] = balance_data['报告日'].str[4:6].astype(int) // 3
 
-
-        # 保留重要列并重命名
-        balance_data = balance_data[[
+        keep_list = [
             '报告日', '货币资金', '应收票据及应收账款', '存货',
             '固定资产净额', '短期借款', '长期借款',
             '所有者权益(或股东权益)合计', '资产总计', '负债合计', 'year', 'quarter'
-        ]]
+        ]
+        add_missing_columns(balance_data, keep_list)
+
+        # 保留重要列并重命名
+        balance_data = balance_data[keep_list]
 
         balance_data.rename(columns={
             '报告日': 'report_date',
@@ -114,7 +138,7 @@ def get_stock_balance_sheet_data(stock_code: str) -> pd.DataFrame:
         return balance_data
 
     except Exception as e:
-        print(f"获取资产负债表数据时发生错误：{e}")
+        print(f"获取资产负债表数据时发生错误：{e} stock_code：{stock_code}")
         return None
 
 
@@ -149,12 +173,15 @@ def get_stock_cash_flow_sheet_data(stock_code: str) -> pd.DataFrame:
         cash_flow_data['year'] = cash_flow_data['报告日'].str[:4].astype(int)
         cash_flow_data['quarter'] = cash_flow_data['报告日'].str[4:6].astype(int) // 3
 
-        # 保留重要列并重命名
-        cash_flow_data = cash_flow_data[[
+        keep_list = [
             '报告日', '经营活动产生的现金流量净额', '投资活动产生的现金流量净额',
             '筹资活动产生的现金流量净额', '现金及现金等价物净增加额',
             '期末现金及现金等价物余额', 'year', 'quarter'
-        ]]
+        ]
+
+        add_missing_columns(cash_flow_data, keep_list)
+        # 保留重要列并重命名
+        cash_flow_data = cash_flow_data[keep_list]
 
         cash_flow_data.rename(columns={
             '报告日': 'report_date',
@@ -168,7 +195,7 @@ def get_stock_cash_flow_sheet_data(stock_code: str) -> pd.DataFrame:
         return cash_flow_data
 
     except Exception as e:
-        print(f"获取现金流量表数据时发生错误：{e}")
+        print(f"获取现金流量表数据时发生错误：{e} stock_code：{stock_code}")
         return None
 
 
