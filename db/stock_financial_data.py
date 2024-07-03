@@ -54,7 +54,7 @@ def bulk_insert_financial_data(db: Session, df: pd.DataFrame):
         with get_db_session() as db:
             bulk_insert_financial_data(db, df)
     """
-    df = df.bfill().ffill()
+    df = df.bfill().ffill().fillna(value=0)
 
     data_list = df.to_dict(orient='records')
     for data in data_list:

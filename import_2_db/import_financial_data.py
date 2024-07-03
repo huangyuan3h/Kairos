@@ -1,12 +1,14 @@
 from data.data_preprocessing import merge_financial_data
-from data.raw import get_stock_profit_sheet_data, get_stock_balance_sheet_data, get_stock_cash_flow_sheet_data
+from data.raw import get_stock_profit_sheet_data, get_stock_balance_sheet_data, get_stock_cash_flow_sheet_data, \
+    get_sh_a_stock_list, get_sz_a_stock_list
 from db import get_db_session
 from db.stock_financial_data import bulk_insert_financial_data, get_last_index_daily_date
 import datetime
 
+import time
+
 
 def import_single_financial_by_code(code: str):
-
     with get_db_session() as db:
         last_date = get_last_index_daily_date(db, code)
 
@@ -26,3 +28,26 @@ def import_single_financial_by_code(code: str):
 
     with get_db_session() as db:
         bulk_insert_financial_data(db, merged)
+
+
+def import_sh_financial_daily():
+    stock_list = get_sh_a_stock_list()
+    for index, row in stock_list.iterrows():
+        import_single_financial_by_code(row["code"])
+        print("sh index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
+        if (index + 1) % 10 == 0:
+            time.sleep(60)
+
+
+def import_sz_financial_daily():
+    stock_list = get_sz_a_stock_list()
+    for index, row in stock_list.iterrows():
+        import_single_financial_by_code(row["code"])
+        print("sz index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
+        if (index + 1) % 10 == 0:
+            time.sleep(60)
+
+
+def import_all_financial_daily():
+    import_sh_financial_daily()
+    import_sz_financial_daily()
