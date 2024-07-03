@@ -6,6 +6,8 @@ import pandas as pd
 from datetime import datetime
 from sqlalchemy import select
 
+pd.set_option('future.no_silent_downcasting', True)
+
 
 class FinancialData(Base):
     __tablename__ = 'financial_data'

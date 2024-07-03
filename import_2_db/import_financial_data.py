@@ -50,7 +50,7 @@ def import_sz_financial_daily():
     for index, row in stock_list.iterrows():
         result = import_single_financial_by_code(row["code"])
         if result:
-            print("sh index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
+            print("sz index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
             counter = counter + 1
         if (counter + 1) % 10 == 0:
             time.sleep(60)
