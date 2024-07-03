@@ -11,7 +11,7 @@ def merge_financial_data(profit_data: pd.DataFrame, balance_data: pd.DataFrame, 
         profit_data (pd.DataFrame): 利润表数据，包含 'report_date', 'revenue', 'operating_profit', 'net_profit', 'basic_eps', 'year', 'quarter' 列。
         balance_data (pd.DataFrame): 资产负债表数据，包含 'report_date', 'total_assets', 'total_liabilities', 'total_equity', 'year', 'quarter' 列。
         cash_flow_data (pd.DataFrame): 现金流量表数据，包含 'report_date', 'net_cash_from_operating', 'net_cash_from_investing', 'net_cash_from_financing', 'net_increase_in_cce', 'year', 'quarter' 列。
-
+        stock_code (str): stock code
     Returns:
         pd.DataFrame: 合并后的财务数据 DataFrame，包含所有列。
     """

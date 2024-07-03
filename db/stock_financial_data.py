@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float
 
+from sqlalchemy import Column, Integer, Float, String, func,DateTime
 from db import Base
 from sqlalchemy.orm import Session
 import pandas as pd
 from datetime import datetime
+from sqlalchemy import select
 
 
 class FinancialData(Base):
@@ -11,7 +12,7 @@ class FinancialData(Base):
 
     id = Column(Integer, primary_key=True)
     report_date = Column(DateTime, nullable=False)
-    stock_code = Column(String, nullable=False)
+    stock_code = Column(String(10), nullable=False)
     revenue = Column(Float)
     total_operating_cost = Column(Float)
     operating_profit = Column(Float)
@@ -75,13 +76,34 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
   """
     start_date = datetime.strptime(start_date, '%Y%m%d')
     end_date = datetime.strptime(end_date, '%Y%m%d')
-    financial_data = db.query(FinancialData).filter(
+    stmt = select(FinancialData).filter(
         FinancialData.stock_code == stock_code,
         FinancialData.report_date >= start_date,
         FinancialData.report_date <= end_date
-    ).all()
+    ).order_by(FinancialData.report_date.desc())
 
-    df = pd.DataFrame([data.__dict__ for data in financial_data])
+    result = db.execute(stmt).all()
+
+    df = pd.DataFrame([data.__dict__ for data in result])
     if '_sa_instance_state' in df.columns:
         df.drop('_sa_instance_state', axis=1, inplace=True)
     return df
+
+
+def get_last_index_daily_date(db: Session, stock_code:str) -> datetime:
+    """
+    查询最近一条记录的时间
+
+    Args:
+        db (Session): 数据库会话对象
+
+    Returns:
+        datetime: 最近一条记录的时间，如果未找到则返回 None
+    """
+
+    stmt = select(func.max(FinancialData.report_date)).where(
+        FinancialData.stock_code == stock_code
+    )
+    result = db.execute(stmt).scalar()
+
+    return result

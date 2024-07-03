@@ -72,10 +72,13 @@ def get_stock_data_by_date_range(db: Session, start_date: str, end_date: str) ->
     start_date = datetime.strptime(start_date, '%Y%m%d')
     end_date = datetime.strptime(end_date, '%Y%m%d')
 
-    data = db.query(SZIndexDaily).filter(
+    stmt = select(SZIndexDaily).filter(
         SZIndexDaily.date >= start_date,
         SZIndexDaily.date <= end_date
-    ).all()
-    df = pd.DataFrame([row.__dict__ for row in data])
+    )
+
+    result = db.execute(stmt).all()
+
+    df = pd.DataFrame([row.__dict__ for row in result])
     df.set_index('date', inplace=True)
     return df

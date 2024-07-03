@@ -76,7 +76,7 @@ def get_stock_data_by_date_range(db: Session, stock_code: str, start_date: str, 
         StockData.stock_code == stock_code,
         StockData.date >= start_date,
         StockData.date <= end_date
-    )
+    ).order_by(StockData.report_date.desc())
 
     # 执行查询并将结果转换为 DataFrame
     result = db.execute(stmt).all()
