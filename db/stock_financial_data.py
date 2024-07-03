@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, Integer, Float, String, func,DateTime
+from sqlalchemy import Column, Integer, Float, String, func, Date
 from db import Base
 from sqlalchemy.orm import Session
 import pandas as pd
@@ -11,7 +11,7 @@ class FinancialData(Base):
     __tablename__ = 'financial_data'
 
     id = Column(Integer, primary_key=True)
-    report_date = Column(DateTime, nullable=False)
+    report_date = Column(Date, nullable=False)
     stock_code = Column(String(10), nullable=False)
     revenue = Column(Float)
     total_operating_cost = Column(Float)
@@ -54,9 +54,11 @@ def bulk_insert_financial_data(db: Session, df: pd.DataFrame):
         with get_db_session() as db:
             bulk_insert_financial_data(db, df)
     """
+    df = df.bfill().ffill()
+
     data_list = df.to_dict(orient='records')
     for data in data_list:
-        db_financial_data = FinancialData(**data)  # 使用你的模型类
+        db_financial_data = FinancialData(**data)
         db.add(db_financial_data)
     db.commit()
 
