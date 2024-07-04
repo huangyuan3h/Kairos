@@ -80,8 +80,10 @@ def clean_outliers(data: pd.Series) -> pd.Series:
     lower_bound = data_type.type(lower_bound)
     upper_bound = data_type.type(upper_bound)
 
-    data[data < lower_bound] = lower_bound
-    data[data > upper_bound] = upper_bound
+    # 使用 loc 属性修改数据
+    data = data.copy()  # 确保我们在原始数据的副本上进行操作
+    data.loc[data < lower_bound] = lower_bound
+    data.loc[data > upper_bound] = upper_bound
 
     return data
 

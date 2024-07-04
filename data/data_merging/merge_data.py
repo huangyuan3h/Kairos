@@ -59,7 +59,8 @@ def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -
 
         interpolated_data.loc[i] = quarter_data
 
-    return df.join(interpolated_data.reset_index(drop=True), how='left')
+    merged_df = df.join(interpolated_data.reset_index(drop=True), how='left', lsuffix='_left', rsuffix='_right')
+    return merged_df
 
 
 def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
@@ -114,10 +115,27 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
-        return merged_data.fillna(method='ffill').fillna(method='bfill')
+        merged_data = merged_data.fillna(method='ffill').fillna(method='bfill')
+        final_df = drop_column_reset_type(merged_data)
+        return final_df
     except Exception as e:
         print(f"获取股票预测数据时发生错误：{e}")
         return None
+
+
+def drop_column_reset_type(df:pd.DataFrame)-> pd.DataFrame:
+
+    # 1. 删除不需要的列
+    columns_to_remove = ['date', 'stock_code_left', 'stock_code_right']  # 将不需要的列名添加到这里
+    df = df.drop(columns=columns_to_remove)
+
+    # 2. 将剩余列转换为 float64 类型
+    for col in df.columns:
+        try:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+        except Exception as e:
+            print(f"无法将列 '{col}' 转换为数字：{e}")
+    return df
 
 
 columns_to_remove = [

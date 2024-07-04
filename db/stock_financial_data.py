@@ -1,9 +1,8 @@
-
 from sqlalchemy import Column, Integer, Float, String, func, Date
 from db import Base
 from sqlalchemy.orm import Session
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import select
 
 pd.set_option('future.no_silent_downcasting', True)
@@ -65,6 +64,32 @@ def bulk_insert_financial_data(db: Session, df: pd.DataFrame):
     db.commit()
 
 
+def get_90_days_before(date: datetime) -> datetime:
+    """
+    获取指定日期的90天前的日期。
+
+    Args:
+        date (datetime): 指定的日期。
+
+    Returns:
+        datetime: 90天前的日期。
+    """
+    return date - timedelta(days=90)
+
+
+def get_90_days_after(date: datetime) -> datetime:
+    """
+    获取指定日期的90天后的日期。
+
+    Args:
+        date (datetime): 指定的日期。
+
+    Returns:
+        datetime: 90天后的日期。
+    """
+    return date + timedelta(days=90)
+
+
 def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
   根据日期范围获取股票的财务数据
@@ -80,10 +105,11 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
   """
     start_date = datetime.strptime(start_date, '%Y%m%d')
     end_date = datetime.strptime(end_date, '%Y%m%d')
+
     stmt = select("*").filter(
         FinancialData.stock_code == stock_code,
-        FinancialData.report_date >= start_date,
-        FinancialData.report_date <= end_date
+        FinancialData.report_date >= get_90_days_before(start_date),
+        FinancialData.report_date <= get_90_days_after(end_date)
     ).order_by(FinancialData.report_date.desc())
 
     result = db.execute(stmt).all()
@@ -95,7 +121,7 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
     return df
 
 
-def get_last_index_daily_date(db: Session, stock_code:str) -> datetime:
+def get_last_index_daily_date(db: Session, stock_code: str) -> datetime:
     """
     查询最近一条记录的时间
 

@@ -43,7 +43,7 @@ def clean_financial_data(merged_data: pd.DataFrame) -> pd.DataFrame:
     """
 
     # 1. 处理缺失值
-    merged_data = merged_data.fillna(method='ffill')  # 使用前值填充，可根据实际情况调整
+    merged_data = merged_data.ffill()  # 使用前值填充，可根据实际情况调整
 
     # 2. 处理异常值
     # 示例：处理毛利率异常值，使用中位数填充
