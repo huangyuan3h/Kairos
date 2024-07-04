@@ -84,7 +84,7 @@ def get_stock_data_by_date_range(db: Session, stock_code: str, start_date: str, 
     # 转换数据类型
     df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
     df['stock_volume'] = df['stock_volume'].astype('int64')
-
+    df = df.drop("id", axis=1)
     return df
 
 

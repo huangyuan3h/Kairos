@@ -91,6 +91,7 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
     df = pd.DataFrame(result, columns=[col.key for col in FinancialData.__table__.columns])
     if '_sa_instance_state' in df.columns:
         df.drop('_sa_instance_state', axis=1, inplace=True)
+    df = df.drop("id", axis=1)
     return df
 
 
