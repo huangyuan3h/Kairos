@@ -9,17 +9,18 @@ from import_2_db.import_stock_list import import_all_stock_list_data
 from src.crawl.sync_fincial_report import sync_financial_report
 
 start_date = '20190101'
+end_date = '20200101'
 
 
 def main():
     create_table()
-    sync_financial_report()
+    # sync_financial_report()
 
     # code = '000508'
     #
     # import_single_financial_by_code(code)
-    # code = '002594'
-    # get_stock_total_data(stock_code=code, start_date=start_date, n_days=365)
+    code = '002594'
+    get_stock_total_data(stock_code=code, start_date=start_date, end_date=end_date)
 
 
 

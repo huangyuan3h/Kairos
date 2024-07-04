@@ -23,6 +23,7 @@ from data.data_preprocessing import (
 from db import get_db_session
 from db.exchange_rate_daily import get_exchange_rate_by_date_range
 from db.stock_daily import get_stock_data_by_date_range
+from db.stock_financial_data import get_financial_data_by_date_range
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -81,13 +82,12 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         cleaned_stock_data = clean_stock_data(stock_data.copy())
 
         # 获取财务数据
-        profit_data = get_stock_profit_sheet_data(stock_code)
-        balance_data = get_stock_balance_sheet_data(stock_code)
-        cash_flow_data = get_stock_cash_flow_sheet_data(stock_code)
-        if profit_data is None or balance_data is None or cash_flow_data is None:
+        with get_db_session() as db:
+            fin_data = get_financial_data_by_date_range(db,stock_code, start_date, end_date)
+        if fin_data is None:
             return None
-        merged_financial_data = merge_financial_data(profit_data, balance_data, cash_flow_data)
-        cleaned_financial_data = clean_financial_data(merged_financial_data.copy())
+
+        cleaned_financial_data = clean_financial_data(fin_data.copy())
 
         # 获取汇率数据
         with get_db_session() as db:

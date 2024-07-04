@@ -80,7 +80,7 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
   """
     start_date = datetime.strptime(start_date, '%Y%m%d')
     end_date = datetime.strptime(end_date, '%Y%m%d')
-    stmt = select(FinancialData).filter(
+    stmt = select("*").filter(
         FinancialData.stock_code == stock_code,
         FinancialData.report_date >= start_date,
         FinancialData.report_date <= end_date
@@ -88,7 +88,7 @@ def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: s
 
     result = db.execute(stmt).all()
 
-    df = pd.DataFrame([data.__dict__ for data in result])
+    df = pd.DataFrame(result, columns=[col.key for col in FinancialData.__table__.columns])
     if '_sa_instance_state' in df.columns:
         df.drop('_sa_instance_state', axis=1, inplace=True)
     return df

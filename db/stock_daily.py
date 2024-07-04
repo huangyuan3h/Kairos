@@ -72,15 +72,14 @@ def get_stock_data_by_date_range(db: Session, stock_code: str, start_date: str, 
     end_date = datetime.strptime(end_date, '%Y%m%d')
 
     # 使用 SQLAlchemy Core API 构建查询语句
-    stmt = select(StockData).where(
+    stmt = select("*").where(
         StockData.stock_code == stock_code,
         StockData.date >= start_date,
         StockData.date <= end_date
-    ).order_by(StockData.report_date.desc())
+    ).order_by(StockData.date.desc())
 
-    # 执行查询并将结果转换为 DataFrame
     result = db.execute(stmt).all()
-    df = pd.DataFrame(result, columns=[column.key for column in StockData.__table__.columns])
+    df = pd.DataFrame(result, columns=[col.key for col in StockData.__table__.columns])
 
     # 转换数据类型
     df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')

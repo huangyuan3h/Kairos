@@ -1,8 +1,6 @@
 
 import pandas as pd
-
-from data.raw import get_stock_data_since
-
+from sklearn.preprocessing import StandardScaler
 
 def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -24,47 +22,34 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: 清洗后的股票数据，包含原始列和新增的特征列。
     """
 
-    # 1. 处理缺失值：使用前一日数据填充
-    stock_data.ffill().bfill()
+    # 1. 处理缺失值：使用前一日数据填充, 并删除首日nan
+    stock_data.ffill(inplace=True)
+    stock_data.dropna(inplace=True)
 
-    # 2. 处理异常值：使用 3σ 原则处理价格和成交量数据
+    # 2. 数据标准化：使用Z-score标准化方法
     for col in ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
-        stock_data = remove_outliers_by_std(stock_data, col)
+        stock_data[col] = zscore_standardization(stock_data[col])
 
-    # 3. 数据标准化：对价格和成交量数据进行 Min-Max 标准化
-    for col in ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
-        stock_data[col] = min_max_scaling(stock_data[col])
+    # 3. 特征工程：添加一些技术指标
+    # 计算每日涨跌幅
+    stock_data['daily_return'] = stock_data['stock_close'].pct_change()
+    # 计算5日均线和20日均线
+    stock_data['ma5'] = stock_data['stock_close'].rolling(window=5).mean()
+    stock_data['ma20'] = stock_data['stock_close'].rolling(window=20).mean()
+    # 计算RSI指标
+    stock_data['rsi'] = calculate_rsi(stock_data['stock_close'])
 
-    # 5. 统一日期格式
+    # 4. 统一日期格式
     stock_data['date'] = pd.to_datetime(stock_data['date'])
     stock_data['date'] = stock_data['date'].dt.strftime('%Y%m%d')
 
+    # 删除前20条数据
+    stock_data = stock_data.drop(stock_data.head(20).index)
     return stock_data
 
-
-def remove_outliers_by_std(data: pd.DataFrame, column: str, std_threshold: float = 3.0) -> pd.DataFrame:
+def zscore_standardization(data: pd.Series) -> pd.Series:
     """
-    使用 3σ 原则移除指定列的异常值。
-
-    Args:
-        data (pd.DataFrame): 待处理的数据集。
-        column (str): 需要处理的列名。
-        std_threshold (float, optional): 标准差倍数阈值，默认为 3.0。
-
-    Returns:
-        pd.DataFrame: 处理后的数据集。
-    """
-    data_std = data[column].std()
-    data_mean = data[column].mean()
-    upper_limit = data_mean + std_threshold * data_std
-    lower_limit = data_mean - std_threshold * data_std
-    data = data[(data[column] < upper_limit) & (data[column] > lower_limit)]
-    return data
-
-
-def min_max_scaling(data: pd.Series) -> pd.Series:
-    """
-    对数据进行 Min-Max 标准化。
+    使用 Z-score 标准化方法对数据进行标准化。
 
     Args:
         data (pd.Series): 待处理的数据。
@@ -72,7 +57,9 @@ def min_max_scaling(data: pd.Series) -> pd.Series:
     Returns:
         pd.Series: 标准化后的数据。
     """
-    return (data - data.min()) / (data.max() - data.min())
+    scaler = StandardScaler()
+    standardized_data = scaler.fit_transform(data.values.reshape(-1, 1))
+    return standardized_data.flatten()
 
 
 def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
