@@ -20,6 +20,9 @@ from data.data_preprocessing import (
     merge_financial_data,
     clean_financial_data,
 )
+from db import get_db_session
+from db.exchange_rate_daily import get_exchange_rate_by_date_range
+from db.stock_daily import get_stock_data_by_date_range
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -56,23 +59,25 @@ def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -
     return df.join(interpolated_data.reset_index(drop=True), how='left')
 
 
-def get_stock_total_data(stock_code: str, start_date: str, n_days: int) -> pd.DataFrame:
+def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
     获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
 
     Args:
         stock_code (str): 股票代码。
         start_date (str): 开始日期，格式为 'YYYYMMDD'。
-        n_days (int): 获取的天数。
+        end_date (str): 开始日期，格式为 'YYYYMMDD'。
 
     Returns:
         pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
     """
     try:
         # 获取股票日线数据
-        stock_data = get_stock_data_since(stock_code, start_date, n_days)
+        with get_db_session() as db:
+            stock_data = get_stock_data_by_date_range(db, stock_code, start_date, end_date)
         if stock_data is None:
             return None
+
         cleaned_stock_data = clean_stock_data(stock_data.copy())
 
         # 获取财务数据
@@ -85,7 +90,8 @@ def get_stock_total_data(stock_code: str, start_date: str, n_days: int) -> pd.Da
         cleaned_financial_data = clean_financial_data(merged_financial_data.copy())
 
         # 获取汇率数据
-        currency_data = get_currency_exchange_rates(start_date, n_days)
+        with get_db_session() as db:
+            currency_data = get_exchange_rate_by_date_range(db, start_date, end_date)
         if currency_data is None:
             return None
         cleaned_currency_data = clean_currency_exchange_rates(currency_data.copy())

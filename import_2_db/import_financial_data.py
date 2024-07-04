@@ -7,6 +7,8 @@ import datetime
 
 import time
 
+from db.stock_list import get_all_stock_list_data
+
 
 def import_single_financial_by_code(code: str)-> bool:
     with get_db_session() as db:
@@ -31,32 +33,15 @@ def import_single_financial_by_code(code: str)-> bool:
     return True
 
 
-def import_sh_financial_report():
-    stock_list = get_sh_a_stock_list()
+def import_all_financial_report():
+    with get_db_session() as db:
+        stock_list = get_all_stock_list_data(db)
     counter = 0
     for index, row in stock_list.iterrows():
         result = import_single_financial_by_code(row["code"])
         if result:
-            print("sh index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
-            counter = counter+1
-        if (counter + 1) % 10 == 0:
-            time.sleep(60)
-            counter = 0
-
-
-def import_sz_financial_report():
-    stock_list = get_sz_a_stock_list()
-    counter = 0
-    for index, row in stock_list.iterrows():
-        result = import_single_financial_by_code(row["code"])
-        if result:
-            print("sz index:" + str(row["index"]) + "--->stock financial code:" + row["code"] + " imported...")
+            print("stock financial code:" + row["code"] + " imported...")
             counter = counter + 1
         if (counter + 1) % 10 == 0:
             time.sleep(60)
             counter = 0
-
-
-def import_all_financial_report():
-    import_sh_financial_report()
-    import_sz_financial_report()
