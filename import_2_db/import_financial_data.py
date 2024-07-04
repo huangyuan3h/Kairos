@@ -31,7 +31,7 @@ def import_single_financial_by_code(code: str)-> bool:
     return True
 
 
-def import_sh_financial_daily():
+def import_sh_financial_report():
     stock_list = get_sh_a_stock_list()
     counter = 0
     for index, row in stock_list.iterrows():
@@ -44,7 +44,7 @@ def import_sh_financial_daily():
             counter = 0
 
 
-def import_sz_financial_daily():
+def import_sz_financial_report():
     stock_list = get_sz_a_stock_list()
     counter = 0
     for index, row in stock_list.iterrows():
@@ -57,6 +57,6 @@ def import_sz_financial_daily():
             counter = 0
 
 
-def import_all_financial_daily():
-    import_sh_financial_daily()
-    import_sz_financial_daily()
+def import_all_financial_report():
+    import_sh_financial_report()
+    import_sz_financial_report()

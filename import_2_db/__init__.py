@@ -6,7 +6,6 @@ from .import_currency_daily import import_exchange_rates
 from .utils import calculate_day_diff, get_next_day
 from .import_sz_index_daily import import_sz_index_daily
 from .import_sh_index_daily import import_sh_index_daily
-from .sync_all import sync_all
 
 __all__ = [
     "import_single_stock_by_code",
@@ -21,5 +20,4 @@ __all__ = [
     "get_next_day",
     "import_sz_index_daily",
     "import_sh_index_daily",
-    "sync_all"
 ]
