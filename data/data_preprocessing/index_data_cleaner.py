@@ -1,7 +1,6 @@
+# data_processing.py
 import pandas as pd
 
-from data.raw import get_sse_composite_index
-pd.options.mode.chained_assignment = None  # default='warn'
 
 def clean_index_data(index_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -35,9 +34,8 @@ def clean_index_data(index_data: pd.DataFrame) -> pd.DataFrame:
 
     # 检查必要的列是否存在
     required_columns = ['date', 'open', 'close', 'high', 'low', 'volume', 'amount']
-    for col in required_columns:
-        if col not in index_data.columns:
-            raise ValueError(f"指数数据缺少必要的列：{col}")
+    if not set(required_columns).issubset(index_data.columns):
+        raise ValueError(f"指数数据缺少必要的列：{set(required_columns) - set(index_data.columns)}")
 
     # 转换日期列为 datetime 类型
     index_data['date'] = pd.to_datetime(index_data['date'])
@@ -47,6 +45,16 @@ def clean_index_data(index_data: pd.DataFrame) -> pd.DataFrame:
     index_data['volume'] = clean_outliers(index_data['volume'])
     index_data['amount'] = clean_outliers(index_data['amount'])
 
+    # 特征工程
+    # 计算每日涨跌幅
+    index_data['daily_return'] = index_data['close'].pct_change()
+    # 计算5日均线和20日均线
+    index_data['ma5'] = index_data['close'].rolling(window=5).mean()
+    index_data['ma20'] = index_data['close'].rolling(window=20).mean()
+    # 计算RSI指标
+    index_data['rsi'] = calculate_rsi(index_data['close'])
+
+    index_data = index_data.drop(index_data.head(20).index)
     return index_data
 
 
@@ -76,6 +84,28 @@ def clean_outliers(data: pd.Series) -> pd.Series:
     data[data > upper_bound] = upper_bound
 
     return data
+
+
+def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
+    """
+    计算相对强弱指数 (RSI)。
+
+    Args:
+        prices (pd.Series): 收盘价序列。
+        period (int, optional): 计算 RSI 的周期，默认为 14。
+
+    Returns:
+        pd.Series: RSI 指标序列。
+    """
+    delta = prices.diff()
+    gain, loss = delta.copy(), delta.copy()
+    gain[gain < 0] = 0
+    loss[loss > 0] = 0
+    avg_gain = gain.rolling(window=period).mean()
+    avg_loss = abs(loss.rolling(window=period).mean())
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
 
 # index_data = get_sse_composite_index(start_date='20230101', n_days=100)
 #

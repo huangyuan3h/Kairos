@@ -58,7 +58,7 @@ def get_last_index_daily_date(db: Session) -> datetime:
     return result
 
 
-def get_index_daily_by_date_range(db: Session, start_date: str, end_date: str) -> pd.DataFrame:
+def get_sh_index_daily_by_date_range(db: Session, start_date: str, end_date: str) -> pd.DataFrame:
     """获取指定日期范围内的股票数据
 
     Args:
@@ -72,12 +72,11 @@ def get_index_daily_by_date_range(db: Session, start_date: str, end_date: str) -
     start_date = datetime.strptime(start_date, '%Y%m%d')
     end_date = datetime.strptime(end_date, '%Y%m%d')
 
-    stmt = select(SHIndexDaily).filter(
+    stmt = select("*").filter(
         SHIndexDaily.date >= start_date,
         SHIndexDaily.date <= end_date
-    ).order_by(SHIndexDaily.report_date.desc())
+    ).order_by(SHIndexDaily.date.desc())
 
     result = db.execute(stmt).all()
-    df = pd.DataFrame([row.__dict__ for row in result])
-    df.set_index('date', inplace=True)
+    df = pd.DataFrame(result, columns=[col.key for col in SHIndexDaily.__table__.columns])
     return df

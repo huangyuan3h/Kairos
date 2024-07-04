@@ -22,8 +22,10 @@ from data.data_preprocessing import (
 )
 from db import get_db_session
 from db.exchange_rate_daily import get_exchange_rate_by_date_range
+from db.sh_index_daily import get_sh_index_daily_by_date_range
 from db.stock_daily import get_stock_data_by_date_range
 from db.stock_financial_data import get_financial_data_by_date_range
+from db.sz_index_daily import get_sz_index_daily_by_date_range
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -97,8 +99,10 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         cleaned_currency_data = clean_currency_exchange_rates(currency_data.copy())
 
         # 获取指数数据
-        sse_index_data = get_sse_composite_index(start_date, n_days)
-        szse_index_data = get_szse_component_index(start_date, n_days)
+        with get_db_session() as db:
+            sse_index_data = get_sh_index_daily_by_date_range(db, start_date, end_date)
+        with get_db_session() as db:
+            szse_index_data = get_sz_index_daily_by_date_range(db, start_date, end_date)
         if sse_index_data is None or szse_index_data is None:
             return None
         cleaned_sse_index_data = clean_index_data(sse_index_data.copy())
