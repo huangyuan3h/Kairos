@@ -27,8 +27,8 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     stock_data.dropna(inplace=True)
 
     # 2. 数据标准化：使用Z-score标准化方法
-    for col in ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
-        stock_data[col] = zscore_standardization(stock_data[col])
+    # for col in ['stock_open', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount']:
+    #     stock_data[col] = zscore_standardization(stock_data[col])
 
     # 3. 特征工程：添加一些技术指标
     # 计算每日涨跌幅

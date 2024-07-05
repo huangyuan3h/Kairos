@@ -4,20 +4,10 @@ import datetime
 from datetime import date, timedelta
 import random
 
-from data.raw import (
-    get_stock_data_since,
-    get_stock_profit_sheet_data,
-    get_stock_balance_sheet_data,
-    get_stock_cash_flow_sheet_data,
-    get_sse_composite_index,
-    get_szse_component_index,
-    get_currency_exchange_rates, get_random_code,
-)
 from data.data_preprocessing import (
     clean_stock_data,
     clean_index_data,
     clean_currency_exchange_rates,
-    merge_financial_data,
     clean_financial_data,
 )
 from db import get_db_session
@@ -25,6 +15,7 @@ from db.exchange_rate_daily import get_exchange_rate_by_date_range
 from db.sh_index_daily import get_sh_index_daily_by_date_range
 from db.stock_daily import get_stock_data_by_date_range
 from db.stock_financial_data import get_financial_data_by_date_range
+from db.stock_list import get_all_stock_list_data
 from db.sz_index_daily import get_sz_index_daily_by_date_range
 
 
@@ -86,7 +77,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
 
         # 获取财务数据
         with get_db_session() as db:
-            fin_data = get_financial_data_by_date_range(db,stock_code, start_date, end_date)
+            fin_data = get_financial_data_by_date_range(db, stock_code, start_date, end_date)
         if fin_data is None:
             return None
 
@@ -123,8 +114,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         return None
 
 
-def drop_column_reset_type(df:pd.DataFrame)-> pd.DataFrame:
-
+def drop_column_reset_type(df: pd.DataFrame) -> pd.DataFrame:
     # 1. 删除不需要的列
     columns_to_remove = ['date', 'stock_code_left', 'stock_code_right']  # 将不需要的列名添加到这里
     df = df.drop(columns=columns_to_remove)
@@ -138,26 +128,6 @@ def drop_column_reset_type(df:pd.DataFrame)-> pd.DataFrame:
     return df
 
 
-columns_to_remove = [
-    'stock_code', 'year', 'quarter', 'date'
-]
-
-
-def drop_columns_and_reset_index(df: pd.DataFrame) -> pd.DataFrame:
-    """删除指定的列并重置索引.
-
-    Args:
-    df (pd.DataFrame): 输入的 DataFrame.
-    columns_to_remove (list): 要删除的列名列表.
-
-    Returns:
-    pd.DataFrame: 删除指定列并重置索引后的 DataFrame.
-    """
-    df = df.drop(columns=columns_to_remove)
-    df = df.reset_index(drop=True)
-    return df
-
-
 def get_random_available_date() -> str:
     today = date.today()
     five_years_ago = today - timedelta(days=365 * 5)
@@ -168,21 +138,49 @@ def get_random_available_date() -> str:
     return random_date.strftime("%Y%m%d")
 
 
+def get_random_code_from_df(df: pd.DataFrame) -> str:
+    random_index = random.randint(0, len(df) - 1)
+    random_row = df.iloc[random_index]
+    random_code = random_row["code"]
+
+    return random_code
+
+
+def get_random_code() -> str:
+    with get_db_session() as db:
+        stock_list = get_all_stock_list_data(db)
+    return get_random_code_from_df(stock_list)
+
+def get_one_year_later(dt):
+    """
+    获取指定日期一年后的日期
+
+    Args:
+        dt: datetime 对象
+
+    Returns:
+        datetime 对象，代表指定日期一年后的日期
+    """
+    if not isinstance(dt, datetime.datetime):
+        raise TypeError("参数 dt 必须为 datetime 对象")
+
+    return dt.replace(year=dt.year + 1)
+
+
 def get_random_full_data() -> pd.DataFrame:
     result = None
     while result is None or len(result) <= 200:
         code = get_random_code()
         start_date = get_random_available_date()
-        result = get_stock_total_data(stock_code=code, start_date=start_date, n_days=365)
+        end_date = get_one_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
+        result = get_stock_total_data(stock_code=code, start_date=start_date, end_date=end_date.strftime("%Y%m%d"))
     return result
 
 
 def get_random_valid_data() -> pd.DataFrame:
     stock_data = get_random_full_data()
-    removed_data = drop_columns_and_reset_index(stock_data)
 
-    return removed_data
-
+    return stock_data
 
 # stock_data = get_stock_total_data(stock_code='600000', start_date='20220101', n_days=200)
 #

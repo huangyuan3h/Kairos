@@ -1,56 +1,53 @@
 import numpy as np
+import pandas as pd
 import torch
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset
+import torch
+from torch.utils.data import IterableDataset, DataLoader
+from typing import Tuple
 
 from data.data_merging import get_random_valid_data
+
+"""
+同时训练20 个股票 100次
+
+"""
+
 
 length_of_records = 100
 
 
-def load_and_preprocess_data() -> torch.Tensor:
-    data = get_random_valid_data()
-    scaler = StandardScaler()
-    data_scaled = scaler.fit_transform(data)
 
-    # 检查数据中是否有异常值
-    if np.isnan(data_scaled).any() or np.isinf(data_scaled).any():
-        raise ValueError("Data contains NaN or Inf values")
-
-    return torch.tensor(data_scaled, dtype=torch.float32)
+# get_random_full_data()
 
 
-stock_list_num = 500
-
-
-class StockDataset(Dataset):
+class StockDataset(IterableDataset):
     def __init__(self,  feature_columns: list, target_column: int):
+        super(StockDataset).__init__()
         self.feature_columns = feature_columns
         self.target_column = target_column
-        self.data = []
-        for i in range(stock_list_num):
-            self.data.append(load_and_preprocess_data())
 
-    def __len__(self) -> int:
-        return length_of_records * stock_list_num
+    def __iter__(self):
+        while True:
 
-    def __getitem__(self, idx: int) -> (torch.Tensor, torch.Tensor):
-        id = idx % stock_list_num
-        index = idx // stock_list_num
 
-        current_data = self.data[id]
+            seq = torch.tensor(self.df.iloc[start_idx:end_idx].values, dtype=torch.float32)
+            targets = torch.tensor([self.calculate_target(end_idx, days) for days in self.target_days], dtype=torch.float32)
+            yield seq, targets
 
+
+
+    def getItem(self, idx: int, df: pd.DataFrame) -> (torch.Tensor, torch.Tensor):
         # 确保索引不超出边界
-        if index + 60 + 10 > len(current_data):
+        if idx + 60 + 10 > len(df):
             raise IndexError("Index out of range")
 
-        x = current_data[index:index + 60, self.feature_columns]
-        # 计算1天、3天、5天和10天的涨跌幅
-        y_1d = current_data[index + 60, self.target_column]
-        y_3d = current_data[index + 60: index + 60 + 3, self.target_column].sum()
-        y_5d = current_data[index + 60: index + 60 + 5, self.target_column].sum()
-        y_10d = current_data[index + 60: index + 60 + 10, self.target_column].sum()
+        df_x = df[idx:idx + 60, self.feature_columns]
+        x = torch.tensor(df_x.values)
+        # 计算目标值（例如，未来 N 天的平均涨跌幅）
+        future_close = df[idx + 60: idx + 60 + 10, self.target_column].values
+        current_close = df[idx + 59, self.target_column]
+        y = torch.tensor([(future_close[i-1] - current_close) / current_close for i in [1, 3, 5, 10]])
 
-        y = torch.tensor([y_1d, y_3d, y_5d, y_10d])
-
-        return x.clone().detach(), y.clone().detach()
+        return x, y

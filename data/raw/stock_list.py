@@ -41,12 +41,6 @@ def get_sh_a_stock_list() -> pd.DataFrame:
     return sh_stock_list
 
 
-def get_sh_a_stock_list_in_range() -> pd.DataFrame:
-    stock_list = get_sh_a_stock_list()
-    filtered_df = stock_list.loc[stock_list['total_market_cap'] > 2 * 10 ** 10]  # 200 亿以下
-    filtered_df = filtered_df.loc[filtered_df['total_market_cap'] < 10 ** 12]  # 1万亿以上
-    return filtered_df
-
 
 def get_sz_a_stock_list() -> pd.DataFrame:
     """
@@ -58,32 +52,3 @@ def get_sz_a_stock_list() -> pd.DataFrame:
     sz_stock_list = ak.stock_sz_a_spot_em()
     sz_stock_list.rename(columns=column_mapping, inplace=True)
     return sz_stock_list
-
-
-def get_random_code_from_df(df: pd.DataFrame) -> str:
-    random_index = random.randint(0, len(df) - 1)
-    random_row = df.iloc[random_index]
-    random_code = random_row["code"]
-
-    return random_code
-
-
-def get_sh_random_code() -> str:
-    sh_list = get_sh_a_stock_list()
-    return get_random_code_from_df(sh_list)
-
-
-def get_sz_random_code() -> str:
-    sz_list = get_sz_a_stock_list()
-    return get_random_code_from_df(sz_list)
-
-
-def random_bool():
-    return random.random() < 0.5
-
-
-def get_random_code() -> str:
-    if random_bool():
-        return get_sh_random_code()
-    else:
-        return get_sz_random_code()
