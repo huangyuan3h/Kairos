@@ -151,6 +151,7 @@ def get_random_code() -> str:
         stock_list = get_all_stock_list_data(db)
     return get_random_code_from_df(stock_list)
 
+
 def get_one_year_later(dt):
     """
     获取指定日期一年后的日期
@@ -164,7 +165,41 @@ def get_one_year_later(dt):
     if not isinstance(dt, datetime.datetime):
         raise TypeError("参数 dt 必须为 datetime 对象")
 
-    return dt.replace(year=dt.year + 1)
+    if dt.month == 2 and dt.day == 29:
+        # Check if the current year is a leap year
+        if not is_leap_year(dt.year):
+            # If it's not a leap year, set the day to March 1st of the following year
+            new_year = dt.year + 1
+            new_month = 3
+            new_day = 1
+        else:
+            # If it's a leap year, set the day to February 29th of the following year
+            new_year = dt.year + 1
+            new_month = 2
+            new_day = 29
+    else:
+        # For other dates, simply add one year
+        new_year = dt.year + 1
+        new_month = dt.month
+        new_day = dt.day
+
+    return dt.replace(year=new_year, month=new_month, day=new_day)
+
+
+def is_leap_year(year):
+    """
+    判断给定年份是否为闰年
+
+    Args:
+        year: 年份
+
+    Returns:
+        True 如果给定年份是闰年，False 否则
+    """
+    if (year % 4 == 0) and (year % 100 != 0) or (year % 400 == 0):
+        return True
+    else:
+        return False
 
 
 def get_random_full_data() -> pd.DataFrame:

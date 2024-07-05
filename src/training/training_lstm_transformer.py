@@ -1,4 +1,3 @@
-
 from models.LSTMTransformer import StockDataset
 from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 
@@ -10,13 +9,16 @@ from models.LSTMTransformer.load_model import load_model
 
 from models.LSTMTransformer.train_model import train_model
 from src.training.parameter import get_model_params, get_training_params, get_data_params
+import torch
 
 
 def training():
     # 获取模型参数
     input_dim, hidden_dim, num_layers, num_heads = get_model_params()
 
-    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads)
+    # 检查设备
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads).to(device)
 
     # 获取训练参数
     batch_size, learning_rate, num_epochs, model_save_path = get_training_params()

@@ -7,7 +7,8 @@ from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 clip_value = 0.5  # 梯度裁剪值
 
 
-def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int, save_path: str):
+def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int,
+                save_path: str):
     """
     训练模型。
 
@@ -24,7 +25,7 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
         for x, y in dataloader:
             optimizer.zero_grad()
             outputs = model(x.float())
-
+            y = y.float()
             # 计算损失
             loss = criterion(outputs, y)
 
