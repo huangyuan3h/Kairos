@@ -1,6 +1,6 @@
-
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+
 
 def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -47,6 +47,7 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     stock_data = stock_data.drop(stock_data.head(20).index)
     return stock_data
 
+
 def zscore_standardization(data: pd.Series) -> pd.Series:
     """
     使用 Z-score 标准化方法对数据进行标准化。
@@ -82,8 +83,6 @@ def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
     return rsi
-
-
 
 # list = get_stock_data_since('600000', '20230101', 100)
 #

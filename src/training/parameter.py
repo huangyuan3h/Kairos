@@ -16,10 +16,10 @@ def get_training_params():
     获取训练参数
     """
     # batch_size = int(1e2)
-    batch_size = 100
-    learning_rate = 1e-3
+    batch_size = 10
+    learning_rate = 1e-4
     # num_epochs = int(1e3)
-    num_epochs = 30
+    num_epochs = 300
     model_save_path = "model_files/lstm_transformer_model.pth"
     return batch_size, learning_rate, num_epochs, model_save_path
 

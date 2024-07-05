@@ -21,11 +21,16 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
         save_path (str): 保存训练好的模型路径。
     """
     model.train()
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     for epoch in range(num_epochs):
         for x, y in dataloader:
-            optimizer.zero_grad()
-            outputs = model(x.float())
+            x = x.float()
             y = y.float()
+            x = x.to(device)  # 将输入数据移动到设备上
+            y = y.to(device)  # 将目标数据移动到设备上
+
+            optimizer.zero_grad()
+            outputs = model(x)
             # 计算损失
             loss = criterion(outputs, y)
 

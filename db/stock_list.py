@@ -3,8 +3,6 @@ from sqlalchemy import Column, Integer, Float, String, func, Date
 from db import Base
 from sqlalchemy.orm import Session
 import pandas as pd
-from datetime import datetime
-from sqlalchemy import select
 
 pd.set_option('future.no_silent_downcasting', True)
 
