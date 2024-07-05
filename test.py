@@ -1,4 +1,4 @@
-from data.data_merging import get_stock_total_data
+from data.data_merging import get_stock_total_data, get_random_valid_data
 from data.data_preprocessing import merge_financial_data
 from data.raw import get_sh_a_stock_list
 
@@ -12,15 +12,12 @@ start_date = '20190101'
 end_date = '20200101'
 
 
+
 def main():
     create_table()
-    # sync_financial_report()
+    stocks = get_random_valid_data()
 
-    # code = '000508'
-    #
-    # import_single_financial_by_code(code)
-    code = '002594'
-    get_stock_total_data(stock_code=code, start_date=start_date, end_date=end_date)
+    print(stocks)
 
 
 

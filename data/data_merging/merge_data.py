@@ -17,6 +17,7 @@ from db.stock_daily import get_stock_data_by_date_range
 from db.stock_financial_data import get_financial_data_by_date_range
 from db.stock_list import get_all_stock_list_data
 from db.sz_index_daily import get_sz_index_daily_by_date_range
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -213,9 +214,23 @@ def get_random_full_data() -> pd.DataFrame:
 
 
 def get_random_valid_data() -> pd.DataFrame:
-    stock_data = get_random_full_data()
+    df = get_random_full_data()
 
-    return stock_data
+    cols_not_scale = ['stock_close', 'stock_change_percent']
+
+    cols_to_scale = [x for x in df.columns if x not in cols_not_scale]
+
+    # 从 DataFrame 中提取需要处理的列
+    data_to_scale = df[cols_to_scale]
+
+    # 使用 StandardScaler 对选定的列进行标准化
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_to_scale)
+
+    # 将标准化后的数据更新回原始 DataFrame
+    df[cols_to_scale] = scaled_data
+
+    return df
 
 # stock_data = get_stock_total_data(stock_code='600000', start_date='20220101', n_days=200)
 #
