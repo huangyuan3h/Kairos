@@ -33,11 +33,3 @@ class RandomStockData:
 
 
 
-# feature_columns = [i for i in range(85)]
-# target_column = "stock_close"
-#
-# stock = RandomStockData(feature_columns, target_column)
-#
-# x, y = stock.get_data()
-#
-# print(x,y)
