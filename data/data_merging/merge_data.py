@@ -106,7 +106,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
-        merged_data = merged_data.fillna(method='ffill').fillna(method='bfill')
+        merged_data = merged_data.ffill().bfill()
         final_df = drop_column_reset_type(merged_data)
         return final_df
     except Exception as e:
