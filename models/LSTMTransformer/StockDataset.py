@@ -7,7 +7,7 @@ from models.LSTMTransformer.RandomStockData import RandomStockData
 同时训练20 个股票数据生成器
 
 """
-length_of_stock = 20
+length_of_stock = 2
 
 
 

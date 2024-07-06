@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 
 # 梯度裁剪
-clip_value = 0.5  # 梯度裁剪值
+clip_value = 0.5 # 梯度裁剪值
 
 
 def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int,

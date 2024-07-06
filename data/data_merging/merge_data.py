@@ -3,6 +3,8 @@ import pandas as pd
 import datetime
 from datetime import date, timedelta
 import random
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from data.data_preprocessing import (
     clean_stock_data,
@@ -18,6 +20,8 @@ from db.stock_financial_data import get_financial_data_by_date_range
 from db.stock_list import get_all_stock_list_data
 from db.sz_index_daily import get_sz_index_daily_by_date_range
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+import numpy as np
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -108,9 +112,12 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
         merged_data = merged_data.ffill().bfill()
+        merged_data = merged_data.replace(to_replace=np.inf, method='ffill')
         final_df = drop_column_reset_type(merged_data)
         return final_df
     except Exception as e:
+        print(f"Exception occurred in file: {e.__traceback__.tb_frame}")
+        print(f"On line number: {e.__traceback__.tb_lineno}")
         print(f"获取股票预测数据时发生错误：{e}")
         return None
 
@@ -166,25 +173,8 @@ def get_one_year_later(dt):
     if not isinstance(dt, datetime.datetime):
         raise TypeError("参数 dt 必须为 datetime 对象")
 
-    if dt.month == 2 and dt.day == 29:
-        # Check if the current year is a leap year
-        if not is_leap_year(dt.year):
-            # If it's not a leap year, set the day to March 1st of the following year
-            new_year = dt.year + 1
-            new_month = 3
-            new_day = 1
-        else:
-            # If it's a leap year, set the day to February 29th of the following year
-            new_year = dt.year + 1
-            new_month = 2
-            new_day = 29
-    else:
-        # For other dates, simply add one year
-        new_year = dt.year + 1
-        new_month = dt.month
-        new_day = dt.day
-
-    return dt.replace(year=new_year, month=new_month, day=new_day)
+    next_day = dt + datetime.timedelta(days=365)
+    return next_day
 
 
 def is_leap_year(year):
@@ -205,7 +195,8 @@ def is_leap_year(year):
 
 def get_random_full_data() -> pd.DataFrame:
     result = None
-    while result is None or len(result) <= 200:
+
+    while result is None or len(result) <= 200 or np.isfinite(result).all().all():
         code = get_random_code()
         start_date = get_random_available_date()
         end_date = get_one_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
@@ -216,7 +207,7 @@ def get_random_full_data() -> pd.DataFrame:
 def get_random_valid_data() -> pd.DataFrame:
     df = get_random_full_data()
 
-    cols_not_scale = ['stock_close', 'stock_change_percent']
+    cols_not_scale = ['stock_close']
 
     cols_to_scale = [x for x in df.columns if x not in cols_not_scale]
 
