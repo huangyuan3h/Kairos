@@ -10,7 +10,6 @@ from models.LSTMTransformer.RandomStockData import RandomStockData
 length_of_stock = 2
 
 
-
 class StockDataset(IterableDataset):
     def __init__(self, feature_columns: list, target_column: str):
         super(StockDataset).__init__()

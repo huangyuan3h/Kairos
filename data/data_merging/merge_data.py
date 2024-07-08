@@ -4,6 +4,7 @@ import datetime
 from datetime import date, timedelta
 import random
 import warnings
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from data.data_preprocessing import (
@@ -22,6 +23,38 @@ from db.sz_index_daily import get_sz_index_daily_by_date_range
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 import numpy as np
+
+
+essential_features = [
+    'stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume',
+    'stock_turnover_rate', 'ma5', 'ma20', 'rsi',
+    'sse_open', 'sse_close', 'sse_high', 'sse_low', 'sse_volume',
+    'sse_turnover_rate', 'sse_ma5', 'sse_ma20', 'sse_rsi',
+    'szse_open', 'szse_close', 'szse_high', 'szse_low', 'szse_volume',
+    'szse_turnover_rate', 'szse_ma5', 'szse_ma20', 'szse_rsi',
+    'Currency_USD_CNY', 'Currency_EUR_CNY', 'Currency_USD_CNY_MA_5',
+    'Currency_USD_CNY_MA_20', 'Currency_EUR_CNY_MA_5', 'Currency_EUR_CNY_MA_20'
+]
+
+consider_features = [
+    'stock_amplitude', 'stock_change_percent', 'stock_change', 'stock_daily_return',
+    'sse_amplitude', 'sse_change_percent', 'sse_change', 'sse_daily_return',
+    'szse_amplitude', 'szse_change_percent', 'szse_change', 'szse_daily_return'
+]
+
+nonessential_features = [
+    'date', 'stock_code_left', 'stock_code_right',
+    'revenue', 'total_operating_cost', 'operating_profit', 'gross_profit', 'net_profit',
+    'basic_eps', 'rd_expenses', 'interest_income', 'interest_expense', 'investment_income',
+    'cash_and_equivalents', 'accounts_receivable', 'inventory', 'net_fixed_assets',
+    'short_term_borrowings', 'long_term_borrowings', 'total_equity', 'total_assets',
+    'total_liabilities', 'net_cash_from_operating', 'net_cash_from_investing',
+    'net_cash_from_financing', 'net_increase_in_cce', 'end_cash_and_cash_equivalents',
+    'gross_profit_margin', 'operating_profit_margin', 'net_profit_margin', 'return_on_equity',
+    'return_on_assets', 'asset_turnover', 'inventory_turnover', 'receivables_turnover',
+    'current_ratio', 'quick_ratio', 'debt_to_asset_ratio', 'revenue_growth_rate',
+    'net_profit_growth_rate'
+]
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -105,6 +138,16 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         cleaned_sse_index_data = clean_index_data(sse_index_data.copy())
         cleaned_szse_index_data = clean_index_data(szse_index_data.copy())
 
+        # 首先为每个数据框添加前缀
+        cleaned_currency_data = cleaned_currency_data.add_prefix('Currency_')
+        cleaned_sse_index_data = cleaned_sse_index_data.add_prefix('sse_')
+        cleaned_szse_index_data = cleaned_szse_index_data.add_prefix('szse_')
+
+        # 将 'date' 列名恢复为没有前缀的名称，以便进行合并
+        cleaned_currency_data = cleaned_currency_data.rename(columns={'Currency_date': 'date'})
+        cleaned_sse_index_data = cleaned_sse_index_data.rename(columns={'sse_date': 'date'})
+        cleaned_szse_index_data = cleaned_szse_index_data.rename(columns={'szse_date': 'date'})
+
         # 合并所有数据
         merged_data = pd.merge(cleaned_stock_data, cleaned_currency_data, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_sse_index_data, on='date', how='left')
@@ -124,7 +167,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
 
 def drop_column_reset_type(df: pd.DataFrame) -> pd.DataFrame:
     # 1. 删除不需要的列
-    columns_to_remove = ['date', 'stock_code_left', 'stock_code_right']  # 将不需要的列名添加到这里
+    columns_to_remove = nonessential_features
     df = df.drop(columns=columns_to_remove)
 
     # 2. 将剩余列转换为 float64 类型
