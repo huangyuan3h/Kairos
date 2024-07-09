@@ -20,7 +20,7 @@ def main():
     # feature_columns, target_column = get_data_params()
     # random = RandomStockData(feature_columns, target_column)
     # x,y = random.get_data()
-    get_stock_total_data("600776","20191230","20201229")
+    get_stock_total_data("002680","20191021","20201020")
 
     # print(x,y)
 

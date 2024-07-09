@@ -240,7 +240,7 @@ def is_leap_year(year):
 def get_random_full_data() -> pd.DataFrame:
     result = None
 
-    while result is None or len(result) <= 200 or np.isfinite(result).all().all():
+    while result is None or len(result) <= 200 or np.isinf(result).any().any():
         code = get_random_code()
         start_date = get_random_available_date()
         end_date = get_one_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
