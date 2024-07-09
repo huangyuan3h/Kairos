@@ -3,7 +3,7 @@ from torch.utils.data import IterableDataset
 
 from models.LSTMTransformer.RandomStockData import RandomStockData
 
-length_of_stock = 20
+length_of_stock = 30
 
 
 class StockDataset(IterableDataset):

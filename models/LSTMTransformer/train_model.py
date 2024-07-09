@@ -52,8 +52,8 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
 
         print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
 
-        # 每 10 个 epoch 保存一次模型
-        if (epoch + 1) % 10 == 0:
+        # 每 30 个 epoch 保存一次模型
+        if (epoch + 1) % 30 == 0:
             checkpoint = {'model': model.state_dict(),
                           'optimizer': optimizer.state_dict()}
             torch.save(checkpoint, f'model_files/checkpoint_{epoch + 1}.pth')
