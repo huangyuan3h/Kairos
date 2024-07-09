@@ -5,9 +5,9 @@ def get_model_params():
     """
     获取模型参数
     """
-    hidden_dim = 1024
-    num_layers = 4
-    num_heads = 32
+    hidden_dim = 512
+    num_layers = 3
+    num_heads = 16
     return input_dim, hidden_dim, num_layers, num_heads
 
 
@@ -19,7 +19,7 @@ def get_training_params():
     batch_size = 2000
     learning_rate = 1e-5
 
-    num_epochs = 5000
+    num_epochs = 500
     model_save_path = "model_files/lstm_transformer_model.pth"
     return batch_size, learning_rate, num_epochs, model_save_path
 
