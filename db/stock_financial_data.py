@@ -74,7 +74,7 @@ def get_90_days_before(date: datetime) -> datetime:
     Returns:
         datetime: 90天前的日期。
     """
-    return date - timedelta(days=90)
+    return date - timedelta(days=120)
 
 
 def get_90_days_after(date: datetime) -> datetime:
@@ -87,7 +87,7 @@ def get_90_days_after(date: datetime) -> datetime:
     Returns:
         datetime: 90天后的日期。
     """
-    return date + timedelta(days=90)
+    return date + timedelta(days=120)
 
 
 def get_financial_data_by_date_range(db: Session, stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:

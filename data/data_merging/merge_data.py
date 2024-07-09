@@ -154,13 +154,14 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
+        merged_data = merged_data.replace([np.inf, -np.inf], np.nan)
         merged_data = merged_data.ffill().bfill()
-        merged_data = merged_data.replace(to_replace=np.inf, method='ffill')
         final_df = drop_column_reset_type(merged_data)
         return final_df
     except Exception as e:
         print(f"Exception occurred in file: {e.__traceback__.tb_frame}")
         print(f"On line number: {e.__traceback__.tb_lineno}")
+        print(stock_code, start_date, end_date)
         print(f"获取股票预测数据时发生错误：{e}")
         return None
 
@@ -249,6 +250,11 @@ def get_random_full_data() -> pd.DataFrame:
 
 def get_random_valid_data() -> pd.DataFrame:
     df = get_random_full_data()
+
+    # 检查数据类型并转换为 float64
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    df = df.fillna(0)
 
     cols_not_scale = ['stock_close']
 

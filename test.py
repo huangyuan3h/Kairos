@@ -17,11 +17,12 @@ end_date = '20200101'
 
 def main():
     create_table()
-    feature_columns, target_column = get_data_params()
-    random = RandomStockData(feature_columns, target_column)
-    x,y = random.get_data()
+    # feature_columns, target_column = get_data_params()
+    # random = RandomStockData(feature_columns, target_column)
+    # x,y = random.get_data()
+    get_stock_total_data("600776","20191230","20201229")
 
-    print(x,y)
+    # print(x,y)
 
 
 

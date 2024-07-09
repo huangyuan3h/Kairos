@@ -32,7 +32,8 @@ def training():
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    dataset = StockDataset(feature_columns=feature_columns, target_column=target_column)
+    dataset = StockDataset(feature_columns=feature_columns, target_column=target_column, batch_size=batch_size,
+                           num_epochs=num_epochs)
     dataloader = create_dataloader(dataset, batch_size)
 
     # 使用训练数据训练模型
