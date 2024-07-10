@@ -237,23 +237,23 @@ def get_random_valid_data() -> pd.DataFrame:
     df = get_random_full_data()
 
     # 检查数据类型并转换为 float64
-    for col in df.columns:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-    df = df.fillna(0)
-
-    cols_not_scale = ['stock_close']
-
-    cols_to_scale = [x for x in df.columns if x not in cols_not_scale]
-
-    # 从 DataFrame 中提取需要处理的列
-    data_to_scale = df[cols_to_scale]
-
-    # 使用 StandardScaler 对选定的列进行标准化
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(data_to_scale)
-
-    # 将标准化后的数据更新回原始 DataFrame
-    df[cols_to_scale] = scaled_data
+    # for col in df.columns:
+    #     df[col] = pd.to_numeric(df[col], errors='coerce')
+    # df = df.fillna(0)
+    #
+    # cols_not_scale = ['stock_close']
+    #
+    # cols_to_scale = [x for x in df.columns if x not in cols_not_scale]
+    #
+    # # 从 DataFrame 中提取需要处理的列
+    # data_to_scale = df[cols_to_scale]
+    #
+    # # 使用 StandardScaler 对选定的列进行标准化
+    # scaler = StandardScaler()
+    # scaled_data = scaler.fit_transform(data_to_scale)
+    #
+    # # 将标准化后的数据更新回原始 DataFrame
+    # df[cols_to_scale] = scaled_data
 
     return df
 

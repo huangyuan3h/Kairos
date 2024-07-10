@@ -5,7 +5,7 @@ from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # 梯度裁剪
-clip_value = 0.5 # 梯度裁剪值
+clip_value = 0.5  # 梯度裁剪值
 
 
 def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int,
@@ -27,6 +27,11 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
 
     for epoch in range(num_epochs):
+        # 在每个 epoch 开始时，初始化 epoch_loss 为 0
+        epoch_loss = 0.0
+        # 计算每个 epoch 中有多少个 batch
+        num_batches = 0
+
         for x, y in dataloader:
             x = x.float()
             y = y.float()
@@ -49,18 +54,30 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
             loss.backward()
             optimizer.step()
 
+            # 将每个 batch 的 loss 加到 epoch_loss 中
+            epoch_loss += loss.item()
+
             # 检查输出值是否包含 NaN 或 Inf
             if torch.isnan(outputs).any() or torch.isinf(outputs).any():
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
 
-        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}, lr = {scheduler.get_last_lr()[0]}")
+            num_batches = num_batches + 1
 
-        # 在每个 epoch 结束后，根据 loss 更新学习率
-        scheduler.step(loss)
+        # 计算 epoch 的平均 loss
+        avg_loss = 9999
+        if epoch_loss != 0 and num_batches != 0:
+            avg_loss = epoch_loss / num_batches
+        else:
+            print(f"error: run nothing epoch_loss - {epoch_loss}, num_batches - {num_batches}")
 
-        # 每 30 个 epoch 保存一次模型
-        if (epoch + 1) % 30 == 0:
+        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {avg_loss}, lr = {scheduler.get_last_lr()[0]}")
+
+        # 在每个 epoch 结束后，根据 avg_loss 更新学习率
+        scheduler.step(avg_loss)
+
+        # 每 100 个 epoch 保存一次模型
+        if (epoch + 1) % 100 == 0:
             checkpoint = {'model': model.state_dict(),
                           'optimizer': optimizer.state_dict()}
             torch.save(checkpoint, f'model_files/checkpoint_{epoch + 1}.pth')

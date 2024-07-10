@@ -12,6 +12,7 @@ from src.training.parameter import get_model_params, get_training_params, get_da
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import numpy as np
 
+
 def evaluate_predictions(expected, predictions):
     """
     评估预测值和预期值之间的差异。
@@ -33,6 +34,7 @@ def evaluate_predictions(expected, predictions):
         'MAE': mae
     }
 
+
 def main():
     # 获取模型参数
     input_dim, hidden_dim, num_layers, num_heads, target_days = get_model_params()
@@ -52,7 +54,6 @@ def main():
     scaler.fit(predict_data)
     predictions = predict(model, predict_data, scaler, feature_columns)
     print("未来10天的预测数据：", predictions)
-
 
     expected_list = data['stock_change_percent'][60:70]
     expected = [expected_list[60], expected_list[:3].mean(), expected_list[:5].mean(), expected_list[:10].mean()]
@@ -96,5 +97,3 @@ def predict_stock_list(stock_list: list):
         result.append(predictions)
 
     return result
-
-
