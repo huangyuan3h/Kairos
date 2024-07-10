@@ -37,4 +37,9 @@ def training():
     dataloader = create_dataloader(dataset, batch_size)
 
     # 使用训练数据训练模型
-    train_model(model, dataloader, criterion, optimizer, num_epochs, model_save_path)
+    try:
+        train_model(model, dataloader, criterion, optimizer, num_epochs, model_save_path)
+    finally:
+        # 确保在训练结束后停止数据加载线程
+        dataset.stop_event.set()
+        dataset.data_thread.join()

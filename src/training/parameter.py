@@ -16,7 +16,7 @@ def get_training_params():
     获取训练参数
     """
 
-    batch_size = 512
+    batch_size = 32
     learning_rate = 1e-3
 
     num_epochs = 1000
