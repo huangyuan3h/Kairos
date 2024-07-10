@@ -24,7 +24,7 @@ def train_model(model: LSTMAttentionTransformer, dataloader: DataLoader, criteri
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     # 添加 ReduceLROnPlateau 学习率调度器
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=50, factor=0.9)
     epoch_loss = 0.0
 
     for epoch in range(num_epochs):
@@ -59,7 +59,6 @@ def train_model(model: LSTMAttentionTransformer, dataloader: DataLoader, criteri
 
         print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss}, lr = {scheduler.get_last_lr()[0]}")
 
-        # 在每个 epoch 结束后，根据 avg_loss 更新学习率
         scheduler.step(epoch_loss)
 
         # 每 100 个 epoch 保存一次模型
