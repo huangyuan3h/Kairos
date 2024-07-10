@@ -7,6 +7,8 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+year = 3
+
 from data.data_preprocessing import (
     clean_stock_data,
     clean_index_data,
@@ -20,10 +22,9 @@ from db.stock_daily import get_stock_data_by_date_range
 from db.stock_financial_data import get_financial_data_by_date_range
 from db.stock_list import get_all_stock_list_data
 from db.sz_index_daily import get_sz_index_daily_by_date_range
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 import numpy as np
-
 
 essential_features = [
     'stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume',
@@ -204,7 +205,7 @@ def get_random_code() -> str:
     return get_random_code_from_df(stock_list)
 
 
-def get_one_year_later(dt):
+def get_n_year_later(dt):
     """
     获取指定日期一年后的日期
 
@@ -217,33 +218,17 @@ def get_one_year_later(dt):
     if not isinstance(dt, datetime.datetime):
         raise TypeError("参数 dt 必须为 datetime 对象")
 
-    next_day = dt + datetime.timedelta(days=365)
+    next_day = dt + datetime.timedelta(days=365 * year)
     return next_day
-
-
-def is_leap_year(year):
-    """
-    判断给定年份是否为闰年
-
-    Args:
-        year: 年份
-
-    Returns:
-        True 如果给定年份是闰年，False 否则
-    """
-    if (year % 4 == 0) and (year % 100 != 0) or (year % 400 == 0):
-        return True
-    else:
-        return False
 
 
 def get_random_full_data() -> pd.DataFrame:
     result = None
 
-    while result is None or len(result) <= 200 or np.isinf(result).any().any():
+    while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
         code = get_random_code()
         start_date = get_random_available_date()
-        end_date = get_one_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
+        end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
         result = get_stock_total_data(stock_code=code, start_date=start_date, end_date=end_date.strftime("%Y%m%d"))
     return result
 

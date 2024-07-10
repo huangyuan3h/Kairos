@@ -1,7 +1,7 @@
-from data.data_merging.merge_data import  get_random_valid_data
+from data.data_merging.merge_data import get_random_valid_data
 import torch
 
-learn_limit = 100
+learn_limit = 500
 
 x_row_num = 60
 
@@ -20,8 +20,8 @@ class RandomStockData:
         idx = self.counter
         x = self.tensor[self.counter: x_row_num + self.counter]
 
-        future_close = df[idx+x_row_num:idx+x_row_num+10][self.target_column].values
-        current_close = df[self.target_column].values[idx+x_row_num-1]
+        future_close = df[idx + x_row_num:idx + x_row_num + 10][self.target_column].values
+        current_close = df[self.target_column].values[idx + x_row_num - 1]
         change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
         y = torch.tensor(change_percentage)
         self.counter = self.counter + 1
@@ -31,6 +31,3 @@ class RandomStockData:
             self.tensor = torch.tensor(self.data.values)
 
         return x, y
-
-
-

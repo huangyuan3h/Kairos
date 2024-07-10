@@ -24,7 +24,7 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     # 添加 ReduceLROnPlateau 学习率调度器
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
 
     for epoch in range(num_epochs):
         for x, y in dataloader:
@@ -54,7 +54,7 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
 
-        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
+        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}, lr = {scheduler.get_last_lr()[0]}")
 
         # 在每个 epoch 结束后，根据 loss 更新学习率
         scheduler.step(loss)

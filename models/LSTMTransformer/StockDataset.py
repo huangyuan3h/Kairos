@@ -1,9 +1,9 @@
-import torch
 from torch.utils.data import IterableDataset
 
 from models.LSTMTransformer.RandomStockData import RandomStockData
+import random
 
-length_of_stock = 2
+length_of_stock = 60
 
 
 class StockDataset(IterableDataset):
@@ -16,7 +16,11 @@ class StockDataset(IterableDataset):
             self.generate_pool.append(RandomStockData(feature_columns, target_column))
 
     def __iter__(self):
-        for _ in range(self.batch_size):
-            current_generator = self.generate_pool[0]
-            x, y = current_generator.get_data()
-            yield x, y
+        for epoch in range(self.num_epochs):
+            # 每个 epoch 开始时打乱股票顺序
+            random.shuffle(self.generate_pool)
+            for batch in range(self.batch_size):
+                # 随机选择一个股票
+                current_generator = random.choice(self.generate_pool)
+                x, y = current_generator.get_data()
+                yield x, y
