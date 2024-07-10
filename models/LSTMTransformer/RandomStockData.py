@@ -1,7 +1,7 @@
 from data.data_merging.merge_data import get_random_valid_data
 import torch
 
-learn_limit = 500
+learn_limit = 100
 
 x_row_num = 60
 

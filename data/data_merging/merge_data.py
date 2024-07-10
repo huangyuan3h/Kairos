@@ -7,7 +7,7 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-year = 3
+year = 1
 
 from data.data_preprocessing import (
     clean_stock_data,
