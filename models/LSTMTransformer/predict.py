@@ -3,10 +3,10 @@ import torch
 
 from sklearn.preprocessing import StandardScaler
 
-from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
+from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 
 
-def predict(model: LSTMTransformerModel, data: torch.Tensor, scaler: StandardScaler, feature_columns: list) -> list:
+def predict(model: LSTMAttentionTransformer, data: torch.Tensor, scaler: StandardScaler, feature_columns: list) -> list:
     model.eval()
     with torch.no_grad():
         data_scaled = scaler.transform(data)

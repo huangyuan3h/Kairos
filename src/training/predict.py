@@ -1,8 +1,8 @@
 from sklearn.preprocessing import StandardScaler
 
-from data.data_merging import get_random_valid_data, get_stock_total_data, drop_columns_and_reset_index
+from data.data_merging import get_random_valid_data, get_stock_total_data
 
-from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
+from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 
 from models.LSTMTransformer.load_model import load_model
 from models.LSTMTransformer.predict import predict
@@ -39,7 +39,7 @@ def main():
     # 获取模型参数
     input_dim, hidden_dim, num_layers, num_heads, target_days = get_model_params()
 
-    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads)
+    model = LSTMAttentionTransformer(input_dim, hidden_dim, num_layers, num_heads)
     # 获取训练参数
     batch_size, learning_rate, num_epochs, model_save_path = get_training_params()
 
@@ -67,7 +67,7 @@ def predict_stock_list(stock_list: list):
     # 获取模型参数
     input_dim, hidden_dim, num_layers, num_heads, target_days = get_model_params()
 
-    model = LSTMTransformerModel(input_dim, hidden_dim, num_layers, num_heads)
+    model = LSTMAttentionTransformer(input_dim, hidden_dim, num_layers, num_heads)
     # 获取训练参数
     batch_size, learning_rate, num_epochs, model_save_path = get_training_params()
 
@@ -89,11 +89,11 @@ def predict_stock_list(stock_list: list):
     scaler = StandardScaler()
 
     start_date = before_200_days.strftime("%Y%m%d")
-    for code in stock_list:
-        stock_list_200_day = get_stock_total_data(stock_code=code, start_date=start_date, n_days=200)
-        predict_data = drop_columns_and_reset_index(stock_list_200_day[-60:])
-        scaler.fit(predict_data)
-        predictions = predict(model, predict_data, scaler, feature_columns)
-        result.append(predictions)
+    # for code in stock_list:
+    #     stock_list_200_day = get_stock_total_data(stock_code=code, start_date=start_date, n_days=200)
+    #     predict_data = drop_columns_and_reset_index(stock_list_200_day[-60:])
+    #     scaler.fit(predict_data)
+    #     predictions = predict(model, predict_data, scaler, feature_columns)
+    #     result.append(predictions)
 
     return result

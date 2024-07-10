@@ -1,14 +1,14 @@
 import torch
 from torch.utils.data import DataLoader
 
-from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
+from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # 梯度裁剪
 clip_value = 0.5  # 梯度裁剪值
 
 
-def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, optimizer, num_epochs: int,
+def train_model(model: LSTMAttentionTransformer, dataloader: DataLoader, criterion, optimizer, num_epochs: int,
                 save_path: str):
     """
     训练模型。
@@ -26,6 +26,7 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
     # 添加 ReduceLROnPlateau 学习率调度器
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
     epoch_loss = 0.0
+
     for epoch in range(num_epochs):
 
         for x, y in dataloader:
