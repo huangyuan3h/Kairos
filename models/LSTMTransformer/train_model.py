@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from models.LSTMTransformer.LSTMTransformerModel import LSTMTransformerModel
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # 梯度裁剪
 clip_value = 0.5 # 梯度裁剪值
@@ -22,6 +23,9 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
     """
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    # 添加 ReduceLROnPlateau 学习率调度器
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5, verbose=True)
+
     for epoch in range(num_epochs):
         for x, y in dataloader:
             x = x.float()
@@ -51,6 +55,9 @@ def train_model(model: LSTMTransformerModel, dataloader: DataLoader, criterion, 
                 continue
 
         print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
+
+        # 在每个 epoch 结束后，根据 loss 更新学习率
+        scheduler.step(loss)
 
         # 每 30 个 epoch 保存一次模型
         if (epoch + 1) % 30 == 0:
