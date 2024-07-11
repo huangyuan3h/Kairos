@@ -8,22 +8,17 @@ from import_2_db.import_stock_list import import_all_stock_list_data
 from models.LSTMTransformer.RandomStockData import RandomStockData
 
 from src.crawl.sync_fincial_report import sync_financial_report
+from src.training.fix_standardlize import build_df, fit_standard_scaler
 from src.training.parameter import get_data_params
 
 start_date = '20190101'
 end_date = '20200101'
 
 
-
 def main():
     create_table()
-    # feature_columns, target_column = get_data_params()
-    # random = RandomStockData(feature_columns, target_column)
-    # x,y = random.get_data()
-    get_stock_total_data("002680","20191021","20201020")
-
-    # print(x,y)
-
+    df = build_df()
+    fit_standard_scaler(df)
 
 
 if __name__ == "__main__":

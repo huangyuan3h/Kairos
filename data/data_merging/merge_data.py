@@ -22,7 +22,6 @@ from db.stock_daily import get_stock_data_by_date_range
 from db.stock_financial_data import get_financial_data_by_date_range
 from db.stock_list import get_all_stock_list_data
 from db.sz_index_daily import get_sz_index_daily_by_date_range
-from sklearn.preprocessing import StandardScaler
 
 import numpy as np
 
@@ -109,7 +108,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         # 获取股票日线数据
         with get_db_session() as db:
             stock_data = get_stock_data_by_date_range(db, stock_code, start_date, end_date)
-        if stock_data is None:
+        if stock_data is None or stock_data.empty:
             return None
 
         cleaned_stock_data = clean_stock_data(stock_data.copy())
@@ -235,25 +234,6 @@ def get_random_full_data() -> pd.DataFrame:
 
 def get_random_valid_data() -> pd.DataFrame:
     df = get_random_full_data()
-
-    # 检查数据类型并转换为 float64
-    # for col in df.columns:
-    #     df[col] = pd.to_numeric(df[col], errors='coerce')
-    # df = df.fillna(0)
-    #
-    # cols_not_scale = ['stock_close']
-    #
-    # cols_to_scale = [x for x in df.columns if x not in cols_not_scale]
-    #
-    # # 从 DataFrame 中提取需要处理的列
-    # data_to_scale = df[cols_to_scale]
-    #
-    # # 使用 StandardScaler 对选定的列进行标准化
-    # scaler = StandardScaler()
-    # scaled_data = scaler.fit_transform(data_to_scale)
-    #
-    # # 将标准化后的数据更新回原始 DataFrame
-    # df[cols_to_scale] = scaled_data
 
     return df
 
