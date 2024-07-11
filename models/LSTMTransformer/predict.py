@@ -1,15 +1,71 @@
-
 import torch
+import pandas as pd
 
-from sklearn.preprocessing import StandardScaler
-
+from models.LSTMTransformer import load_model
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
+from models.standardize.FeatureStandardScaler import FeatureStandardScaler
+from models.standardize.TargetStandardScaler import TargetStandardScaler
+from src.training.parameter import get_model_params, get_training_params
 
 
-def predict(model: LSTMAttentionTransformer, data: torch.Tensor, scaler: StandardScaler, feature_columns: list) -> list:
-    model.eval()
-    with torch.no_grad():
-        data_scaled = scaler.transform(data)
-        x = torch.tensor(data_scaled[-60:, feature_columns], dtype=torch.float32).unsqueeze(0)
-        predictions = model(x).numpy().flatten()
-    return predictions.tolist()
+class ModelPredictor:
+    def __init__(self):
+        # 获取模型参数
+        input_dim, hidden_dim, num_layers, num_heads = get_model_params()
+        batch_size, learning_rate, num_epochs, model_save_path = get_training_params()
+
+        # 初始化特征和目标标准化器
+        feature_scaler = FeatureStandardScaler()
+        feature_scaler.load_scaler()
+        target_scaler = TargetStandardScaler()
+        target_scaler.load_scaler()
+
+        self.model = LSTMAttentionTransformer(input_dim, hidden_dim, num_layers, num_heads)
+        load_model(self.model, model_save_path)
+        self.model.eval()
+        self.feature_scaler = feature_scaler
+        self.target_scaler = target_scaler
+        self.device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+        self.model.to(self.device)
+
+    def preprocess_features(self, df: pd.DataFrame) -> torch.Tensor:
+        """
+        对输入数据进行特征标准化。
+
+        Args:
+            df (pd.DataFrame): 输入数据的 DataFrame。
+
+        Returns:
+            torch.Tensor: 标准化后的特征张量。
+        """
+        scaled_df = self.feature_scaler.transform(df)
+        return torch.tensor(scaled_df.values).float().to(self.device)
+
+    def postprocess_predictions(self, predictions: torch.Tensor) -> pd.DataFrame:
+        """
+        对模型的预测结果进行反向标准化。
+
+        Args:
+            predictions (torch.Tensor): 模型的预测结果。
+
+        Returns:
+            pd.DataFrame: 反向标准化后的预测结果。
+        """
+        predictions_np = predictions.cpu().detach().numpy()
+        return pd.DataFrame(self.target_scaler.inverse_transform(predictions_np))
+
+    def predict(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        使用训练好的模型对输入数据进行预测。
+
+        Args:
+            df (pd.DataFrame): 输入数据的 DataFrame。
+
+        Returns:
+            pd.DataFrame: 模型的预测结果。
+        """
+        x = self.preprocess_features(df)
+        x = x.unsqueeze(0)  # 增加 batch 维度
+        with torch.no_grad():
+            predictions = self.model(x)
+        return self.postprocess_predictions(predictions)
