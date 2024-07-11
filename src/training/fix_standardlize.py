@@ -8,7 +8,7 @@ import datetime as dt
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 
-times = 400
+times = 2000
 
 record_day = 100
 
@@ -66,7 +66,7 @@ def build_data() -> (pd.DataFrame, list):
     for i in range(times):
         if df_merged is None:
             df_merged = get_random_n_data()
-            change_percentage_list=change_percentage_list+ calculate_change_percentages(df_merged, "stock_close", 0)
+            change_percentage_list = change_percentage_list + calculate_change_percentages(df_merged, "stock_close", 0)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
         else:
             to_append = get_random_n_data()
@@ -83,7 +83,8 @@ def fit_feature_scaler(df):
     feature_scaler.fit(df)
     feature_scaler.save_scaler()
 
-def fit_target_scaler(l:list):
+
+def fit_target_scaler(l: list):
     target_scaler = TargetStandardScaler()
     target_scaler.fit(l)
     target_scaler.save_scaler()
