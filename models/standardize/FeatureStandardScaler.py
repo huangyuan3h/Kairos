@@ -42,7 +42,7 @@ class FeatureStandardScaler:
         """
         if self.feature_columns is None:
             df_scaled = self.scaler.transform(df)
-            return pd.DataFrame(df_scaled, columns=df.columns)
+            return df_scaled
         else:
             df[self.feature_columns] = self.scaler.transform(df[self.feature_columns])
             return df

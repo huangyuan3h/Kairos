@@ -4,6 +4,7 @@ from models.LSTMTransformer.RandomStockData import RandomStockData
 import random
 
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
+from models.standardize.TargetStandardScaler import TargetStandardScaler
 
 length_of_stock = 20
 
@@ -15,8 +16,10 @@ class StockDataset(IterableDataset):
         self.batch_size = batch_size
         self.num_epochs = num_epochs
         self.feature_scaler = FeatureStandardScaler()
+        self.target_scaler = TargetStandardScaler()
         for i in range(length_of_stock):
-            self.generate_pool.append(RandomStockData(feature_columns, target_column, self.feature_scaler))
+            self.generate_pool.append(RandomStockData(feature_columns, target_column,
+                                                      self.feature_scaler, self.target_scaler))
 
     def __iter__(self):
         for _ in range(self.batch_size):
