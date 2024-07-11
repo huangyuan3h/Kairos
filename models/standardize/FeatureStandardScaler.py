@@ -8,7 +8,7 @@ class FeatureStandardScaler:
     对特征进行标准化，并保存/加载标准化器。
     """
 
-    def __init__(self, scaler_path="\model_files\scaler_x.pkl", feature_columns=None):
+    def __init__(self, scaler_path="model_files/scaler_x.pkl", feature_columns=None):
         """
         初始化 FeatureStandardScaler。
 

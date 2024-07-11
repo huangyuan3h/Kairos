@@ -6,8 +6,9 @@ import random
 import datetime as dt
 
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
+from models.standardize.TargetStandardScaler import TargetStandardScaler
 
-times = 4000
+times = 400
 
 record_day = 100
 
@@ -35,25 +36,54 @@ def get_random_n_data() -> pd.DataFrame:
     return result
 
 
-def build_df() -> pd.DataFrame:
+def calculate_change_percentages(df: pd.DataFrame, target_column: str, x_row_num: int) -> list:
+    """
+    计算涨幅百分比列表。
+
+    Args:
+        df (pd.DataFrame): 输入数据的 DataFrame。
+        target_column (str): 目标变量的列名。
+        x_row_num (int): 用于计算涨幅的行数。
+
+    Returns:
+        list: 涨幅百分比的列表。
+    """
+    change_percentage_list = []
+    for idx in range(len(df) - x_row_num - 10):
+        future_close = df[idx + x_row_num:idx + x_row_num + 10][target_column].values
+        current_close = df[target_column].values[idx + x_row_num - 1]
+        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
+        change_percentage_list.append(change_percentage)
+    return change_percentage_list
+
+
+def build_data() -> (pd.DataFrame, list):
     df_merged = None
+    change_percentage_list = []
     total_iterations = times
     print(f"开始构建数据帧，总共迭代 {total_iterations} 次")
 
     for i in range(times):
         if df_merged is None:
             df_merged = get_random_n_data()
+            change_percentage_list=change_percentage_list+ calculate_change_percentages(df_merged, "stock_close", 0)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
         else:
             to_append = get_random_n_data()
+            change_percentage_list = change_percentage_list + calculate_change_percentages(to_append, "stock_close", 0)
             df_merged = pd.concat([df_merged, to_append], ignore_index=True)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
 
     print(f"数据帧构建完成，最终大小：{len(df_merged)}")
-    return df_merged
+    return df_merged, change_percentage_list
 
 
-def fit_standard_scaler(df):
+def fit_feature_scaler(df):
     feature_scaler = FeatureStandardScaler()
     feature_scaler.fit(df)
     feature_scaler.save_scaler()
+
+def fit_target_scaler(l:list):
+    target_scaler = TargetStandardScaler()
+    target_scaler.fit(l)
+    target_scaler.save_scaler()

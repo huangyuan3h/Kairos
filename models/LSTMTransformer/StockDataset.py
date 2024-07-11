@@ -3,6 +3,8 @@ from torch.utils.data import IterableDataset
 from models.LSTMTransformer.RandomStockData import RandomStockData
 import random
 
+from models.standardize.FeatureStandardScaler import FeatureStandardScaler
+
 length_of_stock = 20
 
 
@@ -12,8 +14,9 @@ class StockDataset(IterableDataset):
         self.generate_pool = []
         self.batch_size = batch_size
         self.num_epochs = num_epochs
+        self.feature_scaler = FeatureStandardScaler()
         for i in range(length_of_stock):
-            self.generate_pool.append(RandomStockData(feature_columns, target_column))
+            self.generate_pool.append(RandomStockData(feature_columns, target_column, self.feature_scaler))
 
     def __iter__(self):
         for _ in range(self.batch_size):
