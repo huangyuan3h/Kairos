@@ -39,9 +39,9 @@ class ModelPredictor:
             torch.Tensor: 标准化后的特征张量。
         """
         scaled_df = self.feature_scaler.transform(df)
-        return torch.tensor(scaled_df.values).float().to(self.device)
+        return torch.tensor(scaled_df).float().to(self.device)
 
-    def postprocess_predictions(self, predictions: torch.Tensor) -> pd.DataFrame:
+    def postprocess_predictions(self, predictions: torch.Tensor) -> list:
         """
         对模型的预测结果进行反向标准化。
 
@@ -52,7 +52,7 @@ class ModelPredictor:
             pd.DataFrame: 反向标准化后的预测结果。
         """
         predictions_np = predictions.cpu().detach().numpy()
-        return pd.DataFrame(self.target_scaler.inverse_transform(predictions_np))
+        return self.target_scaler.inverse_transform(predictions_np)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         """

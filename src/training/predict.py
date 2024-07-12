@@ -18,7 +18,7 @@ def predict_stock(stock_code: str, predictor: ModelPredictor):
     end_day = datetime.date.today()
 
     # 计算100天前日期
-    delta = datetime.timedelta(days=100)
+    delta = datetime.timedelta(days=160)
     start_day = end_day - delta
 
     end_date = end_day.strftime("%Y%m%d")

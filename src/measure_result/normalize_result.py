@@ -17,7 +17,7 @@ def make_decision(predicted_returns: list, risk_tolerance: str = 'moderate') -> 
 
     short_term_return = predicted_returns[1]  # 3 天的预测值
     medium_term_return = predicted_returns[2] # 5 天的预测值
-    long_term_return = predicted_returns[-1] # 10 天的预测值
+    long_term_return = predicted_returns[3] # 10 天的预测值
 
     # 设定不同的决策阈值，考虑风险偏好
     if risk_tolerance == 'aggressive':
