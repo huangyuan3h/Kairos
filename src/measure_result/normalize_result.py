@@ -2,9 +2,9 @@
 import numpy as np
 
 
-def make_decision(predicted_returns: list, risk_tolerance: str = 'moderate') -> str:
+def calculate_decision_score(predicted_returns: list, risk_tolerance: str = 'moderate') -> float:
     """
-    根据预测的预期收益，返回操作建议
+    根据预测的预期收益和风险偏好，计算决策分数。
 
     Args:
         predicted_returns (list): 预测的 4 个预期收益值，分别对应 1 天、3 天、5 天和 10 天的涨跌幅
@@ -12,43 +12,49 @@ def make_decision(predicted_returns: list, risk_tolerance: str = 'moderate') -> 
             默认为 'moderate'。
 
     Returns:
-        str: 操作建议，包含 '买入（Buy）', '卖出（Sell）', '持有（Hold）', '观望（Wait）'。
+        float: 决策分数，分数越高代表越倾向于买入。
     """
 
     short_term_return = predicted_returns[1]  # 3 天的预测值
     medium_term_return = predicted_returns[2] # 5 天的预测值
     long_term_return = predicted_returns[3] # 10 天的预测值
 
-    # 设定不同的决策阈值，考虑风险偏好
+    # 设定不同的权重，考虑风险偏好
     if risk_tolerance == 'aggressive':
-        buy_threshold = 1.5
-        sell_threshold = -0.5
+        short_weight, medium_weight, long_weight = 0.2, 0.3, 0.5
     elif risk_tolerance == 'moderate':
-        buy_threshold = 1
-        sell_threshold = -0.3
+        short_weight, medium_weight, long_weight = 0.3, 0.4, 0.3
     else:  # conservative
-        buy_threshold = 0.5
-        sell_threshold = 0
+        short_weight, medium_weight, long_weight = 0.4, 0.5, 0.1
 
-    # 综合考虑短期、中期和长期趋势
-    if short_term_return > buy_threshold and medium_term_return > buy_threshold and long_term_return > buy_threshold:
+    # 计算加权平均得分
+    decision_score = short_term_return * short_weight + \
+                     medium_term_return * medium_weight + \
+                     long_term_return * long_weight
+
+    return decision_score
+
+
+def make_decision(decision_score: float) -> str:
+    """
+    根据决策分数，返回操作建议。
+
+    Args:
+        decision_score (float): 决策分数，由 `calculate_decision_score` 函数计算得到。
+
+    Returns:
+        str: 操作建议，包含 '买入（Buy）', '卖出（Sell）', '持有（Hold）', '观望（Wait）'。
+    """
+
+    # 根据决策分数确定操作建议
+    if decision_score >= 1:
         return "买入（Buy）"
-    elif short_term_return < sell_threshold and medium_term_return < sell_threshold and long_term_return < sell_threshold:
-        return "卖出（Sell）"
-    else:
+    elif decision_score >= 0.5:
         return "持有（Hold）"
-
-
-# 平均法
-def average_decision(predicted_returns: list) -> str:
-    avg_return = np.mean(predicted_returns)
-    return make_decision(avg_return)
-
-
-# 加权平均法
-def weighted_average_decision(predicted_returns: list, weights: list) -> str:
-    weighted_avg_return = np.average(predicted_returns, weights=weights)
-    return make_decision(weighted_avg_return)
+    elif decision_score >= 0:
+        return "观望（Wait）"
+    else:
+        return "卖出（Sell）"
 
 
 # 多数投票法
