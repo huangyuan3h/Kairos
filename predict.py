@@ -12,7 +12,7 @@ from src.training.predict import predict_stock_list
 
 def main():
     create_table()
-    # sync_daily_all()
+    sync_daily_all()
     # risk_tolerance = 'moderate'
     with get_db_session() as db:
         stock_list = get_all_stock_list_data(db)

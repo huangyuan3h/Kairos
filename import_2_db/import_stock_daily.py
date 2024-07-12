@@ -34,4 +34,4 @@ def import_all_stocks_daily():
         stock_list = get_all_stock_list_data(db)
     for index, row in stock_list.iterrows():
         import_single_stock_by_code(row["code"])
-        print("id:" + str(row["index"]) + "--->stock code:" + row["code"] + " imported...")
+        print("id:" + str("index") + "--->stock code:" + row["code"] + " imported...")
