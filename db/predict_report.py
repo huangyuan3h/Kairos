@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime,date
 
 from sqlalchemy import Column, Integer, Float, Date, String, func
 from typing import List
@@ -35,3 +35,21 @@ def bulk_insert_predict_report(db: Session, df: pd.DataFrame):
         db_predict_report = PredictReport(**data)
         db.add(db_predict_report)
     db.commit()
+
+def get_predict_report_by_date(db: Session, report_date: str) -> pd.DataFrame:
+    """
+    从数据库中读取某一天的预测报告数据，并将其存储在 Pandas DataFrame 中
+
+    Args:
+        db (Session): 数据库会话对象
+        report_date (date): 要查询的报告日期
+
+    Returns:
+        pd.DataFrame: 包含指定日期预测报告数据的 DataFrame
+    """
+    query = select("*").where(PredictReport.report_date == report_date)
+    result = db.execute(query).all()
+
+    df = pd.DataFrame(result, columns=[col.key for col in PredictReport.__table__.columns])
+
+    return df

@@ -30,7 +30,7 @@ def predict_stock_list(stock_list: list) -> pd.DataFrame:
 def predict_stock(stock_code: str, predictor: ModelPredictor):
     end_day = datetime.date.today() + datetime.timedelta(days=1)
     # 计算100天前日期
-    delta = datetime.timedelta(days=160)
+    delta = datetime.timedelta(days=200)
     start_day = end_day - delta
 
     end_date = end_day.strftime("%Y%m%d")
