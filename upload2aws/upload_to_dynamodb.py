@@ -32,7 +32,7 @@ def upload_df_to_dynamodb(df: pd.DataFrame, table_name: str, modelVersion = 'v1'
         for key, value in item.items():
             if isinstance(value, float):
                 item[key] = Decimal(str(value))
-
+        item["model"] = modelVersion
         # 上传数据到 DynamoDB
         table.put_item(Item=item)
 
@@ -41,4 +41,5 @@ def import_2_aws_process():
     today = datetime.datetime.today()
     with get_db_session() as db:
         report = get_predict_report_by_date(db, today.strftime("%Y-%m-%d"))
-    upload_df_to_dynamodb(report,"prod-kairos-fe-stockPredictReport")
+    report['id'] = report['id'].astype(str)
+    upload_df_to_dynamodb(report,"prod-kairos-fe-stockPredict")
