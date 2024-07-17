@@ -43,3 +43,4 @@ def import_2_aws_process():
         report = get_predict_report_by_date(db, today.strftime("%Y-%m-%d"))
     report['id'] = report['id'].astype(str)
     upload_df_to_dynamodb(report,"prod-kairos-fe-stockPredict")
+    print("import to aws finished")
