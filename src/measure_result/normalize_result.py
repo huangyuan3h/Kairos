@@ -1,13 +1,15 @@
-# 决策函数
-import numpy as np
+import math
 
 
-def calculate_decision_score(predicted_returns: list, risk_tolerance: str = 'moderate') -> float:
+def calculate_decision_score(predicted_returns: list,
+                             volatilities=None,
+                             risk_tolerance: str = 'moderate') -> float:
     """
-    根据预测的预期收益和风险偏好，计算决策分数。
+    根据预测的预期收益、波动率和风险偏好，计算决策分数。
 
     Args:
         predicted_returns (list): 预测的 4 个预期收益值，分别对应 1 天、3 天、5 天和 10 天的涨跌幅
+        volatilities (list):  对应预测时间段的股票价格波动率
         risk_tolerance (str, optional): 用户的风险偏好，可选 'aggressive', 'moderate', 'conservative'。
             默认为 'moderate'。
 
@@ -15,17 +17,34 @@ def calculate_decision_score(predicted_returns: list, risk_tolerance: str = 'mod
         float: 决策分数，分数越高代表越倾向于买入。
     """
 
+    if volatilities is None:
+        volatilities = [0.02, 0.03, 0.04, 0.05]
     short_term_return = predicted_returns[1]  # 3 天的预测值
-    medium_term_return = predicted_returns[2] # 5 天的预测值
-    long_term_return = predicted_returns[3] # 10 天的预测值
+    medium_term_return = predicted_returns[2]  # 5 天的预测值
+    long_term_return = predicted_returns[3]  # 10 天的预测值
 
-    # 设定不同的权重，考虑风险偏好
+    short_term_volatility = volatilities[1]
+    medium_term_volatility = volatilities[2]
+    long_term_volatility = volatilities[3]
+
+    # 设定不同的风险偏好系数
     if risk_tolerance == 'aggressive':
-        short_weight, medium_weight, long_weight = 0.2, 0.3, 0.5
+        risk_factor = 1.2
     elif risk_tolerance == 'moderate':
-        short_weight, medium_weight, long_weight = 0.3, 0.4, 0.3
+        risk_factor = 1.0
     else:  # conservative
-        short_weight, medium_weight, long_weight = 0.4, 0.5, 0.1
+        risk_factor = 0.8
+
+    # 使用夏普比率调整收益率，考虑波动率和风险偏好
+    short_sharpe_ratio = short_term_return / short_term_volatility * risk_factor
+    medium_sharpe_ratio = medium_term_return / medium_term_volatility * risk_factor
+    long_sharpe_ratio = long_term_return / long_term_volatility * risk_factor
+
+    # 动态调整权重，短期收益率权重更高
+    total_sharpe = short_sharpe_ratio + medium_sharpe_ratio + long_sharpe_ratio
+    short_weight = short_sharpe_ratio / total_sharpe
+    medium_weight = medium_sharpe_ratio / total_sharpe
+    long_weight = long_sharpe_ratio / total_sharpe
 
     # 计算加权平均得分
     decision_score = short_term_return * short_weight + \
@@ -35,54 +54,39 @@ def calculate_decision_score(predicted_returns: list, risk_tolerance: str = 'mod
     return decision_score
 
 
-def make_decision(decision_score: float) -> str:
+def make_decision(decision_score: float, risk_tolerance: str = 'moderate') -> str:
     """
-    根据决策分数，返回操作建议。
+    根据决策分数和风险偏好，返回操作建议。
 
     Args:
         decision_score (float): 决策分数，由 `calculate_decision_score` 函数计算得到。
+        risk_tolerance (str, optional): 用户的风险偏好，可选 'aggressive', 'moderate', 'conservative'。
+            默认为 'moderate'。
 
     Returns:
         str: 操作建议，包含 '买入（Buy）', '卖出（Sell）', '持有（Hold）', '观望（Wait）'。
     """
 
+    # 根据风险偏好设置不同的阈值
+    if risk_tolerance == 'aggressive':
+        buy_threshold = 0.8
+        hold_threshold = 0.3
+        wait_threshold = -0.2
+    elif risk_tolerance == 'moderate':
+        buy_threshold = 0.5
+        hold_threshold = 0.2
+        wait_threshold = -0.1
+    else:  # conservative
+        buy_threshold = 0.3
+        hold_threshold = 0.1
+        wait_threshold = 0
+
     # 根据决策分数确定操作建议
-    if decision_score >= 1:
+    if decision_score >= buy_threshold:
         return "买入（Buy）"
-    elif decision_score >= 0.5:
+    elif decision_score >= hold_threshold:
         return "持有（Hold）"
-    elif decision_score >= 0:
+    elif decision_score >= wait_threshold:
         return "观望（Wait）"
     else:
         return "卖出（Sell）"
-
-
-# 多数投票法
-def majority_vote_decision(predicted_returns: list) -> str:
-    decisions = [make_decision(r) for r in predicted_returns]
-    return max(set(decisions), key=decisions.count)
-
-
-
-
-
-
-
-# # 假设预测结果为：
-# predicted_returns =[0.9197320938110352, 0.8447604179382324, 0.6181734800338745, 0.05447008088231087]  # 1天，3天，5天，10天
-#
-# # 用户的风险偏好
-# risk_tolerance = 'moderate'
-#
-# # 调用决策函数
-# decision = make_decision(predicted_returns, risk_tolerance)
-#
-# # 输出决策结果
-# print(decision)  # 输出结果: 买入（Buy）
-
-# predicted_returns = [predicted_return_1, predicted_return_3, predicted_return_5]
-
-# 获取综合决策
-# average_dec = average_decision(predicted_returns)
-# weighted_average_dec = weighted_average_decision(predicted_returns, weights=[0.5, 0.3, 0.2])
-# majority_vote_dec = majority_vote_decision(predicted_returns)
