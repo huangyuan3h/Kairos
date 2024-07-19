@@ -57,7 +57,7 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
         print("获取股票数据出错: " + stock_code)
         return None
 
-    predict_data = stock_list.tail(n=60)
+    predict_data = stock_list.head(60)
     predictions = predictor.predict(predict_data)
 
     return predictions[0]

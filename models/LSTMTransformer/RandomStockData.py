@@ -25,7 +25,7 @@ class RandomStockData:
     def get_data(self):
         df = self.data
         idx = self.counter
-        data_to_scale = self.data.loc[self.counter + y_predict_day+1:x_row_num + self.counter + y_predict_day]
+        data_to_scale = self.data.loc[idx + y_predict_day+1:x_row_num + idx + y_predict_day]
         scaled_data = self.feature_scale.transform(data_to_scale)
 
         x = torch.tensor(scaled_data)
