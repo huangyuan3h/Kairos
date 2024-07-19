@@ -19,6 +19,7 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
 
     Returns:
         pd.DataFrame: 清洗后的股票数据，包含原始列和新增的特征列。
+        :param for_training: 假如是训练模型的数据，删除不准的那些数据
     """
 
     # 1. 处理缺失值：使用前一日数据填充, 并删除首日nan
@@ -32,44 +33,19 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     # 3. 特征工程：添加一些技术指标
     # 计算每日涨跌幅
     stock_data['daily_return'] = stock_data['stock_close'].pct_change()
-    # 计算5日均线和20日均线
-    stock_data['ma5'] = stock_data['stock_close'].rolling(window=5).mean()
-    stock_data['ma20'] = stock_data['stock_close'].rolling(window=20).mean()
-    # 计算RSI指标
-    stock_data['rsi'] = calculate_rsi(stock_data['stock_close'])
+    # 计算5日均线和20日均线, 设置 min_periods=1
+    stock_data['ma5'] = stock_data['stock_close'].rolling(window=5, min_periods=1).mean()
+    stock_data['ma20'] = stock_data['stock_close'].rolling(window=20, min_periods=1).mean()
 
     # 4. 统一日期格式
     stock_data['date'] = pd.to_datetime(stock_data['date'])
     stock_data['date'] = stock_data['date'].dt.strftime('%Y%m%d')
 
-    # 删除前20条数据
-    stock_data = stock_data.drop(stock_data.head(20).index)
     return stock_data
 
 
 
 
-
-def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
-    """
-    计算相对强弱指数 (RSI)。
-
-    Args:
-        prices (pd.Series): 收盘价序列。
-        period (int, optional): 计算 RSI 的周期，默认为 14。
-
-    Returns:
-        pd.Series: RSI 指标序列。
-    """
-    delta = prices.diff()
-    gain, loss = delta.copy(), delta.copy()
-    gain[gain < 0] = 0
-    loss[loss > 0] = 0
-    avg_gain = gain.rolling(window=period).mean()
-    avg_loss = abs(loss.rolling(window=period).mean())
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
 
 # list = get_stock_data_since('600000', '20230101', 100)
 #

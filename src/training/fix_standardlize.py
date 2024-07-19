@@ -12,6 +12,8 @@ times = 2000
 
 record_day = 100
 
+y_predict_day = 10
+
 
 def get_random_record_num_available_date() -> dt.date:
     today = date.today()
@@ -49,10 +51,10 @@ def calculate_change_percentages(df: pd.DataFrame, target_column: str, x_row_num
         list: 涨幅百分比的列表。
     """
     change_percentage_list = []
-    for idx in range(len(df) - x_row_num - 10):
-        future_close = df[idx + x_row_num:idx + x_row_num + 10][target_column].values
-        current_close = df[target_column].values[idx + x_row_num - 1]
-        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
+    for idx in range(len(df) - x_row_num - y_predict_day):
+        future_close = df[idx:idx + y_predict_day][target_column].values
+        current_close = df[target_column].values[idx+y_predict_day]
+        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 6, 8, 10]]
         change_percentage_list.append(change_percentage)
     return change_percentage_list
 
