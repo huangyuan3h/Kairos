@@ -61,8 +61,8 @@ def train_model(model: LSTMAttentionTransformer, dataloader: DataLoader, criteri
 
         scheduler.step(epoch_loss)
 
-        # 每 100 个 epoch 保存一次模型
-        if (epoch + 1) % 100 == 0:
+        # 每 500 个 epoch 保存一次模型
+        if (epoch + 1) % 500 == 0:
             checkpoint = {'model': model.state_dict(),
                           'optimizer': optimizer.state_dict()}
             torch.save(checkpoint, f'model_files/checkpoint_{epoch + 1}.pth')
