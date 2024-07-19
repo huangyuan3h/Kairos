@@ -25,15 +25,14 @@ class RandomStockData:
     def get_data(self):
         df = self.data
         idx = self.counter
-        data_to_scale = self.data.loc[idx + y_predict_day+1:x_row_num + idx + y_predict_day]
+        data_to_scale = self.data.loc[idx:x_row_num + idx - 1]
         scaled_data = self.feature_scale.transform(data_to_scale)
 
         x = torch.tensor(scaled_data)
 
-        future_close = df[idx:idx + y_predict_day][self.target_column].values
-        current_close = df[self.target_column].values[idx + y_predict_day]
-        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 6, 8, 10]]
-        # 10 天， 5天， 3天， 1天
+        future_close = df[idx + x_row_num:idx + x_row_num + y_predict_day][self.target_column].values
+        current_close = df[self.target_column].values[idx + x_row_num - 1]
+        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
         scaled_change_percentage = self.target_scale.transform([change_percentage])[0]
 
         y = torch.tensor(scaled_change_percentage)

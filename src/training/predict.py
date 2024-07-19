@@ -30,10 +30,10 @@ def predict_stock_list(stock_list: list, date: datetime.date = None) -> pd.DataF
         predict_data = {
             'report_date': date,
             'stock_code': stock_code,
-            'change_1d': result[3],
-            'change_3d': result[2],
-            'change_5d': result[1],
-            'change_10d': result[0],
+            'change_1d': result[0],
+            'change_3d': result[1],
+            'change_5d': result[2],
+            'change_10d': result[3],
         }
         df = pd.concat([df, pd.DataFrame.from_dict([predict_data])], ignore_index=True)
 
@@ -57,7 +57,7 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
         print("获取股票数据出错: " + stock_code)
         return None
 
-    predict_data = stock_list.head(60)
+    predict_data = stock_list.tail(n=60)
     predictions = predictor.predict(predict_data)
 
     return predictions[0]

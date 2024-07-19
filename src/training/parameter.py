@@ -1,4 +1,4 @@
-input_dim = 47
+input_dim = 48
 
 
 def get_model_params():
@@ -17,7 +17,7 @@ def get_training_params():
     """
 
     batch_size = 64
-    learning_rate = 1e-4
+    learning_rate = 1e-3
 
     num_epochs = 10000
     model_save_path = "model_files/lstm_transformer_model.pth"
