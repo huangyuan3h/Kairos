@@ -29,7 +29,7 @@ def predict_stock_list(stock_list: list, date=None) -> pd.DataFrame:
         return df
 
     for stock_code in stock_list:
-        date_object = datetime.datetime.strptime(date, "%Y%m%d")
+        date_object = datetime.datetime.strptime(date, "%Y-%m-%d")
         result = predict_stock(stock_code, predictor, date_object)
         if result is None:
             continue
