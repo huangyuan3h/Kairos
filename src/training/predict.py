@@ -28,7 +28,7 @@ def predict_stock_list(stock_list: list, date: datetime.date = None) -> pd.DataF
         if result is None:
             continue
         predict_data = {
-            'report_date': datetime.date.today(),
+            'report_date': date,
             'stock_code': stock_code,
             'change_1d': result[3],
             'change_3d': result[2],

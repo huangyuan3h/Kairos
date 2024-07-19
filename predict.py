@@ -19,7 +19,7 @@ def main():
     df = predict_stock_list(stock_code_list)
     with get_db_session() as db:
         bulk_insert_predict_report(db, df)
-    # import_2_aws_process()
+    import_2_aws_process()
 
 
 if __name__ == "__main__":
