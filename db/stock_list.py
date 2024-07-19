@@ -64,3 +64,15 @@ def get_all_stock_list_data(db: Session) -> pd.DataFrame:
     df = pd.DataFrame([row.__dict__ for row in results])
     df = df.drop(columns=['_sa_instance_state'])
     return df
+
+
+def get_predict_stock_list_data(db: Session) -> pd.DataFrame:
+    """
+    fetch the stock that larger than 1.5 hundred billion total cap
+    :param db:
+    :return:
+    """
+    df = get_all_stock_list_data(db)
+    df = df[(df['total_market_cap'] > 15000000000)]
+
+    return df
