@@ -8,7 +8,7 @@ from upload2aws.upload_to_dynamodb import import_2_aws_process
 
 def main():
     create_table()
-    # sync_daily_all()
+    sync_daily_all()
     with get_db_session() as db:
         stock_list = get_predict_stock_list_data(db)
     stock_code_list = stock_list["code"].values
