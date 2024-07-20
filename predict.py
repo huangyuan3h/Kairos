@@ -8,7 +8,8 @@ from upload2aws.upload_to_dynamodb import import_2_aws_process
 
 def main():
     create_table()
-    process_predict(report_date='2024-07-16', sync_all=False)
+    process_predict(report_date='2024-07-17', sync_all=False)
+    # import_2_aws_process('2024-07-16')
 
 
 if __name__ == "__main__":
