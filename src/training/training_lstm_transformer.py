@@ -30,7 +30,7 @@ def training():
 
     # 优化器
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
 
     dataset = StockDataset(feature_columns=feature_columns, target_column=target_column, batch_size=batch_size,
                            num_epochs=num_epochs)

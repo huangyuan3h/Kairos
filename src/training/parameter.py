@@ -5,9 +5,9 @@ def get_model_params():
     """
     获取模型参数
     """
-    hidden_dim = 768
-    num_layers = 4
-    num_heads = 32
+    hidden_dim = 512
+    num_layers = 3
+    num_heads = 16
     return input_dim, hidden_dim, num_layers, num_heads
 
 
