@@ -5,14 +5,15 @@ from models.LSTMTransformer import load_model
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
-from src.training.parameter import get_model_params, get_training_params
+from src.training.parameter import get_config
 
 
 class ModelPredictor:
-    def __init__(self):
+    def __init__(self, version="v1"):
+        config = get_config(version)
         # 获取模型参数
-        input_dim, hidden_dim, num_layers, num_heads = get_model_params()
-        batch_size, learning_rate, num_epochs, model_save_path = get_training_params()
+        mp = config.model_params
+        tp = config.training_params
 
         # 初始化特征和目标标准化器
         feature_scaler = FeatureStandardScaler()
@@ -20,8 +21,8 @@ class ModelPredictor:
         target_scaler = TargetStandardScaler()
         target_scaler.load_scaler()
 
-        self.model = LSTMAttentionTransformer(input_dim, hidden_dim, num_layers, num_heads)
-        load_model(self.model, model_save_path)
+        self.model = LSTMAttentionTransformer(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads)
+        load_model(self.model, tp.model_save_path)
         self.model.eval()
         self.feature_scaler = feature_scaler
         self.target_scaler = target_scaler
