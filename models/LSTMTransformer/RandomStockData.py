@@ -1,14 +1,13 @@
 from data.data_merging.merge_data import get_random_valid_data
 import torch
 
+from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 
 learn_limit = 100
 
-x_row_num = 60
-
-y_predict_day = 10
+RANGE_SIZE = 70
 
 
 class RandomStockData:
@@ -23,19 +22,12 @@ class RandomStockData:
         self.target_scale = target_scale
 
     def get_data(self):
-        df = self.data
         idx = self.counter
-        data_to_scale = self.data.loc[idx:x_row_num + idx - 1]
-        scaled_data = self.feature_scale.transform(data_to_scale)
+        range_data = self.data.loc[idx:RANGE_SIZE + idx - 1]
+        x, y = get_xy_data_from_df(range_data, self.feature_columns, self.target_column)
+        x = torch.tensor(self.feature_scale.transform(x))
+        y = torch.tensor(self.target_scale.transform(y))
 
-        x = torch.tensor(scaled_data)
-
-        future_close = df[idx + x_row_num:idx + x_row_num + y_predict_day][self.target_column].values
-        current_close = df[self.target_column].values[idx + x_row_num - 1]
-        change_percentage = [(future_close[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
-        scaled_change_percentage = self.target_scale.transform([change_percentage])[0]
-
-        y = torch.tensor(scaled_change_percentage)
         self.counter = self.counter + 1
         if self.counter >= learn_limit:
             self.counter = 0
