@@ -12,8 +12,8 @@ import torch
 from src.training.parameter import get_config
 
 
-def training():
-    config = get_config("v1")
+def training(version="v1"):
+    config = get_config(version)
     # 获取模型参数
     mp = config.model_params
     tp = config.training_params

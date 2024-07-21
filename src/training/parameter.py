@@ -5,6 +5,7 @@ from models.LSTMTransformer.config import config_lstm_transformer_modelV1
 import torch.nn as nn
 
 from models.LSTMTransformerV0.config import config_lstm_transformer_modelV0
+from models.SimpleLSTM.config import config_simple_lstm
 
 
 @dataclass
@@ -62,6 +63,7 @@ def load_config(cfg, name: str):
 
 load_config(config_lstm_transformer_modelV1, "v1")
 load_config(config_lstm_transformer_modelV0, "v0")
+load_config(config_simple_lstm, "simple_lstm")
 
 
 def get_config(model_name: str) -> ModelConfig:
