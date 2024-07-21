@@ -1,5 +1,4 @@
 from models.LSTMTransformer import StockDataset
-from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 
 import torch.nn as nn
 import torch.optim as optim
@@ -19,10 +18,11 @@ def training():
     mp = config.model_params
     tp = config.training_params
     dp = config.data_params
+    Model = config.Model
 
     # 检查设备
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    model = LSTMAttentionTransformer(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads).to(device)
+    model = Model(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads).to(device)
 
     model = load_model(model, tp.model_save_path)
 

@@ -2,6 +2,9 @@ from dataclasses import dataclass, field
 from typing import List
 
 from models.LSTMTransformer.config import config_lstm_transformer_modelV1
+import torch.nn as nn
+
+from models.LSTMTransformerV0.config import config_lstm_transformer_modelV0
 
 
 @dataclass
@@ -31,6 +34,7 @@ class ModelConfig:
     model_params: ModelParams
     training_params: TrainingParams
     data_params: DataParams
+    Model: nn.Module
 
 
 MODEL_CONFIGS = {
@@ -38,7 +42,8 @@ MODEL_CONFIGS = {
         model_params=ModelParams(input_dim=48, hidden_dim=512, num_layers=3, num_heads=16),
         training_params=TrainingParams(batch_size=64, learning_rate=1e-3, num_epochs=10000,
                                        model_save_path="model_files/lstm_transformer_model_a.pth"),
-        data_params=DataParams(feature_columns=[i for i in range(48)], target_column="stock_close")
+        data_params=DataParams(feature_columns=[i for i in range(48)], target_column="stock_close"),
+        Model = nn.Module
     ),
 }
 
@@ -50,11 +55,13 @@ def load_config(cfg, name: str):
         training_params=TrainingParams(batch_size=cfg["batch_size"], learning_rate=cfg["learning_rate"],
                                        num_epochs=cfg["num_epochs"],
                                        model_save_path=cfg["model_save_path"]),
-        data_params=DataParams(feature_columns=cfg["feature_columns"], target_column=cfg["target_column"])
+        data_params=DataParams(feature_columns=cfg["feature_columns"], target_column=cfg["target_column"]),
+        Model = cfg["model"]
     )
 
 
 load_config(config_lstm_transformer_modelV1, "v1")
+load_config(config_lstm_transformer_modelV0, "v0")
 
 
 def get_config(model_name: str) -> ModelConfig:
