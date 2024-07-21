@@ -14,6 +14,7 @@ class ModelPredictor:
         # 获取模型参数
         mp = config.model_params
         tp = config.training_params
+        Model = config.Model
 
         # 初始化特征和目标标准化器
         feature_scaler = FeatureStandardScaler()
@@ -21,7 +22,7 @@ class ModelPredictor:
         target_scaler = TargetStandardScaler()
         target_scaler.load_scaler()
 
-        self.model = LSTMAttentionTransformer(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads)
+        self.model = Model(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads)
         load_model(self.model, tp.model_save_path)
         self.model.eval()
         self.feature_scaler = feature_scaler
