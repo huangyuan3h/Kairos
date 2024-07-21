@@ -2,7 +2,9 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from data.data_merging.merge_data import get_random_full_data
+from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.LSTMTransformer.predict import ModelPredictor
+from src.training.parameter import get_config
 
 
 def evaluate_model(model_name: str, get_data_func) -> dict:
@@ -59,20 +61,16 @@ batch_size = 1000
 
 
 def get_my_data():
+    config = get_config("v1")
+    # 获取模型参数
+    dp = config.data_params
+
     if len(y_list) == 0:
         for i in range(batch_size):
             random_data = get_random_full_data()
             eval_data = random_data.tail(70)
-            x = eval_data.head(60)
-            y_data = eval_data.tail(10)["stock_close"].values
-            current_close = x.tail(1)["stock_close"].values[0]
-            y = [(y_data[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
+            x, y = get_xy_data_from_df(eval_data, dp.feature_columns, dp.target_column)
             x_list.append(x)
             y_list.append(y)
 
     return x_list, y_list
-
-
-
-
-

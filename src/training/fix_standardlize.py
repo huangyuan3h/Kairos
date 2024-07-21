@@ -5,8 +5,10 @@ from data.data_merging.merge_data import get_random_code, get_stock_total_data
 import random
 import datetime as dt
 
+from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
+from src.training.parameter import get_config
 
 times = 2000
 
@@ -63,16 +65,21 @@ def build_data() -> (pd.DataFrame, list):
     df_merged = None
     change_percentage_list = []
     total_iterations = times
+    config = get_config("v1")
+    dp = config.data_params
     print(f"开始构建数据帧，总共迭代 {total_iterations} 次")
 
     for i in range(times):
+        df = get_random_n_data()
+        df = df.head(70)
+        x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
         if df_merged is None:
-            df_merged = get_random_n_data()
-            change_percentage_list = change_percentage_list + calculate_change_percentages(df_merged, "stock_close", 0)
+            df_merged = x
+            change_percentage_list = change_percentage_list + y
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
         else:
-            to_append = get_random_n_data()
-            change_percentage_list = change_percentage_list + calculate_change_percentages(to_append, "stock_close", 0)
+            to_append = x
+            change_percentage_list = change_percentage_list + y
             df_merged = pd.concat([df_merged, to_append], ignore_index=True)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
 
