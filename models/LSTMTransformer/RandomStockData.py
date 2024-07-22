@@ -26,7 +26,7 @@ class RandomStockData:
         range_data = self.data.loc[idx:RANGE_SIZE + idx - 1]
         x, y = get_xy_data_from_df(range_data, self.feature_columns, self.target_column)
         x = torch.tensor(self.feature_scale.transform(x))
-        y = torch.tensor(self.target_scale.transform(y))
+        y = torch.tensor(self.target_scale.transform([y])[0])
 
         self.counter = self.counter + 1
         if self.counter >= learn_limit:

@@ -15,8 +15,8 @@ def main():
     feature_scaler = FeatureStandardScaler()
     target_scaler = TargetStandardScaler()
     generator = RandomStockData(dp.feature_columns, dp.target_column, feature_scaler, target_scaler)
-    data = generator.get_data()
-    print(data)
+    x,y = generator.get_data()
+    print(x,y)
 
 
 if __name__ == "__main__":
