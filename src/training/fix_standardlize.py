@@ -11,7 +11,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
 
-times = 2000
+times = 1000
 
 record_day = 100
 
@@ -31,7 +31,7 @@ def get_random_record_num_available_date() -> dt.date:
 def get_random_n_data(version="v1") -> pd.DataFrame:
     result = None
 
-    while result is None or len(result) <= record_day or np.isinf(result).any().any():
+    while result is None or len(result) <= record_day:
         code = get_random_code()
         start_date = get_random_record_num_available_date()
         end_date = start_date + timedelta(days=record_day * 2)
@@ -79,11 +79,11 @@ def build_data(version="v1") -> (pd.DataFrame, list):
         x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
         if df_merged is None:
             df_merged = x
-            change_percentage_list = change_percentage_list + y
+            change_percentage_list.append(y)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
         else:
             to_append = x
-            change_percentage_list = change_percentage_list + y
+            change_percentage_list.append(y)
             df_merged = pd.concat([df_merged, to_append], ignore_index=True)
             print(f"完成第 {i + 1} 次迭代，数据帧大小：{len(df_merged)}")
 

@@ -24,7 +24,7 @@ column_to_keep = ['stock_close', 'stock_volume', 'stock_amplitude', 'stock_chang
                   'current_ratio']
 
 
-def keep_column(df: pd.DataFrame) :
+def keep_column(df: pd.DataFrame):
     """
     保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
 
@@ -61,7 +61,7 @@ def get_stock_v2_training_data(stock_code: str, start_date: str, end_date: str) 
 def get_random_v2_data() -> pd.DataFrame:
     result = None
 
-    while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
+    while result is None or len(result) <= 200 * year:
         code = get_random_code()
         start_date = get_random_available_date()
         end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
@@ -70,7 +70,7 @@ def get_random_v2_data() -> pd.DataFrame:
     return result
 
 
-def get_random_total_data() -> pd.DataFrame:
+def get_random_data_by_version() -> pd.DataFrame:
     result = None
 
     while result is None or len(result) <= 200 * year or np.isinf(result).any().any():

@@ -169,7 +169,7 @@ def df_normalize_inf(df: pd.DataFrame) -> pd.DataFrame:
     # 将剩余列转换为 float64 类型
     for col in df.columns:
         try:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
+            df.loc[:, col] = pd.to_numeric(df[col], errors='coerce')
         except Exception as e:
             print(f"无法将列 '{col}' 转换为数字：{e}")
     return df

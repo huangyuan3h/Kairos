@@ -1,13 +1,13 @@
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from data.data_merging.merge_data import get_random_full_data
+from data.data_merging.merge_data import get_random_v1_data
 from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.LSTMTransformer.predict import ModelPredictor
 from src.training.parameter import get_config
 
 
-def evaluate_model(model_name: str, get_data_func) -> dict:
+def evaluate_model(model_name: str, get_data_func, data_version = "v1") -> dict:
     """
     使用提供的数据获取函数评估模型的准确度。
 
@@ -19,7 +19,7 @@ def evaluate_model(model_name: str, get_data_func) -> dict:
         dict: 包含评估指标的字典。
     """
     predictor = ModelPredictor(model_name)
-    X, y_true = get_data_func()
+    X, y_true = get_data_func(data_version=data_version)
 
     # 使用模型进行预测
     predictions = []
@@ -50,27 +50,40 @@ def compare_models(model_1_name: str, model_2_name: str, get_data_func) -> pd.Da
     """
     results = {}
     for model_name in [model_1_name, model_2_name]:
-        results[model_name] = evaluate_model(model_name, get_data_func)
+        config = get_config(model_name)
+        data_version = config.data
+        results[model_name] = evaluate_model(model_name, get_data_func, data_version)
     return pd.DataFrame.from_dict(results, orient='index')
 
 
 x_list = []
 y_list = []
 
+x_list_v2 = []
+y_list_v2 = []
+
+eval_data_list = []
+
 batch_size = 1000
 
 
-def get_my_data():
-    config = get_config("v1")
+def get_my_data(data_version="v1"):
+    config = get_config(data_version)
     # 获取模型参数
     dp = config.data_params
 
-    if len(y_list) == 0:
+    if len(eval_data_list) == 0:
         for i in range(batch_size):
-            random_data = get_random_full_data()
+
+            random_data = get_random_v1_data()
             eval_data = random_data.tail(70)
+            eval_data_list.append(eval_data)
+
             x, y = get_xy_data_from_df(eval_data, dp.feature_columns, dp.target_column)
             x_list.append(x)
             y_list.append(y)
 
-    return x_list, y_list
+    if data_version == "v1":
+        return x_list, y_list
+    else:
+        return x_list_v2, y_list_v2

@@ -14,7 +14,7 @@ RANGE_SIZE = 70
 class RandomStockData:
 
     def __init__(self, feature_columns: list, target_column: str, feature_scale: FeatureStandardScaler,
-                 target_scale: TargetStandardScaler, data_version = "v1"):
+                 target_scale: TargetStandardScaler, data_version="v1"):
         self.counter = 0
         if data_version == "v1":
             self.data = get_random_v1_data()
@@ -24,6 +24,7 @@ class RandomStockData:
         self.target_column = target_column
         self.feature_scale = feature_scale
         self.target_scale = target_scale
+        self.data_version = data_version
 
     def get_data(self):
         idx = self.counter
@@ -35,6 +36,10 @@ class RandomStockData:
         self.counter = self.counter + 1
         if self.counter >= learn_limit:
             self.counter = 0
-            self.data = get_random_valid_data()
+            if self.data_version == "v1":
+                self.data = get_random_v1_data()
+            else:
+                self.data = get_random_v2_data()
+
 
         return x, y
