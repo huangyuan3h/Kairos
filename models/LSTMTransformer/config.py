@@ -11,5 +11,6 @@ config_lstm_transformer_modelV1 = {
     "model_save_path": "./model_files/lstm_transformer_model.pth",
     "feature_columns": [i for i in range(48)],
     "target_column": "stock_close",
-    "model": LSTMAttentionTransformer
+    "model": LSTMAttentionTransformer,
+    "data": "v1"
 }

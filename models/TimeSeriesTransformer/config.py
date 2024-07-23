@@ -11,5 +11,6 @@ config_TimeSeriesTransformer = {
     "model_save_path": "./model_files/TimeSeriesTransformer.pth",
     "feature_columns": [i for i in range(48)],
     "target_column": "stock_close",
-    "model": TimeSeriesTransformer
+    "model": TimeSeriesTransformer,
+    "data": "v1"
 }

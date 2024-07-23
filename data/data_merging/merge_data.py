@@ -5,8 +5,6 @@ from datetime import date, timedelta
 import random
 import warnings
 
-from data.data_preprocessing.stock_data_cleaner import add_technical_indicators, add_time_features
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 year = 1
@@ -57,8 +55,6 @@ nonessential_features = [
     'current_ratio', 'quick_ratio', 'debt_to_asset_ratio', 'revenue_growth_rate',
     'net_profit_growth_rate'
 ]
-
-drop_str_columns = ['date', 'stock_code_left', 'stock_code_right']
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -196,39 +192,7 @@ def get_stock_v1_training_data(stock_code: str, start_date: str, end_date: str) 
     return final_df
 
 
-def get_stock_v2_training_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
-    """
-    获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
-
-    Args:
-        stock_code (str): 股票代码。
-        start_date (str): 开始日期，格式为 'YYYYMMDD'。
-        end_date (str): 开始日期，格式为 'YYYYMMDD'。
-
-    Returns:
-        pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
-    """
-    merged_data = get_stock_all_data(stock_code, start_date, end_date)
-    final_df = drop_column_str(merged_data)
-    return final_df
-
-
-def drop_column_str(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
-
-    Args:
-        df (pd.DataFrame): 输入 DataFrame。
-
-    Returns:
-        pd.DataFrame: 处理后的 DataFrame。
-    """
-    df.drop(drop_str_columns, axis=1, inplace=True)
-    df = df_normalize_inf(df)
-    return df
-
-
-def keep_columns_reset_type(df: pd.DataFrame) -> pd.DataFrame:
+def keep_columns_reset_type(df: pd.DataFrame):
     """
     保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
 
@@ -239,6 +203,8 @@ def keep_columns_reset_type(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: 处理后的 DataFrame。
     """
     # 保留 essential_features 和 consider_features 列
+    if df is None:
+        return None
     columns_to_keep = essential_features + consider_features
     df = df[columns_to_keep]
     df = df_normalize_inf(df)
@@ -295,18 +261,6 @@ def get_random_v1_data() -> pd.DataFrame:
         end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
         result = get_stock_v1_training_data(stock_code=code, start_date=start_date,
                                             end_date=end_date.strftime("%Y%m%d"))
-    return result
-
-
-def get_random_total_data() -> pd.DataFrame:
-    result = None
-
-    while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
-        code = get_random_code()
-        start_date = get_random_available_date()
-        end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
-        result = get_stock_v2_training_data(stock_code=code, start_date=start_date, end_date=end_date.strftime("%Y%m%d"))
-        print(result)
     return result
 
 

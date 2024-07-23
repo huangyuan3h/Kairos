@@ -11,5 +11,6 @@ config_simple_lstm = {
     "model_save_path": "./model_files/simple_LSTM.pth",
     "feature_columns": [i for i in range(48)],
     "target_column": "stock_close",
-    "model": SimpleLSTM
+    "model": SimpleLSTM,
+    "data": "v1"
 }

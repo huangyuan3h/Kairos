@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
-from data.data_merging.merge_data import get_random_code, get_stock_total_data
+from data.data_merging.merge_data import get_random_code, get_stock_v1_training_data
 import random
 import datetime as dt
 
+from data.data_merging.merge_data_v2 import get_stock_v2_training_data
 from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
@@ -27,15 +28,18 @@ def get_random_record_num_available_date() -> dt.date:
     return random_date
 
 
-def get_random_n_data() -> pd.DataFrame:
+def get_random_n_data(version="v1") -> pd.DataFrame:
     result = None
 
     while result is None or len(result) <= record_day or np.isinf(result).any().any():
         code = get_random_code()
         start_date = get_random_record_num_available_date()
         end_date = start_date + timedelta(days=record_day * 2)
-
-        result = get_stock_total_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
+        if version == "v2":
+            result = get_stock_v2_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
+                                      end_date=end_date.strftime("%Y%m%d"))
+        else:
+            result = get_stock_v1_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
                                       end_date=end_date.strftime("%Y%m%d"))
     return result
 
@@ -61,16 +65,16 @@ def calculate_change_percentages(df: pd.DataFrame, target_column: str, x_row_num
     return change_percentage_list
 
 
-def build_data() -> (pd.DataFrame, list):
+def build_data(version="v1") -> (pd.DataFrame, list):
     df_merged = None
     change_percentage_list = []
     total_iterations = times
-    config = get_config("v1")
+    config = get_config(version)
     dp = config.data_params
     print(f"开始构建数据帧，总共迭代 {total_iterations} 次")
 
     for i in range(times):
-        df = get_random_n_data()
+        df = get_random_n_data(config.data)
         df = df.head(70)
         x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
         if df_merged is None:
@@ -87,13 +91,19 @@ def build_data() -> (pd.DataFrame, list):
     return df_merged, change_percentage_list
 
 
-def fit_feature_scaler(df):
-    feature_scaler = FeatureStandardScaler()
+def fit_feature_scaler(df, version = "v1"):
+    if version == "v2":
+        feature_scaler = FeatureStandardScaler(scaler_path="model_files/scaler_x_v2.pkl")
+    else:
+        feature_scaler = FeatureStandardScaler()
     feature_scaler.fit(df)
     feature_scaler.save_scaler()
 
 
-def fit_target_scaler(l: list):
-    target_scaler = TargetStandardScaler()
+def fit_target_scaler(l: list,  version = "v1"):
+    if version == "v2":
+        target_scaler = TargetStandardScaler(scaler_path="model_files/scaler_y_v2.pkl")
+    else:
+        target_scaler = TargetStandardScaler()
     target_scaler.fit(l)
     target_scaler.save_scaler()

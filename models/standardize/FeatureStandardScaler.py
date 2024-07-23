@@ -20,6 +20,7 @@ class FeatureStandardScaler:
         self.feature_columns = feature_columns
         self.scaler = self.load_scaler() or StandardScaler()
 
+
     def fit(self, df: pd.DataFrame):
         """
         使用给定的 DataFrame 拟合标准化器。
