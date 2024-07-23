@@ -1,4 +1,6 @@
-from data.data_merging import get_stock_total_data
+
+from data.data_merging.merge_data import get_stock_v1_training_data
+from data.data_merging.merge_data_v2 import get_stock_v2_training_data
 from db import get_db_session
 from db.predict_report import get_predict_report_by_date, bulk_insert_predict_report
 from db.sh_index_daily import get_last_index_daily_date
@@ -10,12 +12,14 @@ import datetime
 import pandas as pd
 
 from src.crawl.sync_daily_all import sync_daily_all
+from src.training.parameter import get_config
 from upload2aws.upload_to_dynamodb import import_2_aws_process
 
 
 def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
                        version="simple_lstm_v1_2") -> pd.DataFrame:
     predictor = ModelPredictor(version)
+    config = get_config(version)
 
     df = pd.DataFrame(columns=['report_date', 'stock_code', 'change_1d', 'change_3d', 'change_5d', 'change_10d'])
     if date_object is None:
@@ -29,7 +33,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
         return df
 
     for stock_code in stock_list:
-        result = predict_stock(stock_code, predictor, date_object)
+        result = predict_stock(stock_code, predictor, date_object, config.data)
         if result is None:
             continue
         predict_data = {
@@ -46,7 +50,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
     return df
 
 
-def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.date):
+def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.date, data_version= "v1"):
     if date is None:
         return None
     end_day = date
@@ -56,8 +60,10 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
 
     end_date = end_day.strftime("%Y%m%d")
     start_date = start_day.strftime("%Y%m%d")
-
-    stock_list = get_stock_total_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
+    if data_version == "v2":
+        stock_list = get_stock_v2_training_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
+    else:
+        stock_list = get_stock_v1_training_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
 
     if stock_list is None or stock_list.empty or len(stock_list) <= 60:
         print("获取股票数据出错: " + stock_code)

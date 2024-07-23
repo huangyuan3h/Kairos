@@ -188,11 +188,11 @@ def get_stock_v1_training_data(stock_code: str, start_date: str, end_date: str) 
         pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
     """
     merged_data = get_stock_all_data(stock_code, start_date, end_date)
-    final_df = keep_columns_reset_type(merged_data)
+    final_df = keep_columns_v1(merged_data)
     return final_df
 
 
-def keep_columns_reset_type(df: pd.DataFrame):
+def keep_columns_v1(df: pd.DataFrame):
     """
     保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
 

@@ -3,7 +3,10 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
 
+
+
 if __name__ == "__main__":
+
     config = get_config("simple_lstm_v2_1")
     # 获取模型参数
     mp = config.model_params
