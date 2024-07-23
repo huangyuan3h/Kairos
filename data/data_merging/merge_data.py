@@ -5,6 +5,8 @@ from datetime import date, timedelta
 import random
 import warnings
 
+from data.data_preprocessing.stock_data_cleaner import add_technical_indicators, add_time_features
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 year = 1
@@ -43,7 +45,7 @@ consider_features = [
 ]
 
 nonessential_features = [
-    'date', 'stock_code_left', 'stock_code_right',
+
     'revenue', 'total_operating_cost', 'operating_profit', 'gross_profit', 'net_profit',
     'basic_eps', 'rd_expenses', 'interest_income', 'interest_expense', 'investment_income',
     'cash_and_equivalents', 'accounts_receivable', 'inventory', 'net_fixed_assets',
@@ -55,6 +57,8 @@ nonessential_features = [
     'current_ratio', 'quick_ratio', 'debt_to_asset_ratio', 'revenue_growth_rate',
     'net_profit_growth_rate'
 ]
+
+drop_str_columns = ['date', 'stock_code_left', 'stock_code_right']
 
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
@@ -92,7 +96,7 @@ def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -
     return merged_df
 
 
-def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
+def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
     获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
 
@@ -156,8 +160,7 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
 
         merged_data = merged_data.replace([np.inf, -np.inf], np.nan)
         merged_data = merged_data.ffill().bfill()
-        final_df = drop_column_reset_type(merged_data)
-        return final_df
+        return merged_data
     except Exception as e:
         print(f"Exception occurred in file: {e.__traceback__.tb_frame}")
         print(f"On line number: {e.__traceback__.tb_lineno}")
@@ -166,17 +169,79 @@ def get_stock_total_data(stock_code: str, start_date: str, end_date: str) -> pd.
         return None
 
 
-def drop_column_reset_type(df: pd.DataFrame) -> pd.DataFrame:
-    # 1. 删除不需要的列
-    columns_to_remove = nonessential_features
-    df = df.drop(columns=columns_to_remove)
-
-    # 2. 将剩余列转换为 float64 类型
+def df_normalize_inf(df: pd.DataFrame) -> pd.DataFrame:
+    # 将剩余列转换为 float64 类型
     for col in df.columns:
         try:
             df[col] = pd.to_numeric(df[col], errors='coerce')
         except Exception as e:
             print(f"无法将列 '{col}' 转换为数字：{e}")
+    return df
+
+
+def get_stock_v1_training_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """
+    获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
+
+    Args:
+        stock_code (str): 股票代码。
+        start_date (str): 开始日期，格式为 'YYYYMMDD'。
+        end_date (str): 开始日期，格式为 'YYYYMMDD'。
+
+    Returns:
+        pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
+    """
+    merged_data = get_stock_all_data(stock_code, start_date, end_date)
+    final_df = keep_columns_reset_type(merged_data)
+    return final_df
+
+
+def get_stock_v2_training_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """
+    获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
+
+    Args:
+        stock_code (str): 股票代码。
+        start_date (str): 开始日期，格式为 'YYYYMMDD'。
+        end_date (str): 开始日期，格式为 'YYYYMMDD'。
+
+    Returns:
+        pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
+    """
+    merged_data = get_stock_all_data(stock_code, start_date, end_date)
+    final_df = drop_column_str(merged_data)
+    return final_df
+
+
+def drop_column_str(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
+
+    Args:
+        df (pd.DataFrame): 输入 DataFrame。
+
+    Returns:
+        pd.DataFrame: 处理后的 DataFrame。
+    """
+    df.drop(drop_str_columns, axis=1, inplace=True)
+    df = df_normalize_inf(df)
+    return df
+
+
+def keep_columns_reset_type(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
+
+    Args:
+        df (pd.DataFrame): 输入 DataFrame。
+
+    Returns:
+        pd.DataFrame: 处理后的 DataFrame。
+    """
+    # 保留 essential_features 和 consider_features 列
+    columns_to_keep = essential_features + consider_features
+    df = df[columns_to_keep]
+    df = df_normalize_inf(df)
     return df
 
 
@@ -221,19 +286,32 @@ def get_n_year_later(dt):
     return next_day
 
 
-def get_random_full_data() -> pd.DataFrame:
+def get_random_v1_data() -> pd.DataFrame:
     result = None
 
     while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
         code = get_random_code()
         start_date = get_random_available_date()
         end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
-        result = get_stock_total_data(stock_code=code, start_date=start_date, end_date=end_date.strftime("%Y%m%d"))
+        result = get_stock_v1_training_data(stock_code=code, start_date=start_date,
+                                            end_date=end_date.strftime("%Y%m%d"))
+    return result
+
+
+def get_random_total_data() -> pd.DataFrame:
+    result = None
+
+    while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
+        code = get_random_code()
+        start_date = get_random_available_date()
+        end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
+        result = get_stock_v2_training_data(stock_code=code, start_date=start_date, end_date=end_date.strftime("%Y%m%d"))
+        print(result)
     return result
 
 
 def get_random_valid_data() -> pd.DataFrame:
-    df = get_random_full_data()
+    df = get_random_v1_data()
 
     return df
 

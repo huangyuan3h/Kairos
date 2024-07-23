@@ -9,7 +9,7 @@ from src.training.parameter import get_config
 
 
 class ModelPredictor:
-    def __init__(self, version="v1"):
+    def __init__(self, version="simple_lstm_v1_2"):
         config = get_config(version)
         # 获取模型参数
         mp = config.model_params

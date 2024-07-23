@@ -13,8 +13,9 @@ from src.crawl.sync_daily_all import sync_daily_all
 from upload2aws.upload_to_dynamodb import import_2_aws_process
 
 
-def predict_stock_list(stock_list: list, date_object: datetime.datetime = None) -> pd.DataFrame:
-    predictor = ModelPredictor()
+def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
+                       version="simple_lstm_v1_2") -> pd.DataFrame:
+    predictor = ModelPredictor(version)
 
     df = pd.DataFrame(columns=['report_date', 'stock_code', 'change_1d', 'change_3d', 'change_5d', 'change_10d'])
     if date_object is None:
@@ -67,19 +68,19 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
     return predictions[0]
 
 
-def process_predict(report_date=None, sync_all=True, import_2_aws=True):
+def process_predict(report_date=None, sync_all=True, import_2_aws=True, version="simple_lstm_v1_2"):
     if report_date is None:
         with get_db_session() as db:
             report_date_object = get_last_index_daily_date(db)
     else:
-        report_date_object =datetime.datetime.strptime(report_date, "%Y-%m-%d")
+        report_date_object = datetime.datetime.strptime(report_date, "%Y-%m-%d")
 
     if sync_all:
         sync_daily_all()
     with get_db_session() as db:
         stock_list = get_predict_stock_list_data(db)
     stock_code_list = stock_list["code"].values
-    df = predict_stock_list(stock_code_list, report_date_object)
+    df = predict_stock_list(stock_code_list, report_date_object, version)
     with get_db_session() as db:
         bulk_insert_predict_report(db, df)
     if import_2_aws:
