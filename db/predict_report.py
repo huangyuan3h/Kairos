@@ -2,7 +2,7 @@
 from datetime import datetime,date
 
 from sqlalchemy import Column, Integer, Float, Date, String, func
-from typing import List
+
 
 from db.database import Base
 from sqlalchemy.orm import Session
@@ -20,6 +20,7 @@ class PredictReport(Base):
     change_3d = Column(Float)  # 3天涨幅
     change_5d = Column(Float)  # 5天涨幅
     change_10d = Column(Float)  # 10天涨幅
+    model_version = Column(String(32), nullable=False)
 
 
 def bulk_insert_predict_report(db: Session, df: pd.DataFrame):

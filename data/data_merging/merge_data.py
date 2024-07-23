@@ -37,13 +37,12 @@ essential_features = [
 ]
 
 consider_features = [
-    'stock_amplitude', 'stock_change_percent', 'stock_change', 'stock_daily_return',
+    'stock_amplitude', 'stock_change_percent', 'stock_change',
     'sse_amplitude', 'sse_change_percent', 'sse_change', 'sse_daily_return',
     'szse_amplitude', 'szse_change_percent', 'szse_change', 'szse_daily_return'
 ]
 
 nonessential_features = [
-
     'revenue', 'total_operating_cost', 'operating_profit', 'gross_profit', 'net_profit',
     'basic_eps', 'rd_expenses', 'interest_income', 'interest_expense', 'investment_income',
     'cash_and_equivalents', 'accounts_receivable', 'inventory', 'net_fixed_assets',
@@ -154,8 +153,6 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
-        merged_data = merged_data.replace([np.inf, -np.inf], np.nan)
-        merged_data = merged_data.ffill().bfill()
         return merged_data
     except Exception as e:
         print(f"Exception occurred in file: {e.__traceback__.tb_frame}")
@@ -172,6 +169,9 @@ def df_normalize_inf(df: pd.DataFrame) -> pd.DataFrame:
             df.loc[:, col] = pd.to_numeric(df[col], errors='coerce')
         except Exception as e:
             print(f"无法将列 '{col}' 转换为数字：{e}")
+
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df = df.ffill().bfill()
     return df
 
 

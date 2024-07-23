@@ -39,6 +39,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
             'change_3d': result[1],
             'change_5d': result[2],
             'change_10d': result[3],
+            'model_version': version
         }
         df = pd.concat([df, pd.DataFrame.from_dict([predict_data])], ignore_index=True)
 

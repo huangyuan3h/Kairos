@@ -11,7 +11,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
 
-times = 1000
+times = 2000
 
 record_day = 100
 

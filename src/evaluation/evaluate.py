@@ -7,7 +7,7 @@ from models.LSTMTransformer.predict import ModelPredictor
 from src.training.parameter import get_config
 
 
-def evaluate_model(model_name: str, get_data_func, data_version = "v1") -> dict:
+def evaluate_model(model_name: str, get_data_func, data_version="v1") -> dict:
     """
     使用提供的数据获取函数评估模型的准确度。
 
@@ -56,34 +56,28 @@ def compare_models(model_1_name: str, model_2_name: str, get_data_func) -> pd.Da
     return pd.DataFrame.from_dict(results, orient='index')
 
 
-x_list = []
-y_list = []
-
-x_list_v2 = []
-y_list_v2 = []
-
 eval_data_list = []
 
 batch_size = 1000
 
 
 def get_my_data(data_version="v1"):
+    x_list = []
+    y_list = []
+
     config = get_config(data_version)
     # 获取模型参数
     dp = config.data_params
 
     if len(eval_data_list) == 0:
         for i in range(batch_size):
-
             random_data = get_random_v1_data()
             eval_data = random_data.tail(70)
             eval_data_list.append(eval_data)
 
-            x, y = get_xy_data_from_df(eval_data, dp.feature_columns, dp.target_column)
-            x_list.append(x)
-            y_list.append(y)
+    for df in eval_data_list:
+        x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
+        x_list.append(x)
+        y_list.append(y)
 
-    if data_version == "v1":
-        return x_list, y_list
-    else:
-        return x_list_v2, y_list_v2
+    return x_list, y_list
