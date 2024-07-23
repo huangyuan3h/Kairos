@@ -5,6 +5,9 @@ import pandas as pd
 
 from data.data_merging.merge_data import get_stock_all_data, df_normalize_inf, get_random_code, \
     get_random_available_date, get_n_year_later, year
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 drop_str_columns = ['date', 'stock_code_left', 'stock_code_right']
 

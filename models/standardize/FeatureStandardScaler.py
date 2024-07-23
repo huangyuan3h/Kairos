@@ -8,18 +8,21 @@ class FeatureStandardScaler:
     对特征进行标准化，并保存/加载标准化器。
     """
 
-    def __init__(self, scaler_path="model_files/scaler_x.pkl", feature_columns=None):
+    def __init__(self, feature_columns=None, data_version="v1"):
         """
         初始化 FeatureStandardScaler。
 
         Args:
-            scaler_path (str): 标准化器保存路径。默认为 'scaler_x.pkl'。
             feature_columns (list): 需要进行标准化的特征列名。默认为 None，表示对所有列进行标准化。
+            data_version (str): 标准化版本
         """
-        self.scaler_path = scaler_path
+        if data_version == "v1":
+            self.scaler_path = "model_files/scaler_x.pkl"
+        else:
+            self.scaler_path = "model_files/scaler_x_v2.pkl"
+
         self.feature_columns = feature_columns
         self.scaler = self.load_scaler() or StandardScaler()
-
 
     def fit(self, df: pd.DataFrame):
         """

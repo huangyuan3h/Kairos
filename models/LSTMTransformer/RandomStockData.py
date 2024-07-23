@@ -1,6 +1,7 @@
-from data.data_merging.merge_data import get_random_valid_data
+from data.data_merging.merge_data import get_random_valid_data, get_random_v1_data
 import torch
 
+from data.data_merging.merge_data_v2 import get_random_v2_data
 from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
@@ -13,9 +14,12 @@ RANGE_SIZE = 70
 class RandomStockData:
 
     def __init__(self, feature_columns: list, target_column: str, feature_scale: FeatureStandardScaler,
-                 target_scale: TargetStandardScaler):
+                 target_scale: TargetStandardScaler, data_version = "v1"):
         self.counter = 0
-        self.data = get_random_valid_data()
+        if data_version == "v1":
+            self.data = get_random_v1_data()
+        else:
+            self.data = get_random_v2_data()
         self.feature_columns = feature_columns
         self.target_column = target_column
         self.feature_scale = feature_scale

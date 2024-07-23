@@ -7,14 +7,17 @@ class TargetStandardScaler:
     对目标变量进行标准化，并保存/加载标准化器。
     """
 
-    def __init__(self, scaler_path="model_files/scaler_y.pkl"):
+    def __init__(self, data_version="v1"):
         """
         初始化 TargetStandardScaler。
 
         Args:
             scaler_path (str): 标准化器保存路径。默认为 'scaler_y.pkl'。
         """
-        self.scaler_path = scaler_path
+        if data_version == "v1":
+            self.scaler_path = "model_files/scaler_y.pkl"
+        else:
+            self.scaler_path = "model_files/scaler_y_v2.pkl"
         self.scaler = self.load_scaler() or StandardScaler()
 
     def fit(self, change_percentage_list: list):

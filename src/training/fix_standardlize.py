@@ -37,10 +37,10 @@ def get_random_n_data(version="v1") -> pd.DataFrame:
         end_date = start_date + timedelta(days=record_day * 2)
         if version == "v2":
             result = get_stock_v2_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
-                                      end_date=end_date.strftime("%Y%m%d"))
+                                                end_date=end_date.strftime("%Y%m%d"))
         else:
             result = get_stock_v1_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
-                                      end_date=end_date.strftime("%Y%m%d"))
+                                                end_date=end_date.strftime("%Y%m%d"))
     return result
 
 
@@ -91,19 +91,17 @@ def build_data(version="v1") -> (pd.DataFrame, list):
     return df_merged, change_percentage_list
 
 
-def fit_feature_scaler(df, version = "v1"):
-    if version == "v2":
-        feature_scaler = FeatureStandardScaler(scaler_path="model_files/scaler_x_v2.pkl")
-    else:
-        feature_scaler = FeatureStandardScaler()
+def fit_feature_scaler(df, version="v1"):
+
+    feature_scaler = FeatureStandardScaler(data_version=version)
+
     feature_scaler.fit(df)
     feature_scaler.save_scaler()
 
 
-def fit_target_scaler(l: list,  version = "v1"):
-    if version == "v2":
-        target_scaler = TargetStandardScaler(scaler_path="model_files/scaler_y_v2.pkl")
-    else:
-        target_scaler = TargetStandardScaler()
+def fit_target_scaler(l: list, version="v1"):
+
+    target_scaler = TargetStandardScaler(data_version=version)
+
     target_scaler.fit(l)
     target_scaler.save_scaler()

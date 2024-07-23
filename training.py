@@ -2,7 +2,7 @@ from src.training import training
 
 
 def main():
-    training("time_series_transformer")
+    training("simple_lstm_v2_1")
 
 
 if __name__ == "__main__":
