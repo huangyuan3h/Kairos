@@ -5,6 +5,9 @@ from datetime import date, timedelta
 import random
 import warnings
 
+from data.data_preprocessing.shibo_rate_cleaner import clean_shibo_rate_data
+from db.shibor_rates import get_shibor_rate_by_date_range
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 year = 1
@@ -137,20 +140,28 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
         cleaned_sse_index_data = clean_index_data(sse_index_data.copy())
         cleaned_szse_index_data = clean_index_data(szse_index_data.copy())
 
+        with get_db_session() as db:
+            shibor_rate = get_shibor_rate_by_date_range(db, start_date, end_date)
+
+        cleaned_shibo_rate = clean_shibo_rate_data(shibor_rate)
+
         # 首先为每个数据框添加前缀
         cleaned_currency_data = cleaned_currency_data.add_prefix('Currency_')
         cleaned_sse_index_data = cleaned_sse_index_data.add_prefix('sse_')
         cleaned_szse_index_data = cleaned_szse_index_data.add_prefix('szse_')
+        cleaned_shibo_rate=cleaned_shibo_rate.add_prefix('rate_')
 
         # 将 'date' 列名恢复为没有前缀的名称，以便进行合并
         cleaned_currency_data = cleaned_currency_data.rename(columns={'Currency_date': 'date'})
         cleaned_sse_index_data = cleaned_sse_index_data.rename(columns={'sse_date': 'date'})
         cleaned_szse_index_data = cleaned_szse_index_data.rename(columns={'szse_date': 'date'})
+        cleaned_shibo_rate = cleaned_shibo_rate.rename(columns={'rate_date': 'date'})
 
         # 合并所有数据
         merged_data = pd.merge(cleaned_stock_data, cleaned_currency_data, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_sse_index_data, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_szse_index_data, on='date', how='left')
+        merged_data = pd.merge(merged_data, cleaned_shibo_rate, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
 
         return merged_data

@@ -66,7 +66,7 @@ def get_shibor_rate_by_date_range(db: Session, start_date: str, end_date: str) -
     stmt = select("*").filter(
         ShiborRate.date >= start_date,
         ShiborRate.date <= end_date
-    )
+    ).order_by(ShiborRate.date.asc())
 
     result = db.execute(stmt).all()
 

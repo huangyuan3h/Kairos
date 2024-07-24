@@ -75,7 +75,7 @@ def get_sz_index_daily_by_date_range(db: Session, start_date: str, end_date: str
     stmt = select("*").filter(
         SZIndexDaily.date >= start_date,
         SZIndexDaily.date <= end_date
-    ).order_by(SZIndexDaily.date.desc())
+    ).order_by(SZIndexDaily.date.asc())
 
     result = db.execute(stmt).all()
 

@@ -96,6 +96,11 @@ def add_technical_indicators(stock_data: pd.DataFrame) -> pd.DataFrame:
     # money_flow_ratio = positive_flow / negative_flow.abs()
     # stock_data['MFI'] = 100 - (100 / (1 + money_flow_ratio))
 
+    # 计算布林线 (Bollinger Bands)
+    stock_data['BOLL_mid'] = stock_data['stock_close'].rolling(window=20).mean()
+    stock_data['BOLL_upper'] = stock_data['BOLL_mid'] + 2 * stock_data['stock_close'].rolling(window=20).std()
+    stock_data['BOLL_lower'] = stock_data['BOLL_mid'] - 2 * stock_data['stock_close'].rolling(window=20).std()
+
     return stock_data
 
 

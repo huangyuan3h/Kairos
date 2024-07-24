@@ -57,7 +57,7 @@ def get_exchange_rate_by_date_range(db: Session, start_date: str, end_date: str)
     stmt = select("*").where(
         ExchangeRate.date >= start_date,
         ExchangeRate.date <= end_date
-    ).order_by(ExchangeRate.date.desc())
+    ).order_by(ExchangeRate.date.asc())
 
     result = db.execute(stmt).all()
     df = pd.DataFrame(result, columns=[column.key for column in ExchangeRate.__table__.columns])

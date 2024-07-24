@@ -75,7 +75,7 @@ def get_sh_index_daily_by_date_range(db: Session, start_date: str, end_date: str
     stmt = select("*").filter(
         SHIndexDaily.date >= start_date,
         SHIndexDaily.date <= end_date
-    ).order_by(SHIndexDaily.date.desc())
+    ).order_by(SHIndexDaily.date.asc())
 
     result = db.execute(stmt).all()
     df = pd.DataFrame(result, columns=[col.key for col in SHIndexDaily.__table__.columns])
