@@ -6,7 +6,7 @@ import random
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 
-length_of_stock = 40
+length_of_stock = 64
 
 
 class StockDataset(IterableDataset):
