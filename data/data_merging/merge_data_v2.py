@@ -9,22 +9,26 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-
-column_to_keep =  ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount',
-        'stock_amplitude', 'stock_change_percent', 'stock_change', 'stock_turnover_rate', 'daily_return', 'ma5', 'ma20',
-        'rsi', 'ATR', 'KDJ_K', 'KDJ_D', 'KDJ_J', 'EMA12', 'EMA26', 'MACD', 'MACD_signal', 'MACD_hist', 'VWAP', 'BOLL_mid',
-        'BOLL_upper', 'BOLL_lower', 'day_of_week', 'month', 'quarter', 'is_end_of_week', 'is_end_of_month', 'Currency_USD_CNY',
-        'Currency_EUR_CNY', 'Currency_USD_CNY_MA_5', 'Currency_USD_CNY_MA_20', 'Currency_EUR_CNY_MA_5', 'Currency_EUR_CNY_MA_20',
-        'sse_open', 'sse_close', 'sse_high', 'sse_low', 'sse_change_percent',
-        'sse_change', 'sse_turnover_rate', 'sse_daily_return', 'sse_ma5', 'sse_ma20', 'sse_rsi', 'szse_open', 'szse_close',
-        'szse_high', 'szse_low', 'szse_change_percent', 'szse_change',
-        'szse_turnover_rate', 'szse_daily_return', 'szse_ma5', 'szse_ma20', 'szse_rsi', 'rate_rate', 'rate_change',
-        'qvix_open', 'qvix_high', 'qvix_low', 'qvix_close',  'gross_profit_margin', 'operating_profit_margin', 'net_profit_margin',
-        'return_on_equity', 'return_on_assets', 'asset_turnover',
-        'inventory_turnover', 'receivables_turnover',
-        'current_ratio', 'quick_ratio', 'debt_to_asset_ratio', 'revenue_growth_rate', 'net_profit_growth_rate']
-
-
+column_to_keep = ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume', 'stock_amount',
+                  'stock_amplitude', 'stock_change_percent', 'stock_change', 'stock_turnover_rate', 'daily_return',
+                  'ma5', 'ma20',
+                  'rsi', 'ATR', 'KDJ_K', 'KDJ_D', 'KDJ_J', 'EMA12', 'EMA26', 'MACD', 'MACD_signal', 'MACD_hist', 'VWAP',
+                  'BOLL_mid',
+                  'BOLL_upper', 'BOLL_lower', 'day_of_week', 'month', 'quarter', 'is_end_of_week', 'is_end_of_month',
+                  'Currency_USD_CNY',
+                  'Currency_EUR_CNY', 'Currency_USD_CNY_MA_5', 'Currency_USD_CNY_MA_20', 'Currency_EUR_CNY_MA_5',
+                  'Currency_EUR_CNY_MA_20',
+                  'sse_open', 'sse_close', 'sse_high', 'sse_low', 'sse_change_percent',
+                  'sse_change', 'sse_turnover_rate', 'sse_daily_return', 'sse_ma5', 'sse_ma20', 'sse_rsi', 'szse_open',
+                  'szse_close',
+                  'szse_high', 'szse_low', 'szse_change_percent', 'szse_change',
+                  'szse_turnover_rate', 'szse_daily_return', 'szse_ma5', 'szse_ma20', 'szse_rsi', 'rate_rate',
+                  'rate_change',
+                  'qvix_open', 'qvix_high', 'qvix_low', 'qvix_close', 'gross_profit_margin', 'operating_profit_margin',
+                  'net_profit_margin',
+                  'asset_turnover',
+                  'current_ratio', 'quick_ratio', 'debt_to_asset_ratio'
+                  ]
 
 
 def keep_column_v2(df: pd.DataFrame):
@@ -81,5 +85,5 @@ def get_random_data_all() -> pd.DataFrame:
         start_date = get_random_available_date()
         end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
         result = get_stock_all_data(stock_code=code, start_date=start_date,
-                                            end_date=end_date.strftime("%Y%m%d"))
+                                    end_date=end_date.strftime("%Y%m%d"))
     return result
