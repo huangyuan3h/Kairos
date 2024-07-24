@@ -1,22 +1,11 @@
-from models.LSTMTransformer.RandomStockData import RandomStockData
-from models.standardize.FeatureStandardScaler import FeatureStandardScaler
-from models.standardize.TargetStandardScaler import TargetStandardScaler
-from src.training.parameter import get_config
-
-
+from data.raw.interbank_rates import get_shibor_rate
+from db import create_table, get_db_session
+from db.shibor_rates import get_shibor_rate_by_date_range
+from import_2_db.import_shibor_rate import import_shibor_rate
 
 if __name__ == "__main__":
+    create_table()
+    with get_db_session() as db:
+        df = get_shibor_rate_by_date_range(db, "20240101", "20240723")
+    print(df)
 
-    config = get_config("simple_lstm_v2_1")
-    # 获取模型参数
-    mp = config.model_params
-    tp = config.training_params
-    dp = config.data_params
-    Model = config.Model
-    data_version = config.data
-
-    feature_scaler = FeatureStandardScaler(data_version=data_version)
-    target_scaler = TargetStandardScaler(data_version=data_version)
-    generator = RandomStockData(dp.feature_columns, dp.target_column, feature_scaler, target_scaler, data_version)
-    x, y = generator.get_data()
-    print(x, y)
