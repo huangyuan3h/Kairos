@@ -13,7 +13,7 @@ def import_etf_qvix():
     """
     导入 50ETF 期权波动率指数 (QVIX) 数据到数据库
     """
-    cursor = currency_start_date
+    cursor = currency_start_date.date()
     with get_db_session() as db:
         last_date = get_last_etf_qvix_date(db)
         if last_date is not None:
@@ -26,6 +26,9 @@ def import_etf_qvix():
         return
 
     etf_qvix_df['date'] = pd.to_datetime(etf_qvix_df['date'])
+
+    # Extract the date part and assign it back to the 'date' column
+    etf_qvix_df['date'] = etf_qvix_df['date'].dt.date
     to_insert = etf_qvix_df[etf_qvix_df["date"] > cursor]
 
     with get_db_session() as db:

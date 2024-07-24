@@ -1,7 +1,7 @@
 from src.evaluation.evaluate import compare_models, get_my_data
 
 # 比较两个模型的性能
-comparison_df = compare_models("simple_lstm_v2_1", "simple_lstm", get_my_data)
+comparison_df = compare_models("v1", "simple_lstm_v2_1", get_my_data)
 print(comparison_df)
 
 # 根据不同指标选择最佳模型
