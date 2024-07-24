@@ -42,8 +42,90 @@ def clean_stock_data(stock_data: pd.DataFrame) -> pd.DataFrame:
     # 4. 统一日期格式
     stock_data['date'] = pd.to_datetime(stock_data['date'])
     stock_data['date'] = stock_data['date'].dt.strftime('%Y%m%d')
-
+    stock_data = add_technical_indicators(stock_data)
+    stock_data = add_time_features(stock_data)
     stock_data = stock_data.drop(stock_data.head(20).index)
+    return stock_data
+
+
+def add_technical_indicators(stock_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    添加更多技术指标。
+
+    Args:
+        stock_data (pd.DataFrame): 包含基本特征的股票数据。
+
+    Returns:
+        pd.DataFrame: 添加了更多技术指标的股票数据。
+    """
+
+    # 1. 波动性指标
+    # 计算平均真实波动范围 (ATR)
+    high_low = stock_data['stock_high'] - stock_data['stock_low']
+    high_close = (stock_data['stock_high'] - stock_data['stock_close'].shift()).abs()
+    low_close = (stock_data['stock_low'] - stock_data['stock_close'].shift()).abs()
+    ranges = pd.concat([high_low, high_close, low_close], axis=1)
+    true_range = ranges.max(axis=1)
+    stock_data['ATR'] = true_range.rolling(window=14).mean()
+
+    # 2. 动量指标
+    # 计算随机指标 (KDJ)
+    low_min = stock_data['stock_low'].rolling(window=9).min()
+    high_max = stock_data['stock_high'].rolling(window=9).max()
+    stock_data['KDJ_K'] = ((stock_data['stock_close'] - low_min) / (high_max - low_min)) * 100
+    stock_data['KDJ_D'] = stock_data['KDJ_K'].rolling(window=3).mean()
+    stock_data['KDJ_J'] = 3 * stock_data['KDJ_D'] - 2 * stock_data['KDJ_K']
+
+    # 计算移动平均收敛散度 (MACD)
+    stock_data['EMA12'] = stock_data['stock_close'].ewm(span=12).mean()
+    stock_data['EMA26'] = stock_data['stock_close'].ewm(span=26).mean()
+    stock_data['MACD'] = stock_data['EMA12'] - stock_data['EMA26']
+    stock_data['MACD_signal'] = stock_data['MACD'].ewm(span=9).mean()
+    stock_data['MACD_hist'] = stock_data['MACD'] - stock_data['MACD_signal']
+
+    # 3. 其他指标
+    # 计算成交量加权平均价格 (VWAP)
+    stock_data['VWAP'] = (stock_data['stock_amount'] / stock_data['stock_volume']).cumsum() / stock_data[
+        'stock_volume'].cumsum()
+
+    # # 计算资金流量指标 (MFI)
+    # typical_price = (stock_data['stock_high'] + stock_data['stock_low'] + stock_data['stock_close']) / 3
+    # money_flow = typical_price * stock_data['stock_volume']
+    # positive_flow = money_flow[money_flow > 0].rolling(window=14).sum()
+    # negative_flow = money_flow[money_flow < 0].rolling(window=14).sum()
+    # money_flow_ratio = positive_flow / negative_flow.abs()
+    # stock_data['MFI'] = 100 - (100 / (1 + money_flow_ratio))
+
+    # 计算布林线 (Bollinger Bands)
+    stock_data['BOLL_mid'] = stock_data['stock_close'].rolling(window=20).mean()
+    stock_data['BOLL_upper'] = stock_data['BOLL_mid'] + 2 * stock_data['stock_close'].rolling(window=20).std()
+    stock_data['BOLL_lower'] = stock_data['BOLL_mid'] - 2 * stock_data['stock_close'].rolling(window=20).std()
+
+    return stock_data
+
+
+def add_time_features(stock_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    添加时间特征。
+
+    Args:
+        stock_data (pd.DataFrame): 包含日期特征的股票数据。
+
+    Returns:
+        pd.DataFrame: 添加了时间特征的股票数据。
+    """
+    stock_data['date'] = pd.to_datetime(stock_data['date'])
+    # 添加星期几特征
+    stock_data['day_of_week'] = stock_data['date'].dt.dayofweek
+    # 添加月份特征
+    stock_data['month'] = stock_data['date'].dt.month
+    # 添加季度特征
+    stock_data['quarter'] = stock_data['date'].dt.quarter
+    # 添加是否为交易日结束特征
+    stock_data['is_end_of_week'] = stock_data['day_of_week'].isin([4, 5]).astype(int)
+    # 添加是否为月末特征
+    stock_data['is_end_of_month'] = stock_data['date'].dt.is_month_end.astype(int)
+    stock_data['date'] = stock_data['date'].dt.strftime('%Y%m%d')
     return stock_data
 
 

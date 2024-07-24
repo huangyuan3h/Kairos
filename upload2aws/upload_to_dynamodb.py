@@ -4,11 +4,11 @@ from decimal import Decimal
 import boto3
 import pandas as pd
 
-from db import create_table, get_db_session
+from db import get_db_session
 from db.predict_report import get_predict_report_by_date
 
 
-def upload_df_to_dynamodb(df: pd.DataFrame, table_name: str, modelVersion = 'v1'):
+def upload_df_to_dynamodb(df: pd.DataFrame, table_name: str):
     """
     将 Pandas DataFrame 中的数据上传到 DynamoDB 表
 
@@ -32,7 +32,6 @@ def upload_df_to_dynamodb(df: pd.DataFrame, table_name: str, modelVersion = 'v1'
         for key, value in item.items():
             if isinstance(value, float):
                 item[key] = Decimal(str(value))
-        item["model"] = modelVersion
         # 上传数据到 DynamoDB
         table.put_item(Item=item)
 

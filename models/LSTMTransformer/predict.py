@@ -9,17 +9,17 @@ from src.training.parameter import get_config
 
 
 class ModelPredictor:
-    def __init__(self, version="v1"):
+    def __init__(self, version="simple_lstm_v1_2"):
         config = get_config(version)
         # 获取模型参数
         mp = config.model_params
         tp = config.training_params
         Model = config.Model
-
+        data_version = config.data
         # 初始化特征和目标标准化器
-        feature_scaler = FeatureStandardScaler()
+        feature_scaler = FeatureStandardScaler(data_version=data_version)
         feature_scaler.load_scaler()
-        target_scaler = TargetStandardScaler()
+        target_scaler = TargetStandardScaler(data_version=data_version)
         target_scaler.load_scaler()
 
         self.model = Model(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads)

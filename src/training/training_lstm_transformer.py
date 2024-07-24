@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from models.LSTMTransformer.StockDataLoader import create_dataloader
+from models.LSTMTransformer.WeightedSumLoss import WeightedSumLoss
 from models.LSTMTransformer.load_model import load_model
 
 from models.LSTMTransformer.train_model import train_model
@@ -19,6 +20,7 @@ def training(version="v1"):
     tp = config.training_params
     dp = config.data_params
     Model = config.Model
+    data_version = config.data
 
     # 检查设备
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
@@ -27,11 +29,12 @@ def training(version="v1"):
     model = load_model(model, tp.model_save_path)
 
     # 优化器
-    criterion = nn.MSELoss()
+    weights = [0.8, 1.2, 1, 0.4]  # balance
+    criterion = WeightedSumLoss(weights=weights)
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
     dataset = StockDataset(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,
-                           num_epochs=tp.num_epochs)
+                           num_epochs=tp.num_epochs, data_version=data_version)
     dataloader = create_dataloader(dataset, tp.batch_size)
 
     # 使用训练数据训练模型

@@ -11,5 +11,6 @@ config_CNNLSTM = {
     "model_save_path": "./model_files/CNN_LSTM.pth",
     "feature_columns": [i for i in range(48)],
     "target_column": "stock_close",
-    "model": CNNLSTM
+    "model": CNNLSTM,
+    "data": "v1"
 }

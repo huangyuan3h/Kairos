@@ -8,6 +8,9 @@ import torch.nn as nn
 from models.LSTMTransformerV0.config import config_lstm_transformer_modelV0
 from models.LSTMTransformerV1_1.config import config_lstm_transformer_modelV1_2
 from models.SimpleLSTM.config import config_simple_lstm
+from models.SimpleLSTM_v1_2.config import config_simple_lstm_v1_2
+from models.SimpleLSTM_v2_1.config import config_simple_lstm_v2_1
+from models.TimeSeriesTransformer.config import config_TimeSeriesTransformer
 
 
 @dataclass
@@ -38,6 +41,7 @@ class ModelConfig:
     training_params: TrainingParams
     data_params: DataParams
     Model: nn.Module
+    data: str # data version
 
 
 MODEL_CONFIGS = {
@@ -46,7 +50,8 @@ MODEL_CONFIGS = {
         training_params=TrainingParams(batch_size=64, learning_rate=1e-3, num_epochs=10000,
                                        model_save_path="model_files/lstm_transformer_model_a.pth"),
         data_params=DataParams(feature_columns=[i for i in range(48)], target_column="stock_close"),
-        Model = nn.Module
+        Model = nn.Module,
+        data = "v1"
     ),
 }
 
@@ -59,7 +64,8 @@ def load_config(cfg, name: str):
                                        num_epochs=cfg["num_epochs"],
                                        model_save_path=cfg["model_save_path"]),
         data_params=DataParams(feature_columns=cfg["feature_columns"], target_column=cfg["target_column"]),
-        Model = cfg["model"]
+        Model = cfg["model"],
+        data = cfg["data"]
     )
 
 
@@ -67,6 +73,9 @@ load_config(config_lstm_transformer_modelV1, "v1")
 load_config(config_lstm_transformer_modelV0, "v0")
 load_config(config_simple_lstm, "simple_lstm")
 load_config(config_CNNLSTM, "cnn_lstm")
+load_config(config_simple_lstm_v1_2, "simple_lstm_v1_2")
+load_config(config_TimeSeriesTransformer, "time_series_transformer")
+load_config(config_simple_lstm_v2_1, "simple_lstm_v2_1")
 
 
 def get_config(model_name: str) -> ModelConfig:

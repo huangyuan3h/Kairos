@@ -1,4 +1,5 @@
-from import_2_db import import_all_stocks_daily, import_exchange_rates, import_sh_index_daily, import_sz_index_daily
+from import_2_db import import_all_stocks_daily, import_exchange_rates, import_sh_index_daily, import_sz_index_daily, \
+    import_shibor_rate
 
 
 def sync_daily_all():
@@ -6,3 +7,4 @@ def sync_daily_all():
     import_exchange_rates()
     import_sh_index_daily()
     import_sz_index_daily()
+    import_shibor_rate()
