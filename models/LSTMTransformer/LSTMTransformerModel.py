@@ -23,7 +23,7 @@ class LSTMAttentionTransformer(nn.Module):
 
         # Transformer 全局信息整合
         transformer_encoder_layer = nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=num_heads,
-                                                               dropout=dropout_rate)
+                                                               dropout=dropout_rate,  batch_first=True)
         self.transformer_encoder = nn.TransformerEncoder(transformer_encoder_layer, num_layers=num_layers)
 
         # 输出层

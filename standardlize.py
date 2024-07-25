@@ -2,7 +2,7 @@ from src.training.fix_standardlize import build_data, fit_feature_scaler, fit_ta
 
 
 def main():
-    df, y = build_data("simple_lstm_v2_1")
+    df, y = build_data("v1")
     fit_feature_scaler(df, "v2")
     fit_target_scaler(y, "v2")
 

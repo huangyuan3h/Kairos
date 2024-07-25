@@ -9,6 +9,7 @@ from data.data_preprocessing.shibo_rate_cleaner import clean_shibo_rate_data
 from data.data_preprocessing.vix_data_cleaner import clean_qvix_data
 from db.option_qvix import get_etf_qvix_by_date_range
 from db.shibor_rates import get_shibor_rate_by_date_range
+from db.us_index_daily import get_us_index_daily_by_date_range
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -18,7 +19,7 @@ from data.data_preprocessing import (
     clean_stock_data,
     clean_index_data,
     clean_currency_exchange_rates,
-    clean_financial_data,
+    clean_financial_data, clean_us_index_data,
 )
 from db import get_db_session
 from db.exchange_rate_daily import get_exchange_rate_by_date_range
@@ -152,12 +153,18 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
 
         cleaned_qvix =clean_qvix_data(qvix)
 
+        with get_db_session() as db:
+            us_index = get_us_index_daily_by_date_range(db,  start_date, end_date)
+
+        cleaned_us_index = clean_us_index_data(us_index)
+
         # 首先为每个数据框添加前缀
         cleaned_currency_data = cleaned_currency_data.add_prefix('Currency_')
         cleaned_sse_index_data = cleaned_sse_index_data.add_prefix('sse_')
         cleaned_szse_index_data = cleaned_szse_index_data.add_prefix('szse_')
         cleaned_shibo_rate=cleaned_shibo_rate.add_prefix('rate_')
         cleaned_qvix = cleaned_qvix.add_prefix("qvix_")
+
 
         # 将 'date' 列名恢复为没有前缀的名称，以便进行合并
         cleaned_currency_data = cleaned_currency_data.rename(columns={'Currency_date': 'date'})
@@ -173,6 +180,7 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
         merged_data = pd.merge(merged_data, cleaned_shibo_rate, on='date', how='left')
         merged_data = pd.merge(merged_data, cleaned_qvix, on='date', how='left')
         merged_data = interpolate_financial_data(merged_data, cleaned_financial_data)
+        merged_data = pd.merge(merged_data, cleaned_us_index, on='date', how='left')
 
         return merged_data
     except Exception as e:

@@ -27,7 +27,8 @@ column_to_keep = ['stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock
                   'qvix_open', 'qvix_high', 'qvix_low', 'qvix_close', 'gross_profit_margin', 'operating_profit_margin',
                   'net_profit_margin',
                   'asset_turnover',
-                  'current_ratio', 'quick_ratio', 'debt_to_asset_ratio'
+                  'current_ratio', 'quick_ratio', 'debt_to_asset_ratio',
+                    'IXIC_increase', 'DJI_increase', 'INX_increase', 'NDX_increase'
                   ]
 
 
