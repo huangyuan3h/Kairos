@@ -33,10 +33,7 @@ class RandomStockData:
         self.counter = self.counter + 1
         if self.counter >= learn_limit:
             self.counter = 0
-            if self.data_version == "v1":
-                self.data = get_random_v1_data()
-            else:
-                self.data = get_random_v2_data()
+            self.data = get_random_v2_data()
 
 
         return x, y

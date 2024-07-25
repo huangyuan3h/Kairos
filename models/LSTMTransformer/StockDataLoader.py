@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 
+
 def create_dataloader(dataset: torch.utils.data.IterableDataset, batch_size: int) -> DataLoader:
     """
     创建一个 DataLoader 用于加载股票数据。

@@ -29,7 +29,7 @@ def import_etf_qvix():
 
     # Extract the date part and assign it back to the 'date' column
     etf_qvix_df['date'] = etf_qvix_df['date'].dt.date
-    to_insert = etf_qvix_df[etf_qvix_df["date"] > cursor]
+    to_insert = etf_qvix_df[etf_qvix_df["date"] >= cursor]
 
     with get_db_session() as db:
         bulk_insert_etf_qvix_data(db, to_insert)

@@ -17,8 +17,14 @@ class PredictReport(Base):
     report_date = Column(Date, nullable=False)
     stock_code = Column(String(10), nullable=False)
     change_1d = Column(Float)  # 1天涨幅
+    change_2d = Column(Float)  # 2天涨幅
     change_3d = Column(Float)  # 3天涨幅
+    change_4d = Column(Float)  # 4天涨幅
     change_5d = Column(Float)  # 5天涨幅
+    change_6d = Column(Float)  # 6天涨幅
+    change_7d = Column(Float)  # 7天涨幅
+    change_8d = Column(Float)  # 8天涨幅
+    change_9d = Column(Float)  # 9天涨幅
     change_10d = Column(Float)  # 10天涨幅
     model_version = Column(String(32), nullable=False)
 

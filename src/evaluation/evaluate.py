@@ -1,7 +1,9 @@
 import pandas as pd
+import torch
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from data.data_merging.merge_data_v2 import get_random_data_all, keep_column_v2
+from models.LSTMTransformer.WeightedSumLoss import get_weights
 from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.LSTMTransformer.predict import ModelPredictor
 from src.training.parameter import get_config
@@ -9,7 +11,7 @@ from src.training.parameter import get_config
 
 def evaluate_model(model_name: str, get_data_func) -> dict:
     """
-    使用提供的数据获取函数评估模型的准确度。
+    使用提供的数据获取函数评估模型的准确度，并考虑不同时间步的权重。
 
     Args:
         model_name (str): 模型名称。
@@ -20,20 +22,36 @@ def evaluate_model(model_name: str, get_data_func) -> dict:
     """
     predictor = ModelPredictor(model_name)
     X, y_true = get_data_func(model_name)
+    weights = get_weights()
+    weights = torch.tensor(weights)
 
     # 使用模型进行预测
     predictions = []
     for x in X:
         prediction = predictor.predict(x)
         predictions.append(prediction[0])  # 获取预测值
+    predictions = torch.stack(predictions)
 
-    # 计算评估指标
-    mae = mean_absolute_error(y_true, predictions)
-    mse = mean_squared_error(y_true, predictions)
-    rmse = mse ** 0.5
-    r2 = r2_score(y_true, predictions)
+    # 计算加权指标
+    weighted_mae = (torch.abs(predictions - y_true) * weights).mean()
+    weighted_mse = ((predictions - y_true) ** 2 * weights).mean()
+    weighted_rmse = weighted_mse ** 0.5
+    weighted_r2 = r2_score(y_true.view(-1), predictions.view(-1), sample_weight=weights.repeat(len(y_true)))
 
-    return {"MAE": mae, "MSE": mse, "RMSE": rmse, "R2": r2}
+    # 计算每个时间步的指标
+    mae_per_step = [mean_absolute_error(y_true[:, i], predictions[:, i]) for i in range(predictions.shape[1])]
+    mse_per_step = [mean_squared_error(y_true[:, i], predictions[:, i]) for i in range(predictions.shape[1])]
+    rmse_per_step = [mse ** 0.5 for mse in mse_per_step]
+
+    return {
+        "Weighted MAE": weighted_mae.item(),
+        "Weighted MSE": weighted_mse.item(),
+        "Weighted RMSE": weighted_rmse.item(),
+        "Weighted R2": weighted_r2,
+        "MAE per Step": mae_per_step,
+        "MSE per Step": mse_per_step,
+        "RMSE per Step": rmse_per_step,
+    }
 
 
 def compare_models(model_1_name: str, model_2_name: str, get_data_func) -> pd.DataFrame:
