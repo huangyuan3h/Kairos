@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
+from classify.LSTMTransformerClassify.config import config_lstm_transformer_model_classify
 from models.CNNLSTM.config import config_CNNLSTM
 from models.LSTMTransformer.config import config_lstm_transformer_modelV1
 import torch.nn as nn
@@ -67,6 +68,7 @@ def load_config(cfg, name: str):
 load_config(config_lstm_transformer_modelV1, "v1")
 load_config(config_CNNLSTM, "cnn_lstm")
 load_config(config_simple_lstm_v2_1, "simple_lstm_v2_1")
+load_config(config_lstm_transformer_model_classify, "v1_classify")
 
 
 def get_config(model_name: str) -> ModelConfig:
