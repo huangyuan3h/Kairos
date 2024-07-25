@@ -20,7 +20,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
     predictor = ModelPredictor(version)
     config = get_config(version)
 
-    df = pd.DataFrame(columns=['report_date', 'stock_code', 'change_1d', 'change_3d', 'change_5d', 'change_10d'])
+    df = pd.DataFrame(columns=['report_date', 'stock_code', 'change_1d','change_2d','change_3d','change_4d', 'change_5d', 'change_6d', 'change_7d','change_8d','change_9d','change_10d'])
     if date_object is None:
         with get_db_session() as db:
             date_object = get_last_index_daily_date(db)
@@ -39,9 +39,15 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
             'report_date': date_object,
             'stock_code': stock_code,
             'change_1d': result[0],
-            'change_3d': result[1],
-            'change_5d': result[2],
-            'change_10d': result[3],
+            'change_2d': result[1],
+            'change_3d': result[2],
+            'change_4d': result[3],
+            'change_5d': result[4],
+            'change_6d': result[5],
+            'change_7d': result[6],
+            'change_8d': result[7],
+            'change_9d': result[8],
+            'change_10d': result[9],
             'model_version': version
         }
         df = pd.concat([df, pd.DataFrame.from_dict([predict_data])], ignore_index=True)
