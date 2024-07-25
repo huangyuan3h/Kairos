@@ -24,7 +24,7 @@ def train_model(model: LSTMAttentionTransformer, dataloader: DataLoader, criteri
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     # 添加 ReduceLROnPlateau 学习率调度器
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=30, factor=0.9)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=50, factor=0.9)
     epoch_loss = 0.0
 
     for epoch in range(num_epochs):

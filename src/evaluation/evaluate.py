@@ -30,7 +30,9 @@ def evaluate_model(model_name: str, get_data_func) -> dict:
     for x in X:
         prediction = predictor.predict(x)
         predictions.append(prediction[0])  # 获取预测值
-    predictions = torch.stack(predictions)
+    predictions = torch.stack([torch.tensor(p) for p in predictions])
+    y_true = torch.tensor(y_true)
+
 
     # 计算加权指标
     weighted_mae = (torch.abs(predictions - y_true) * weights).mean()
