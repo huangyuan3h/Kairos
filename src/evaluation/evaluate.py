@@ -77,7 +77,7 @@ def compare_models(model_1_name: str, model_2_name: str, get_data_func) -> pd.Da
 
 eval_data_list = []
 
-batch_size = 1000
+batch_size = 500
 
 
 def get_my_data(model_name="v1"):
