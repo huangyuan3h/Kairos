@@ -3,6 +3,7 @@ import numpy as np  # 导入 NumPy 库
 from typing import Tuple
 from sklearn.feature_selection import SelectKBest, f_regression, mutual_info_regression
 
+
 def filter_features_correlation(df: pd.DataFrame, threshold: float = 0.8) -> Tuple[pd.DataFrame, list, list]:
     """
     过滤掉相关性高于阈值的特征。
@@ -24,6 +25,7 @@ def filter_features_correlation(df: pd.DataFrame, threshold: float = 0.8) -> Tup
     filtered_df = df.drop(to_drop, axis=1)
     kept_features = filtered_df.columns.tolist()
     return filtered_df, kept_features, to_drop
+
 
 def select_k_best_features(X: pd.DataFrame, y: pd.Series, k: int = 10) -> Tuple[pd.DataFrame, list]:
     """

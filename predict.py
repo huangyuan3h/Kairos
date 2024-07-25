@@ -1,9 +1,5 @@
 from db import get_db_session, create_table
-from db.predict_report import bulk_insert_predict_report
-from db.stock_list import get_all_stock_list_data, get_predict_stock_list_data
-from src.crawl.sync_daily_all import sync_daily_all
 from src.training.predict import predict_stock_list, process_predict
-from upload2aws.upload_to_dynamodb import import_2_aws_process
 
 
 def main():

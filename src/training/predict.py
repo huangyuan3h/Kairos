@@ -1,5 +1,4 @@
 
-from data.data_merging.merge_data import get_stock_v1_training_data
 from data.data_merging.merge_data_v2 import get_stock_v2_training_data
 from db import get_db_session
 from db.predict_report import get_predict_report_by_date, bulk_insert_predict_report
@@ -60,10 +59,7 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
 
     end_date = end_day.strftime("%Y%m%d")
     start_date = start_day.strftime("%Y%m%d")
-    if data_version == "v2":
-        stock_list = get_stock_v2_training_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
-    else:
-        stock_list = get_stock_v1_training_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
+    stock_list = get_stock_v2_training_data(stock_code=stock_code, start_date=start_date, end_date=end_date)
 
     if stock_list is None or stock_list.empty or len(stock_list) <= 60:
         print("获取股票数据出错: " + stock_code)

@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from data.data_merging.merge_data import keep_columns_v1
 from data.data_merging.merge_data_v2 import get_random_data_all, keep_column_v2
 from models.LSTMTransformer.get_data import get_xy_data_from_df
 from models.LSTMTransformer.predict import ModelPredictor
@@ -76,10 +75,7 @@ def get_my_data(model_name="v1"):
             eval_data_list.append(eval_data)
 
     for df in eval_data_list:
-        if data_version == "v1":
-            df = keep_columns_v1(df)
-        else:
-            df = keep_column_v2(df)
+        df = keep_column_v2(df)
         x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
         x_list.append(x)
         y_list.append(y)

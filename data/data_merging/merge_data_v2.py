@@ -1,6 +1,5 @@
 import datetime
 
-import numpy as np
 import pandas as pd
 
 from data.data_merging.merge_data import get_stock_all_data, df_normalize_inf, get_random_code, \
