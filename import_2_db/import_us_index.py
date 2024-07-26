@@ -98,7 +98,7 @@ def import_us_index():
     combined_df['date'] = combined_df['date'].dt.date
 
     # 筛选需要插入的数据
-    to_insert = combined_df[combined_df["date"] > cursor]
+    to_insert = combined_df[combined_df["date"] >= cursor]
 
     # 批量插入数据到数据库
     with get_db_session() as db:
