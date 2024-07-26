@@ -3,12 +3,13 @@ from torch import optim
 from torch.nn import CrossEntropyLoss
 
 from classify.StockDatasetClassify import StockDatasetClassify
-from models.LSTMTransformer import load_model, train_model
+from classify.train_model import train_model_classify
+from models.LSTMTransformer import load_model
 from models.LSTMTransformer.StockDataLoader import create_dataloader
 from src.training.parameter import get_config
 
 
-def training_classify(version="v1"):
+def training_classify(version="v1_classify"):
     config = get_config(version)
     # 获取模型参数
     mp = config.model_params
@@ -24,7 +25,6 @@ def training_classify(version="v1"):
     model = load_model(model, tp.model_save_path)
 
     # 优化器
-
     criterion = CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
@@ -33,4 +33,4 @@ def training_classify(version="v1"):
     dataloader = create_dataloader(dataset, tp.batch_size)
 
     # 使用训练数据训练模型
-    train_model(model, dataloader, criterion, optimizer, tp.num_epochs, tp.model_save_path)
+    train_model_classify(model, dataloader, criterion, optimizer, tp.num_epochs, tp.model_save_path)
