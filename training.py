@@ -2,7 +2,7 @@ from src.training import training
 
 
 def main():
-    training("simple_lstm_v2_2")
+    training("cnn_lstm")
 
 
 if __name__ == "__main__":

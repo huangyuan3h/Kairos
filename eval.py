@@ -1,7 +1,7 @@
 from src.evaluation.evaluate import compare_models, get_my_data
 
 # 比较两个模型的性能
-comparison_df = compare_models("simple_lstm_v2_2", "simple_lstm_v2_1", get_my_data)
+comparison_df = compare_models("simple_lstm_v2_2", "cnn_lstm", get_my_data)
 df = comparison_df[["Weighted RMSE", "Weighted MAE", "Weighted MSE", "Weighted R2"]]
 print(df)
 
