@@ -2,7 +2,7 @@ from src.training import training
 
 
 def main():
-    training("v1")
+    training("simple_lstm_v2_2")
 
 
 if __name__ == "__main__":

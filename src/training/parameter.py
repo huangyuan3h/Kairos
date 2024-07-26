@@ -7,6 +7,7 @@ from models.LSTMTransformer.config import config_lstm_transformer_modelV1
 import torch.nn as nn
 
 from models.SimpleLSTM_v2_1.config import config_simple_lstm_v2_1
+from models.SimpleLSTM_v2_2.config import config_simple_lstm_v2_2
 
 
 @dataclass
@@ -68,6 +69,7 @@ def load_config(cfg, name: str):
 load_config(config_lstm_transformer_modelV1, "v1")
 load_config(config_CNNLSTM, "cnn_lstm")
 load_config(config_simple_lstm_v2_1, "simple_lstm_v2_1")
+load_config(config_simple_lstm_v2_2, "simple_lstm_v2_2")
 load_config(config_lstm_transformer_model_classify, "v1_classify")
 
 
