@@ -23,11 +23,11 @@ class LSTMAttentionTransformerClassify(nn.Module):
 
         # Transformer 全局信息整合
         transformer_encoder_layer = nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=num_heads,
-                                                               dropout=dropout_rate,  batch_first=True)
+                                                               dropout=dropout_rate, batch_first=True)
         self.transformer_encoder = nn.TransformerEncoder(transformer_encoder_layer, num_layers=num_layers)
 
         # 输出层
-        self.fc = nn.Linear(hidden_dim, 1)
+        self.fc = nn.Linear(hidden_dim, 3)  # 修改为3分类
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # CNN 特征提取
@@ -48,5 +48,5 @@ class LSTMAttentionTransformerClassify(nn.Module):
         transformer_out = self.transformer_encoder(attn_output + lstm_out)  # (batch_size, seq_len, hidden_dim)
 
         # 使用最后一个时间步的输出
-        out = self.fc(transformer_out[:, -1, :])  # (batch_size, 1)
+        out = self.fc(transformer_out[:, -1, :])  # (batch_size, 3)
         return out

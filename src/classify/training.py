@@ -1,6 +1,6 @@
 import torch
 from torch import optim
-from torch.nn import CrossEntropyLoss
+import torch.nn as nn
 
 from classify.StockDatasetClassify import StockDatasetClassify
 from classify.train_model import train_model_classify
@@ -25,7 +25,7 @@ def training_classify(version="v1_classify"):
     model = load_model(model, tp.model_save_path)
 
     # 优化器
-    criterion = CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
     dataset = StockDatasetClassify(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,

@@ -30,14 +30,14 @@ def train_model_classify(model: LSTMAttentionTransformer, dataloader: DataLoader
 
         for x, y in dataloader:
             x = x.float()
-            y = y.float()
+            y = y.long()
             x = x.to(device)  # 将输入数据移动到设备上
             y = y.to(device)  # 将目标数据移动到设备上
 
             optimizer.zero_grad()
             outputs = model(x)
             # 计算损失
-            loss = criterion(outputs, y)
+            loss = criterion(outputs, y.squeeze())
 
             # 检查损失是否为 NaN
             if torch.isnan(loss):
