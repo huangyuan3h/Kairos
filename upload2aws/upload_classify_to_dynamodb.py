@@ -36,7 +36,7 @@ def upload_df_to_dynamodb(df: pd.DataFrame, table_name: str):
         table.put_item(Item=item)
 
 
-def import_2_aws_process(report_date=None, report=None):
+def import_classify_2_aws_process(report_date=None, report=None):
     if report is None:
         if report_date is None:
             report_date = datetime.datetime.today()
@@ -44,5 +44,5 @@ def import_2_aws_process(report_date=None, report=None):
         with get_db_session() as db:
             report = get_predict_report_by_date(db, report_date)
     report['id'] = report['id'].astype(str)
-    upload_df_to_dynamodb(report, "prod-kairos-fe-stockPredict")
+    upload_df_to_dynamodb(report, "prod-kairos-fe-stockClassifyPredict")
     print("import to aws finished")

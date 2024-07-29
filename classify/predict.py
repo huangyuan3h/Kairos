@@ -1,13 +1,14 @@
 import torch
 import pandas as pd
+import torch.nn.functional as F
+from pandas import DataFrame
 
 from models.LSTMTransformer import load_model
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
-from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
 
 
-class ModelPredictor:
+class ModelPredictorClassify:
     def __init__(self, version="simple_lstm_v1_2"):
         config = get_config(version)
         # 获取模型参数
@@ -18,14 +19,11 @@ class ModelPredictor:
         # 初始化特征和目标标准化器
         feature_scaler = FeatureStandardScaler(data_version=data_version)
         feature_scaler.load_scaler()
-        target_scaler = TargetStandardScaler(data_version=data_version)
-        target_scaler.load_scaler()
 
         self.model = Model(mp.input_dim, mp.hidden_dim, mp.num_layers, mp.num_heads)
         load_model(self.model, tp.model_save_path)
         self.model.eval()
         self.feature_scaler = feature_scaler
-        self.target_scaler = target_scaler
         self.device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
         self.model.to(self.device)
 
@@ -42,20 +40,7 @@ class ModelPredictor:
         scaled_df = self.feature_scaler.transform(df)
         return torch.tensor(scaled_df).float().to(self.device)
 
-    def postprocess_predictions(self, predictions: torch.Tensor) -> list:
-        """
-        对模型的预测结果进行反向标准化。
-
-        Args:
-            predictions (torch.Tensor): 模型的预测结果。
-
-        Returns:
-            pd.DataFrame: 反向标准化后的预测结果。
-        """
-        predictions_np = predictions.cpu().detach().numpy()
-        return self.target_scaler.inverse_transform(predictions_np)
-
-    def predict(self, df: pd.DataFrame) -> list:
+    def predict(self, df: pd.DataFrame) -> DataFrame:
         """
         使用训练好的模型对输入数据进行预测。
 
@@ -68,5 +53,9 @@ class ModelPredictor:
         x = self.preprocess_features(df)
         x = x.unsqueeze(0)  # 增加 batch 维度
         with torch.no_grad():
-            predictions = self.model(x)
-        return self.postprocess_predictions(predictions)
+            logits = self.model(x)
+            probabilities = F.softmax(logits, dim=1).cpu().numpy()
+            predicted_classes = probabilities.argmax(axis=1)
+        result = pd.DataFrame(probabilities, columns=['rise', 'jitter', 'fall'])
+        result['predicted_classes'] = int(predicted_classes)
+        return result

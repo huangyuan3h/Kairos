@@ -1,4 +1,3 @@
-
 from data.data_merging.merge_data_v2 import get_stock_v2_training_data
 from db import get_db_session
 from db.predict_report import get_predict_report_by_date, bulk_insert_predict_report
@@ -20,7 +19,9 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
     predictor = ModelPredictor(version)
     config = get_config(version)
 
-    df = pd.DataFrame(columns=['report_date', 'stock_code', 'change_1d','change_2d','change_3d','change_4d', 'change_5d', 'change_6d', 'change_7d','change_8d','change_9d','change_10d'])
+    df = pd.DataFrame(
+        columns=['report_date', 'stock_code', 'change_1d', 'change_2d', 'change_3d', 'change_4d', 'change_5d',
+                 'change_6d', 'change_7d', 'change_8d', 'change_9d', 'change_10d', 'model_version'])
     if date_object is None:
         with get_db_session() as db:
             date_object = get_last_index_daily_date(db)
@@ -55,7 +56,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
     return df
 
 
-def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.date, data_version= "v1"):
+def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.date, data_version="v1"):
     if date is None:
         return None
     end_day = date
