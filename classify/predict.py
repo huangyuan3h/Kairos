@@ -55,7 +55,7 @@ class ModelPredictorClassify:
         with torch.no_grad():
             logits = self.model(x)
             probabilities = F.softmax(logits, dim=1).cpu().numpy()
-            predicted_classes = probabilities.argmax(axis=1)
-        result = pd.DataFrame(probabilities, columns=['rise', 'jitter', 'fall'])
-        result['predicted_classes'] = int(predicted_classes)
+            predict_class = probabilities.argmax(axis=1)
+        result = pd.DataFrame(probabilities, columns=['fall', 'jitter', 'rise'])
+        result['predict_class'] = predict_class
         return result

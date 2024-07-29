@@ -5,7 +5,7 @@ import pandas as pd
 from classify.predict import ModelPredictorClassify
 from data.data_merging.merge_data_v2 import get_stock_v2_training_data
 from db import get_db_session
-from db.predict_report_classify import get_predict_classify_report_by_date
+from db.predict_report_classify import get_predict_classify_report_by_date, bulk_insert_predict_report
 from db.sh_index_daily import get_last_index_daily_date
 from db.stock_list import get_predict_stock_list_data
 from src.crawl.sync_daily_all import sync_daily_all
@@ -41,7 +41,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
     config = get_config(version)
 
     df = pd.DataFrame(
-        columns=['report_date', 'stock_code', 'predicted_classes', 'rise', 'jitter', 'fall', 'model_version'])
+        columns=['report_date', 'stock_code', 'predict_class', 'rise', 'jitter', 'fall', 'model_version'])
     if date_object is None:
         with get_db_session() as db:
             date_object = get_last_index_daily_date(db)
@@ -63,7 +63,7 @@ def predict_stock_list(stock_list: list, date_object: datetime.datetime = None,
             'rise': result.iloc[0]['rise'],
             'jitter': result.iloc[0]['jitter'],
             'fall': result.iloc[0]['fall'],
-            'predicted_classes': result.iloc[0]['predicted_classes'],
+            'predict_class': result.iloc[0]['predict_class'],
             'model_version': version
         }
         df = pd.concat([df, pd.DataFrame.from_dict([predict_data])], ignore_index=True)
@@ -85,7 +85,7 @@ def process_predict_classify(report_date=None, sync_all=True, import_2_aws=True,
     stock_code_list = stock_list["code"].values
     df = predict_stock_list(stock_code_list, report_date_object, version)
     with get_db_session() as db:
-        get_predict_classify_report_by_date(db, df)
+        bulk_insert_predict_report(db, df)
     if import_2_aws:
         with get_db_session() as db:
             df = get_predict_classify_report_by_date(db, report_date)
