@@ -23,7 +23,7 @@ def train_model_classify(model: LSTMAttentionTransformer, dataloader: DataLoader
     """
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=20, factor=0.8)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=30, factor=0.8)
     epoch_loss = 0.0
 
     for epoch in range(num_epochs):

@@ -39,7 +39,7 @@ class RandomStockDataClassify:
     def get_data(self):
         x, y = self.get_data_inner()
         rad = random()
-        while y[0] == 1 and rad < 0.5:
+        while y[0] == 1 and rad < 0.9:
             rad = random()
             x, y = self.get_data_inner()
         x = torch.tensor(self.feature_scale.transform(x))
