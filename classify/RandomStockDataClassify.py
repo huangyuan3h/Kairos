@@ -42,12 +42,8 @@ class RandomStockDataClassify:
 
     def get_data(self):
         x, y = self.get_data_inner()
-        rad = random()
-        while y[0] == 1 and rad < 0.90:
-            rad = random()
-            x, y = self.get_data_inner()
-        while y[0] == 0 and rad < 0.5:
-            rad = random()
+
+        while y[0] == 1 and random() < 0.95:
             x, y = self.get_data_inner()
 
         # 添加噪声
