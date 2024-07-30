@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class SimpleLSTMClassify(nn.Module):
-    def __init__(self, input_dim, hidden_dim, num_layers, num_heads, dropout_rate=0.2):
+    def __init__(self, input_dim, hidden_dim, num_layers, num_heads, dropout_rate=0.1):
         super(SimpleLSTMClassify, self).__init__()
 
         # LSTM 时序建模

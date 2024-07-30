@@ -1,12 +1,12 @@
 from random import random
 
+import numpy as np
 import torch
 
 from classify.get_classify_data import get_classify_xy_data_from_df
 from data.data_merging.merge_data_v2 import get_random_v2_data
-from models.LSTMTransformer.get_data import get_xy_data_from_df
+
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
-from models.standardize.TargetStandardScaler import TargetStandardScaler
 
 learn_limit = 100
 
@@ -36,12 +36,22 @@ class RandomStockDataClassify:
 
         return x, y
 
+    def add_noise(self, x, noise_level=0.01):
+        noise = np.random.normal(0, noise_level, x.shape)
+        return x + noise
+
     def get_data(self):
         x, y = self.get_data_inner()
         rad = random()
-        while y[0] == 1 and rad < 0.9:
+        while y[0] == 1 and rad < 0.90:
             rad = random()
             x, y = self.get_data_inner()
+        while y[0] == 0 and rad < 0.5:
+            rad = random()
+            x, y = self.get_data_inner()
+
+        # 添加噪声
+        x = self.add_noise(x)
         x = torch.tensor(self.feature_scale.transform(x))
         y = torch.tensor(y)
         return x, y
