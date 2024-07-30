@@ -1,4 +1,4 @@
-from random import random
+
 
 import pandas as pd
 import torch
@@ -99,13 +99,6 @@ def get_my_data(model_name="v1"):
     for df in eval_data_list:
         df = keep_column_v2(df)
         x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
-        rad = random()
-        while y[0] == 1 and rad < 0.9:
-            rad = random()
-            x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
-        while y[0] == 0 and rad < 0.5:
-            rad = random()
-            x, y = get_xy_data_from_df(df, dp.feature_columns, dp.target_column)
         x_list.append(x)
         y_list.append(y)
 

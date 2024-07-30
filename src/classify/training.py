@@ -25,7 +25,7 @@ def training_classify(version="v1_classify"):
     model = load_model(model, tp.model_save_path)
 
     # 优化器
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(weight=torch.tensor([25.0, 1.0, 50.0]).to(device))
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
     dataset = StockDatasetClassify(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,

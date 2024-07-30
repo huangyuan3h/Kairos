@@ -69,7 +69,7 @@ def compare_classify_models(model_1_name: str, model_2_name: str, get_data_func)
 
 eval_data_list = []
 
-batch_size = 500
+batch_size = 1000
 
 def get_my_data_classify(model_name="v1"):
     x_list = []
