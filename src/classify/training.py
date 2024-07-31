@@ -2,7 +2,6 @@ import torch
 from torch import optim
 import torch.nn as nn
 
-from classify.FocalLoss import FocalLoss
 from classify.StockDatasetClassify import StockDatasetClassify
 from classify.train_model import train_model_classify
 from models.LSTMTransformer import load_model
@@ -26,7 +25,7 @@ def training_classify(version="v1_classify"):
     model = load_model(model, tp.model_save_path)
 
     # 优化器
-    weights = torch.tensor([50.0, 1.0, 100.0]).to(device)  # 根据实际情况调整
+    weights = torch.tensor([1.0, 1.0, 2.0]).to(device)  # 根据实际情况调整
     criterion = nn.CrossEntropyLoss(weight=weights)
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 

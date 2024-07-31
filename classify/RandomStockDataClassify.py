@@ -13,6 +13,11 @@ learn_limit = 100
 RANGE_SIZE = 70
 
 
+def add_noise(x, noise_level=0.01):
+    noise = np.random.normal(0, noise_level, x.shape)
+    return x + noise
+
+
 class RandomStockDataClassify:
 
     def __init__(self, feature_columns: list, target_column: str, feature_scale: FeatureStandardScaler,
@@ -36,10 +41,6 @@ class RandomStockDataClassify:
 
         return x, y
 
-    def add_noise(self, x, noise_level=0.01):
-        noise = np.random.normal(0, noise_level, x.shape)
-        return x + noise
-
     def get_data(self):
         x, y = self.get_data_inner()
 
@@ -47,7 +48,7 @@ class RandomStockDataClassify:
             x, y = self.get_data_inner()
 
         # 添加噪声
-        x = self.add_noise(x)
+        x = add_noise(x)
         x = torch.tensor(self.feature_scale.transform(x))
         y = torch.tensor(y)
         return x, y

@@ -1,7 +1,7 @@
 # 比较两个模型的性能
 from src.evaluation.evaluate_classify import compare_classify_models, get_my_data_classify
 
-comparison_df = compare_classify_models("simple_lstm_classify", "simple_lstm_classify_v1_2", get_my_data_classify)
+comparison_df = compare_classify_models("simple_lstm_classify", "v1_classify", get_my_data_classify)
 df = comparison_df[["Accuracy", "Precision", "Recall", "F1 Score"]]
 print(df)
 
