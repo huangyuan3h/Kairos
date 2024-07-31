@@ -3,13 +3,15 @@ from torch import optim
 import torch.nn as nn
 
 from classify.StockDatasetClassify import StockDatasetClassify
+from classify.StockDatasetSmoteClassify import StockDatasetSmoteClassify
+from classify.data_prepare.save_load import load_xy_data
 from classify.train_model import train_model_classify
 from models.LSTMTransformer import load_model
 from models.LSTMTransformer.StockDataLoader import create_dataloader
 from src.training.parameter import get_config
 
 
-def training_classify(version="v1_classify"):
+def training_classify(version="v1_classify", use_smote=True):
     config = get_config(version)
     # 获取模型参数
     mp = config.model_params
@@ -29,7 +31,11 @@ def training_classify(version="v1_classify"):
     criterion = nn.CrossEntropyLoss(weight=weights)
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
-    dataset = StockDatasetClassify(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,
+    if use_smote:
+        x, y = load_xy_data("model_files")
+        dataset = StockDatasetSmoteClassify(x, y)
+    else:
+        dataset = StockDatasetClassify(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,
                            num_epochs=tp.num_epochs, data_version=data_version)
     dataloader = create_dataloader(dataset, tp.batch_size)
 

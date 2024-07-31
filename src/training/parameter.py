@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from classify.LSTMTransformerClassify.config import config_lstm_transformer_model_classify
+from classify.LSTMTransformerClassify_v2.config import config_lstm_transformer_model_classify_v2
 from classify.SimpleLSTMClassify.config import config_lstm_classify
 from classify.SimpleLSTMClassify_v1_2.config import config_lstm_classify_v1_2
 from models.CNNLSTM.config import config_CNNLSTM
@@ -75,6 +76,8 @@ load_config(config_simple_lstm_v2_2, "simple_lstm_v2_2")
 load_config(config_lstm_transformer_model_classify, "v1_classify")
 load_config(config_lstm_classify, "simple_lstm_classify")
 load_config(config_lstm_classify_v1_2, "simple_lstm_classify_v1_2")
+load_config(config_lstm_transformer_model_classify_v2, "v2_classify")
+
 
 
 
