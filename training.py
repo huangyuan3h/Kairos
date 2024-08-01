@@ -4,7 +4,7 @@ from src.training import training
 
 def main():
     # training("cnn_lstm")
-    training_classify("v2_classify")
+    training_classify("simple_lstm_classify")
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ class SimpleLSTMClassify(nn.Module):
         self.dropout = nn.Dropout(dropout_rate)
 
         # 输出层
-        self.fc = nn.Linear(hidden_dim, 3)
+        self.fc = nn.Linear(hidden_dim, 2)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # LSTM 时序建模

@@ -43,10 +43,6 @@ class RandomStockDataClassify:
 
     def get_data(self):
         x, y = self.get_data_inner()
-
-        while y[0] == 1 and random() < 0.95:
-            x, y = self.get_data_inner()
-
         # 添加噪声
         x = add_noise(x)
         x = torch.tensor(self.feature_scale.transform(x))

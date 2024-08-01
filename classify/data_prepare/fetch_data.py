@@ -15,15 +15,15 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 def get_training_list():
     with get_db_session() as db:
         df = get_all_stock_list_data(db)
-    result = df[df.index % 3 == 0]  # Select multiples of 3
-    result = pd.concat([result, df[df.index % 3 == 1]])
+    result = df[df.index % 20 == 0]
+    result = pd.concat([result, df[df.index % 20 == 1]])
     return result
 
 
 def get_predict_list():
     with get_db_session() as db:
         df = get_all_stock_list_data(db)
-    result = df[df.index % 3 == 2]
+    result = df[df.index % 20 == 2]
     return result
 
 
@@ -38,8 +38,6 @@ def get_XY_all_list():
             continue
         all_x = all_x + x_list
         all_y = all_y + y_list
-        if index > 600:
-            break
     return all_x, all_y
 
 
