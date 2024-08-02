@@ -2,11 +2,11 @@ import pandas as pd
 import torch
 from sklearn.metrics import r2_score
 
-from data.data_merging.merge_data_v2 import get_random_data_all, keep_column_v2
 from data.data_merging.training_predict import get_random_v2_predict_data
 from days.days_parameter import get_days_config
 from days.days_predict import DaysPredictor
 from days.get_days_data import get_xy_days_data_from_df
+from sklearn.metrics import accuracy_score
 
 
 def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
@@ -36,11 +36,17 @@ def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
     rmse = mse ** 0.5
     r2 = r2_score(y_true.detach().numpy(), predictions.detach().numpy())
 
+    # 计算方向预测准确率
+    direction_predictions = torch.where(predictions > 0, 1, 0)
+    direction_true = torch.where(y_true > 0, 1, 0)
+    accuracy = accuracy_score(direction_true.cpu().detach().numpy(), direction_predictions.cpu().detach().numpy())
+
     return {
         "MAE": mae.item(),
         "MSE": mse.item(),
         "RMSE": rmse.item(),
         "R2": r2,
+        "Accuracy": accuracy,
     }
 
 
