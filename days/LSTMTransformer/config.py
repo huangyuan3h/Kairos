@@ -1,7 +1,6 @@
-from classify.LSTMTransformerClassify.LSTMTransformerModel import LSTMAttentionTransformerClassify
+from days.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 
-
-config_lstm_transformer_model = {
+config_lstm_transformer_days_model = {
     "input_dim": 77,
     "hidden_dim": 768,
     "num_layers": 2,
@@ -12,6 +11,6 @@ config_lstm_transformer_model = {
     "model_save_path": "./model_files/lstm_transformer_model_{}days.pth",
     "feature_columns": [i for i in range(77)],
     "target_column": "stock_close",
-    "model": LSTMAttentionTransformerClassify,
+    "model": LSTMAttentionTransformer,
     "data": "v2"
 }

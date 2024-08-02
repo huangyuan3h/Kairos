@@ -5,7 +5,7 @@ DF_length = 70
 X_length = 60
 
 
-def get_xy_days_data_from_df(df: pd.DataFrame, feature_columns: list, target_column: str,days=1):
+def get_xy_days_data_from_df(df: pd.DataFrame, feature_columns: list, target_column: str, days=1):
     if len(df) != 70:
         return None
 
