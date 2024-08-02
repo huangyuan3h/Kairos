@@ -8,7 +8,7 @@ class LSTMAttentionTransformerV2(nn.Module):
 
         self.lstm = nn.LSTM(input_size=input_dim,
                             hidden_size=hidden_dim,
-                            num_layers=num_layers,
+                            num_layers=3,
                             batch_first=True,
                             dropout=dropout_rate)
 
