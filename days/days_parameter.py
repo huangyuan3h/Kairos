@@ -5,7 +5,7 @@ from days.LSTMTransformer.config import config_lstm_transformer_days_model
 from days.SimpleLSTM.config import config_simple_lstm_days
 import torch.nn as nn
 
-from days.TFTModel.config import config_tft_model
+from days.LSTMTransformerV2.config import config_LSTMAttentionTransformerV2_model
 
 
 @dataclass
@@ -67,7 +67,7 @@ def load_config(cfg, name: str):
 load_config(config_simple_lstm_days, "simpleLSTM")
 
 load_config(config_lstm_transformer_days_model, "lstmTransformer")
-load_config(config_tft_model, "TFTModel")
+load_config(config_LSTMAttentionTransformerV2_model, "LSTMTransformerV2")
 
 
 def get_days_config(model_name: str) -> ModelConfig:

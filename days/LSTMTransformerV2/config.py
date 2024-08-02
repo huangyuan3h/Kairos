@@ -1,6 +1,6 @@
-from days.TFTModel.TFTModel import TFTModel
+from days.LSTMTransformerV2.LSTMAttentionTransformerV2 import LSTMAttentionTransformerV2
 
-config_tft_model = {
+config_LSTMAttentionTransformerV2_model = {
     "input_dim": 77,
     "hidden_dim": 768,
     "num_layers": 2,
@@ -8,9 +8,9 @@ config_tft_model = {
     "batch_size": 64,
     "learning_rate": 1e-4,
     "num_epochs": 3000,
-    "model_save_path": "./model_files/days/TFTModel_{}days.pth",
+    "model_save_path": "./model_files/days/LSTMAttentionTransformerV2_{}days.pth",
     "feature_columns": [i for i in range(77)],
     "target_column": "stock_close",
-    "model": TFTModel,
+    "model": LSTMAttentionTransformerV2,
     "data": "v2"
 }
