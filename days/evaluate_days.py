@@ -32,18 +32,16 @@ def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
 
 
     # 计算加权指标
-    weighted_mae = torch.abs(predictions - y_true).mean()
-    weighted_mse = ((predictions - y_true) ** 2).mean()
-    weighted_rmse = weighted_mse ** 0.5
-    weighted_r2 = r2_score(y_true.view(-1), predictions.view(-1))
-
-
+    mae = torch.abs(predictions - y_true).mean()
+    mse = ((predictions - y_true) ** 2).mean()
+    rmse = mse ** 0.5
+    r2 = r2_score(y_true.detach().numpy(), predictions.detach().numpy())
 
     return {
-        "Weighted MAE": weighted_mae.item(),
-        "Weighted MSE": weighted_mse.item(),
-        "Weighted RMSE": weighted_rmse.item(),
-        "Weighted R2": weighted_r2,
+        "MAE": mae.item(),
+        "MSE": mse.item(),
+        "RMSE": rmse.item(),
+        "R2": r2,
     }
 
 
@@ -68,10 +66,10 @@ def compare_days_models(model_1_name: str, model_2_name: str, get_data_func, day
 
 eval_data_list = []
 
-batch_size = 500
+batch_size = 5
 
 
-def get_days_data(model_name="v1", days = 1):
+def get_days_data(model_name="v1", days=1):
     x_list = []
     y_list = []
 
