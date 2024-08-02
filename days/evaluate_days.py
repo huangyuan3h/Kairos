@@ -4,9 +4,9 @@ import torch
 from sklearn.metrics import r2_score
 
 from data.data_merging.merge_data_v2 import get_random_data_all, keep_column_v2
+from days.days_parameter import get_days_config
 from days.days_predict import DaysPredictor
 from days.get_days_data import get_xy_days_data_from_df
-from src.training.parameter import get_config
 
 
 def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
@@ -75,7 +75,7 @@ def get_days_data(model_name="v1", days = 1):
     x_list = []
     y_list = []
 
-    config = get_config(model_name)
+    config = get_days_config(model_name)
     # 获取模型参数
     dp = config.data_params
     if len(eval_data_list) == 0:

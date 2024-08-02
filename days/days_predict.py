@@ -1,16 +1,15 @@
 import torch
 import pandas as pd
 
+from days.days_parameter import get_days_config
 from days.load_days_model import load_days_model
-from models.LSTMTransformer import load_model
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
-from models.standardize.TargetStandardScaler import TargetStandardScaler
-from src.training.parameter import get_config
+
 
 
 class DaysPredictor:
     def __init__(self, version="simple_lstm_v1_2", days=1):
-        config = get_config(version)
+        config = get_days_config(version)
         # 获取模型参数
         mp = config.model_params
         tp = config.training_params
