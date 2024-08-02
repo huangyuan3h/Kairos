@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from sklearn.metrics import r2_score
 
-from data.data_merging.training_predict import get_random_v2_predict_data
+from data.data_merging.training_predict import get_random_v2_data_by_type
 from days.days_parameter import get_days_config
 from days.days_predict import DaysPredictor
 from days.get_days_data import get_xy_days_data_from_df
@@ -79,7 +79,7 @@ def get_days_data(model_name="v1", days=1):
     dp = config.data_params
     if len(x_list) == 0:
         for i in range(batch_size):
-            random_data = get_random_v2_predict_data()
+            random_data = get_random_v2_data_by_type("test")
             eval_data = random_data.tail(70)
             x, y = get_xy_days_data_from_df(eval_data, dp.feature_columns, dp.target_column, days)
             x_list.append(x)
