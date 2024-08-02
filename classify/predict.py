@@ -56,6 +56,6 @@ class ModelPredictorClassify:
             logits = self.model(x)
             probabilities = F.softmax(logits, dim=1).cpu().numpy()
             predict_class = probabilities.argmax(axis=1)
-        result = pd.DataFrame(probabilities, columns=['fall', 'jitter', 'rise'])
+        result = pd.DataFrame(probabilities, columns=['flat', 'wave'])
         result['predict_class'] = predict_class
         return result
