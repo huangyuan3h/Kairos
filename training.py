@@ -6,7 +6,7 @@ from src.training import training
 def main():
     # training("cnn_lstm")
     # training_classify("v1_classify")
-    training_days_model("lstmTransformer", 1)
+    training_days_model("simpleLSTM", 1)
 
 
 if __name__ == "__main__":
