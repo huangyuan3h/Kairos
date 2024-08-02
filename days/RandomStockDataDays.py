@@ -9,6 +9,8 @@ from models.standardize.TargetStandardScaler import TargetStandardScaler
 
 learn_limit = 100
 
+CACHE_LIMIT = 100
+
 RANGE_SIZE = 70
 
 
@@ -16,6 +18,7 @@ class RandomStockDataDays:
 
     def __init__(self, feature_columns: list, target_column: str, feature_scale: FeatureStandardScaler, days=1):
         self.counter = 0
+        self.cacheCounter = 0
         self.data = get_random_v2_training_data()
         self.feature_columns = feature_columns
         self.target_column = target_column
@@ -31,7 +34,10 @@ class RandomStockDataDays:
 
         self.counter = self.counter + 1
         if self.counter >= learn_limit:
+            self.cacheCounter = self.cacheCounter + 1
+        if self.cacheCounter >= CACHE_LIMIT:
             self.counter = 0
+            self.cacheCounter = 0
             self.data = get_random_v2_training_data()
 
         return x, y
