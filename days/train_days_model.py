@@ -36,8 +36,9 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
     epochs_without_improvement = 0
 
     for epoch in range(tp.num_epochs):
+        model.train()
         epoch_loss = 0.0
-        for step, (x, y) in enumerate(dataloader):
+        for x, y in dataloader:
             x = x.float().to(device)
             y = y.float().to(device)
 
@@ -56,18 +57,17 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
 
             loss.backward()
             optimizer.step()
-            epoch_loss = loss.item()
+            epoch_loss = epoch_loss + loss.item()
 
             # 检查输出值是否包含 NaN 或 Inf
             if torch.isnan(outputs).any() or torch.isinf(outputs).any():
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
 
-        epoch_loss /= 1000  # 和steps_per_epoch 一致
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Loss: {epoch_loss}, lr = {scheduler.get_last_lr()[0]}")
 
         # 在每个 epoch 结束后评估验证集
-        validation_loss = evaluate_on_validation_set(version, criterion, days)
+        validation_loss = evaluate_on_validation_set(model, version, criterion, days)
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Validation Loss: {validation_loss}")
 
         # Early stopping

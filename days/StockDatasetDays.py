@@ -18,7 +18,7 @@ class StockDatasetDays(IterableDataset):
         self.batch_size = batch_size
         self.num_epochs = num_epochs
         self.feature_scaler = FeatureStandardScaler(data_version=data_version)
-        self.steps_per_epoch = 1000
+        self.steps_per_epoch = 500
         for i in range(length_of_stock):
             self.generate_pool.append(RandomStockDataDays(feature_columns, target_column,
                                                           self.feature_scaler, days))
