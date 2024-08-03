@@ -36,4 +36,4 @@ def training_days_model(version="v1", days=1):
     dataloader = create_dataloader(dataset, tp.batch_size)
 
     # 使用训练数据训练模型
-    train_days_model(version, dataloader, criterion, optimizer, days)
+    train_days_model(model, version, dataloader, criterion, optimizer, days)

@@ -12,11 +12,13 @@ clip_value = 0.5
 patience = 60
 
 
-def train_days_model(version: str, dataloader: DataLoader, criterion, optimizer, days=1):
+def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
+                     days=1):
     """
     训练模型。
 
     Args:
+        model (LSTMTransformerModel): 要训练的模型。
         version (str): model version
         dataloader (DataLoader): 数据加载器。
         criterion: 损失函数。
@@ -24,20 +26,17 @@ def train_days_model(version: str, dataloader: DataLoader, criterion, optimizer,
         days: training day
     """
     config = get_days_config(version)
-    # 获取模型参数
     tp = config.training_params
-    model = config.Model
-
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+
     # 添加 ReduceLROnPlateau 学习率调度器
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=20, factor=0.5)
     best_loss = float('inf')
     epochs_without_improvement = 0
-    epoch_loss = 100000  # very large number
 
     for epoch in range(tp.num_epochs):
-
+        epoch_loss = 0.0
         for step, (x, y) in enumerate(dataloader):
             x = x.float().to(device)
             y = y.float().to(device)
@@ -64,7 +63,7 @@ def train_days_model(version: str, dataloader: DataLoader, criterion, optimizer,
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
 
-        epoch_loss /= len(dataloader)
+        epoch_loss /= 1000  # 和steps_per_epoch 一致
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Loss: {epoch_loss}, lr = {scheduler.get_last_lr()[0]}")
 
         # 在每个 epoch 结束后评估验证集
