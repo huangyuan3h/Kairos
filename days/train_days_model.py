@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 
+from days.StockDatasetDays import steps_per_epoch
 from days.days_parameter import get_days_config
 from days.early_stop import evaluate_on_validation_set
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
@@ -63,7 +64,7 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
             if torch.isnan(outputs).any() or torch.isinf(outputs).any():
                 print("Outputs contain NaN or Inf values. Skipping this batch.")
                 continue
-
+        epoch_loss = epoch_loss / steps_per_epoch
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Loss: {epoch_loss}, lr = {scheduler.get_last_lr()[0]}")
 
         # 在每个 epoch 结束后评估验证集
