@@ -6,7 +6,6 @@ from days.load_days_model import load_days_model
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 
 
-
 class DaysPredictor:
     def __init__(self, version="simple_lstm_v1_2", days=1):
         config = get_days_config(version)

@@ -34,6 +34,7 @@ class RandomStockDataDays:
 
         self.counter = self.counter + 1
         if self.counter >= learn_limit:
+            self.counter = 0
             self.cacheCounter = self.cacheCounter + 1
         if self.cacheCounter >= CACHE_LIMIT:
             self.counter = 0

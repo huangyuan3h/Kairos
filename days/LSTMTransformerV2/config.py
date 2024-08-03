@@ -7,7 +7,7 @@ config_LSTMAttentionTransformerV2_model = {
     "num_heads": 32,
     "batch_size": 64,
     "learning_rate": 1e-4,
-    "num_epochs": 400,
+    "num_epochs": 200,
     "model_save_path": "./model_files/days/LSTMAttentionTransformerV2_{}days.pth",
     "feature_columns": [i for i in range(77)],
     "target_column": "stock_close",

@@ -1,7 +1,8 @@
 import torch
 import os
 
-def load_days_model(model, load_path,days =1):
+
+def load_days_model(model, load_path, days=1):
     """加载模型
     Args:
         model: 模型实例
