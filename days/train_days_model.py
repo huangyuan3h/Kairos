@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 # 梯度裁剪
 clip_value = 0.5
 
-patience = 60
+patience = 40
 
 
 def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
@@ -32,7 +32,7 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
     # 添加 ReduceLROnPlateau 学习率调度器
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=20, factor=0.5)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
     best_loss = float('inf')
     epochs_without_improvement = 0
 

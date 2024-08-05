@@ -8,7 +8,7 @@ from days.get_days_data import get_xy_days_data_from_df
 from models.LSTMTransformer import LSTMAttentionTransformer
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 
-SIZE_OF_VERIFY = 100
+SIZE_OF_VERIFY = 300
 
 validate_list = []
 
@@ -41,12 +41,8 @@ def evaluate_on_validation_set(model: LSTMAttentionTransformer, version: str, cr
     if len(validate_list) == 0:
         for _ in range(SIZE_OF_VERIFY):
             df = get_random_v2_data_by_type("verify")
-            head_df = df.head(70)
-            validate_list.append(head_df)
-            tail_df = df.tail(70)
-            validate_list.append(tail_df)
             left_len = len(df) - 70
-            for idx in range(8):
+            for idx in range(10):
                 idx = random.randint(0, left_len)
                 target_df = df[idx:idx + 70]
                 validate_list.append(target_df)
