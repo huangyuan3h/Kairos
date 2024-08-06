@@ -17,5 +17,5 @@ def get_xy_trend_data_from_df(df: pd.DataFrame, feature_columns: list, target_co
     change_percentages = [(y_data[i] - current_close) * 100 / current_close for i in range(10)]
     # get day 4 to day 10 value
     weights = [0.2688, 0.2151, 0.1795, 0.1539, 0.1344, 0.1194, 0.1075]
-    y = sum([change_percentages[i + 3] * weights[i] for i in range(len(weights))])
+    y = [sum([change_percentages[i + 3] * weights[i] for i in range(len(weights))])]
     return x, y
