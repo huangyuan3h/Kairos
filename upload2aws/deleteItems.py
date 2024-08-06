@@ -2,7 +2,7 @@ import boto3
 
 # 初始化DynamoDB资源
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('prod-kairos-fe-stockClassifyPredict')
+table = dynamodb.Table('prod-kairos-fe-stockPredict')
 
 # 扫描表获取所有项目
 response = table.scan()
