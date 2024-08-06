@@ -29,7 +29,7 @@ def get_df_by_code_date(stock_code: str, date: datetime.date):
     return data
 
 
-def predict_all(stock_list: list, date_object: datetime = None, ):
+def predict_all(stock_list: list, date_object: datetime = None):
     df = pd.DataFrame(
         columns=['report_date', 'stock_code', 'change_1d', 'change_2d', 'change_3d', 'trend'])
     if date_object is None:
@@ -57,3 +57,4 @@ def predict_all(stock_list: list, date_object: datetime = None, ):
             'trend': result[3]
         }
         df = pd.concat([df, pd.DataFrame.from_dict([predict_data])], ignore_index=True)
+    return df

@@ -24,7 +24,7 @@ def get_xy_trend_data_from_df(df: pd.DataFrame, feature_columns: list, target_co
     # Calculate the average closing price over the 7-day period
     average_price = closing_prices[3:].mean()
     # Normalize the price difference by the average price
-    trend = price_difference * 100 / average_price
+    trend = price_difference / average_price
 
     y = [trend]
     return x, y

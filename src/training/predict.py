@@ -10,6 +10,7 @@ import datetime
 import pandas as pd
 
 from src.crawl.sync_daily_all import sync_daily_all
+from src.predict.predict_all import predict_all
 from src.training.parameter import get_config
 from upload2aws.upload_to_dynamodb import import_2_aws_process
 
@@ -78,7 +79,7 @@ def predict_stock(stock_code: str, predictor: ModelPredictor, date: datetime.dat
     return predictions[0]
 
 
-def process_predict(report_date=None, sync_all=True, import_2_aws=True, version="simple_lstm_v1_2"):
+def process_predict(report_date=None, sync_all=True, import_2_aws=True):
     if report_date is None:
         with get_db_session() as db:
             report_date_object = get_last_index_daily_date(db)
@@ -90,7 +91,7 @@ def process_predict(report_date=None, sync_all=True, import_2_aws=True, version=
     with get_db_session() as db:
         stock_list = get_predict_stock_list_data(db)
     stock_code_list = stock_list["code"].values
-    df = predict_stock_list(stock_code_list, report_date_object, version)
+    df = predict_all(stock_code_list, report_date_object)
     with get_db_session() as db:
         bulk_insert_predict_report(db, df)
     if import_2_aws:
