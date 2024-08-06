@@ -1,12 +1,9 @@
-from days.training_days_model import training_days_model
-from src.classify.training import training_classify
-from src.training import training
+from trend.training_trend_model import training_trend_model
 
 
 def main():
     # training("cnn_lstm")
-    # training_classify("v1_classify")
-    training_days_model("simpleLSTM", 4)
+    training_trend_model("lstmTransformer")
 
 
 if __name__ == "__main__":
