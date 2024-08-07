@@ -1,6 +1,5 @@
 from models.LSTMTransformer import StockDataset
 
-import torch.nn as nn
 import torch.optim as optim
 
 from models.LSTMTransformer.StockDataLoader import create_dataloader
