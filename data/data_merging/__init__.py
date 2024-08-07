@@ -1,7 +1,6 @@
-from .merge_data import get_random_available_date,get_random_valid_data
+from .merge_data import get_random_available_date
 
 
 __all__ = [
-    "get_random_available_date",
-    "get_random_valid_data"
+    "get_random_available_date"
 ]

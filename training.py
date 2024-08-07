@@ -1,8 +1,9 @@
-from src.training import training
+from trend.training_trend_model import training_trend_model
 
 
 def main():
-    training("v1")
+    # training("cnn_lstm")
+    training_trend_model("lstmTransformer")
 
 
 if __name__ == "__main__":

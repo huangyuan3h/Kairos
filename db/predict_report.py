@@ -1,13 +1,12 @@
-
-from datetime import datetime,date
+from datetime import datetime, date
 
 from sqlalchemy import Column, Integer, Float, Date, String, func
-
 
 from db.database import Base
 from sqlalchemy.orm import Session
 import pandas as pd
 from sqlalchemy import select
+
 
 class PredictReport(Base):
     """预测报告模型"""
@@ -17,10 +16,9 @@ class PredictReport(Base):
     report_date = Column(Date, nullable=False)
     stock_code = Column(String(10), nullable=False)
     change_1d = Column(Float)  # 1天涨幅
+    change_2d = Column(Float)  # 2天涨幅
     change_3d = Column(Float)  # 3天涨幅
-    change_5d = Column(Float)  # 5天涨幅
-    change_10d = Column(Float)  # 10天涨幅
-    model_version = Column(String(32), nullable=False)
+    trend = Column(Float)  # 3天涨幅
 
 
 def bulk_insert_predict_report(db: Session, df: pd.DataFrame):
@@ -36,6 +34,7 @@ def bulk_insert_predict_report(db: Session, df: pd.DataFrame):
         db_predict_report = PredictReport(**data)
         db.add(db_predict_report)
     db.commit()
+
 
 def get_predict_report_by_date(db: Session, report_date: str) -> pd.DataFrame:
     """

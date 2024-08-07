@@ -3,7 +3,7 @@ from models.LSTMTransformer import LSTMAttentionTransformer
 config_lstm_transformer_modelV1 = {
     "input_dim": 77,
     "hidden_dim": 768,
-    "num_layers": 4,
+    "num_layers": 1,
     "num_heads": 32,
     "batch_size": 64,
     "learning_rate": 1e-3,

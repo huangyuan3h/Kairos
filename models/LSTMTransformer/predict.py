@@ -2,7 +2,6 @@ import torch
 import pandas as pd
 
 from models.LSTMTransformer import load_model
-from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
@@ -56,7 +55,7 @@ class ModelPredictor:
         predictions_np = predictions.cpu().detach().numpy()
         return self.target_scaler.inverse_transform(predictions_np)
 
-    def predict(self, df: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, df: pd.DataFrame) -> list:
         """
         使用训练好的模型对输入数据进行预测。
 

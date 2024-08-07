@@ -14,10 +14,7 @@ class TargetStandardScaler:
         Args:
             scaler_path (str): 标准化器保存路径。默认为 'scaler_y.pkl'。
         """
-        if data_version == "v1":
-            self.scaler_path = "model_files/scaler_y.pkl"
-        else:
-            self.scaler_path = "model_files/scaler_y_v2.pkl"
+        self.scaler_path = "model_files/scaler_y_v2.pkl"
         self.scaler = self.load_scaler() or StandardScaler()
 
     def fit(self, change_percentage_list: list):

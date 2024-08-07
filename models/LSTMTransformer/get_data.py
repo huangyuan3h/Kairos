@@ -14,6 +14,6 @@ def get_xy_data_from_df(df: pd.DataFrame, feature_columns: list, target_column: 
     x = x.head(X_length)
 
     current_close = x.tail(1)[target_column].values[0]
-    y = [(y_data[i - 1] - current_close) * 100 / current_close for i in [1, 3, 5, 10]]
+    y = [(y_data[i] - current_close) * 100 / current_close for i in range(10)]
 
     return x, y

@@ -1,7 +1,6 @@
 import pandas as pd
-import numpy as np
 from datetime import date, timedelta
-from data.data_merging.merge_data import get_random_code, get_stock_v1_training_data
+from data.data_merging.merge_data import get_random_code
 import random
 import datetime as dt
 
@@ -11,7 +10,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from models.standardize.TargetStandardScaler import TargetStandardScaler
 from src.training.parameter import get_config
 
-times = 1000
+times = 10
 
 record_day = 100
 
@@ -35,12 +34,9 @@ def get_random_n_data(version="v1") -> pd.DataFrame:
         code = get_random_code()
         start_date = get_random_record_num_available_date()
         end_date = start_date + timedelta(days=record_day * 2)
-        if version == "v2":
-            result = get_stock_v2_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
+        result = get_stock_v2_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
                                                 end_date=end_date.strftime("%Y%m%d"))
-        else:
-            result = get_stock_v1_training_data(stock_code=code, start_date=start_date.strftime("%Y%m%d"),
-                                                end_date=end_date.strftime("%Y%m%d"))
+
     return result
 
 
@@ -94,7 +90,6 @@ def build_data(version="v1") -> (pd.DataFrame, list):
 def fit_feature_scaler(df, version="v1"):
 
     feature_scaler = FeatureStandardScaler(data_version=version)
-
     feature_scaler.fit(df)
     feature_scaler.save_scaler()
 
@@ -102,6 +97,5 @@ def fit_feature_scaler(df, version="v1"):
 def fit_target_scaler(l: list, version="v1"):
 
     target_scaler = TargetStandardScaler(data_version=version)
-
     target_scaler.fit(l)
     target_scaler.save_scaler()

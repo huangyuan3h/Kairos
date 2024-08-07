@@ -1,11 +1,11 @@
 import torch.nn as nn
 
 
-class SimpleLSTM(nn.Module):
+class SimpleLSTM_v2_2(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_layers, num_heads, dropout_rate=0.2):
-        super(SimpleLSTM, self).__init__()
-        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True, dropout=dropout_rate)
-        self.fc = nn.Linear(hidden_dim, 4)
+        super(SimpleLSTM_v2_2, self).__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, 10)
 
     def forward(self, x):
         # LSTM 编码

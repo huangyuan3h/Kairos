@@ -31,36 +31,6 @@ from db.sz_index_daily import get_sz_index_daily_by_date_range
 
 import numpy as np
 
-essential_features = [
-    'stock_open', 'stock_close', 'stock_high', 'stock_low', 'stock_volume',
-    'stock_turnover_rate', 'ma5', 'ma20', 'rsi',
-    'sse_open', 'sse_close', 'sse_high', 'sse_low', 'sse_volume',
-    'sse_turnover_rate', 'sse_ma5', 'sse_ma20', 'sse_rsi',
-    'szse_open', 'szse_close', 'szse_high', 'szse_low', 'szse_volume',
-    'szse_turnover_rate', 'szse_ma5', 'szse_ma20', 'szse_rsi',
-    'Currency_USD_CNY', 'Currency_EUR_CNY', 'Currency_USD_CNY_MA_5',
-    'Currency_USD_CNY_MA_20', 'Currency_EUR_CNY_MA_5', 'Currency_EUR_CNY_MA_20'
-]
-
-consider_features = [
-    'stock_amplitude', 'stock_change_percent', 'stock_change',
-    'sse_amplitude', 'sse_change_percent', 'sse_change', 'sse_daily_return',
-    'szse_amplitude', 'szse_change_percent', 'szse_change', 'szse_daily_return'
-]
-
-nonessential_features = [
-    'revenue', 'total_operating_cost', 'operating_profit', 'gross_profit', 'net_profit',
-    'basic_eps', 'rd_expenses', 'interest_income', 'interest_expense', 'investment_income',
-    'cash_and_equivalents', 'accounts_receivable', 'inventory', 'net_fixed_assets',
-    'short_term_borrowings', 'long_term_borrowings', 'total_equity', 'total_assets',
-    'total_liabilities', 'net_cash_from_operating', 'net_cash_from_investing',
-    'net_cash_from_financing', 'net_increase_in_cce', 'end_cash_and_cash_equivalents',
-    'gross_profit_margin', 'operating_profit_margin', 'net_profit_margin', 'return_on_equity',
-    'return_on_assets', 'asset_turnover', 'inventory_turnover', 'receivables_turnover',
-    'current_ratio', 'quick_ratio', 'debt_to_asset_ratio', 'revenue_growth_rate',
-    'net_profit_growth_rate'
-]
-
 
 def interpolate_financial_data(df: pd.DataFrame, financial_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -151,10 +121,10 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
         with get_db_session() as db:
             qvix = get_etf_qvix_by_date_range(db, start_date, end_date)
 
-        cleaned_qvix =clean_qvix_data(qvix)
+        cleaned_qvix = clean_qvix_data(qvix)
 
         with get_db_session() as db:
-            us_index = get_us_index_daily_by_date_range(db,  start_date, end_date)
+            us_index = get_us_index_daily_by_date_range(db, start_date, end_date)
 
         cleaned_us_index = clean_us_index_data(us_index)
 
@@ -162,9 +132,8 @@ def get_stock_all_data(stock_code: str, start_date: str, end_date: str) -> pd.Da
         cleaned_currency_data = cleaned_currency_data.add_prefix('Currency_')
         cleaned_sse_index_data = cleaned_sse_index_data.add_prefix('sse_')
         cleaned_szse_index_data = cleaned_szse_index_data.add_prefix('szse_')
-        cleaned_shibo_rate=cleaned_shibo_rate.add_prefix('rate_')
+        cleaned_shibo_rate = cleaned_shibo_rate.add_prefix('rate_')
         cleaned_qvix = cleaned_qvix.add_prefix("qvix_")
-
 
         # 将 'date' 列名恢复为没有前缀的名称，以便进行合并
         cleaned_currency_data = cleaned_currency_data.rename(columns={'Currency_date': 'date'})
@@ -201,42 +170,6 @@ def df_normalize_inf(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.ffill().bfill()
-    return df
-
-
-def get_stock_v1_training_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
-    """
-    获取指定股票代码的预测数据，包含股票日线数据、财务数据、汇率数据和指数数据。
-
-    Args:
-        stock_code (str): 股票代码。
-        start_date (str): 开始日期，格式为 'YYYYMMDD'。
-        end_date (str): 开始日期，格式为 'YYYYMMDD'。
-
-    Returns:
-        pd.DataFrame: 包含所有数据的 DataFrame，如果获取失败则返回 None。
-    """
-    merged_data = get_stock_all_data(stock_code, start_date, end_date)
-    final_df = keep_columns_v1(merged_data)
-    return final_df
-
-
-def keep_columns_v1(df: pd.DataFrame):
-    """
-    保留 essential_features 和 consider_features 列，并将其转换为 float64 类型。
-
-    Args:
-        df (pd.DataFrame): 输入 DataFrame。
-
-    Returns:
-        pd.DataFrame: 处理后的 DataFrame。
-    """
-    # 保留 essential_features 和 consider_features 列
-    if df is None:
-        return None
-    columns_to_keep = essential_features + consider_features
-    df = df[columns_to_keep]
-    df = df_normalize_inf(df)
     return df
 
 
@@ -279,26 +212,3 @@ def get_n_year_later(dt):
 
     next_day = dt + datetime.timedelta(days=365 * year)
     return next_day
-
-
-def get_random_v1_data() -> pd.DataFrame:
-    result = None
-
-    while result is None or len(result) <= 200 * year or np.isinf(result).any().any():
-        code = get_random_code()
-        start_date = get_random_available_date()
-        end_date = get_n_year_later(datetime.datetime.strptime(start_date, "%Y%m%d"))
-        result = get_stock_v1_training_data(stock_code=code, start_date=start_date,
-                                            end_date=end_date.strftime("%Y%m%d"))
-    return result
-
-
-def get_random_valid_data() -> pd.DataFrame:
-    df = get_random_v1_data()
-
-    return df
-
-# stock_data = get_stock_total_data(stock_code='600000', start_date='20220101', n_days=200)
-#
-# removed_data = drop_columns_and_reset_index(stock_data)
-# print(removed_data)

@@ -27,7 +27,7 @@ class LSTMAttentionTransformer(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(transformer_encoder_layer, num_layers=num_layers)
 
         # 输出层
-        self.fc = nn.Linear(hidden_dim, 4)
+        self.fc = nn.Linear(hidden_dim, 10)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # CNN 特征提取
