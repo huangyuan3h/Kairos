@@ -2,12 +2,11 @@ import torch
 from torch.utils.data import DataLoader
 
 from days.StockDatasetDays import steps_per_epoch
-from days.days_parameter import get_days_config
-from days.early_stop import evaluate_on_validation_set
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from operation.operation_early_stop import evaluate_operation_on_validation_set
+from operation.operation_parameter import get_operation_config
 
 # 梯度裁剪
 clip_value = 0.5
@@ -16,7 +15,7 @@ patience = 60
 
 
 def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
-                     days=1):
+                          days=1):
     """
     训练模型。
 
@@ -28,7 +27,7 @@ def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloa
         optimizer: 优化器。
         days: training day
     """
-    config = get_days_config(version)
+    config = get_operation_config(version)
     tp = config.training_params
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")

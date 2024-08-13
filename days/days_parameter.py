@@ -67,7 +67,7 @@ def load_config(cfg, name: str):
 load_config(config_simple_lstm_days, "simpleLSTM")
 
 load_config(config_lstm_transformer_days_model, "lstmTransformer")
-load_config(config_LSTMAttentionTransformerV2_model, "LSTMTransformerV2")
+load_config(config_LSTMAttentionTransformerV2_model, "lstmTransformerV2")
 
 
 def get_days_config(model_name: str) -> ModelConfig:

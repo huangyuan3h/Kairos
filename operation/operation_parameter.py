@@ -3,7 +3,6 @@ from typing import List
 import torch.nn as nn
 
 from operation.LSTMTransformer.config import config_lstm_transformer_operation_model
-from trend.LSTMTransformer.config import config_lstm_transformer_trend_model
 
 
 @dataclass
