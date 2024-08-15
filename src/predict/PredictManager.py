@@ -9,7 +9,7 @@ from trend.trend_predict import TrendPredictor
 class PredictManager:
     def __init__(self):
         self.feature_scaler = FeatureStandardScaler(data_version="v2")
-        self.predictor_day1 = DaysPredictor(version="lstmTransformer", days=1)
+        self.predictor_day1 = DaysPredictor(version="lstmTransformerV2", days=1)
         self.predictor_day2 = DaysPredictor(version="lstmTransformer", days=2)
         self.predictor_day3 = DaysPredictor(version="lstmTransformer", days=3)
         self.trend_predictor = TrendPredictor(version="lstmTransformer")

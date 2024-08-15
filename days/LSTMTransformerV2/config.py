@@ -5,7 +5,7 @@ config_LSTMAttentionTransformerV2_model = {
     "hidden_dim": 256,
     "num_layers": 3,
     "num_heads": 8,
-    "batch_size": 128,
+    "batch_size": 256,
     "learning_rate": 1e-4,
     "num_epochs": 2000,
     "model_save_path": "./model_files/days/lstm_transformer_model_v2_{}days.pth",

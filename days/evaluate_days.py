@@ -70,7 +70,7 @@ def compare_days_models(model_1_name: str, model_2_name: str, get_data_func, day
 
 x_list = []
 y_list = []
-batch_size = 1000
+batch_size = 2000
 
 
 def get_days_data(model_name="v1", days=1):

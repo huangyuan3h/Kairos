@@ -6,7 +6,7 @@ import random
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 
 length_of_stock = 128
-steps_per_epoch = 5000
+steps_per_epoch = 10000
 
 
 class StockDatasetDays(IterableDataset):

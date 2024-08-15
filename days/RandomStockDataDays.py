@@ -9,7 +9,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 
 learn_limit = 100
 
-CACHE_LIMIT = 3
+CACHE_LIMIT = 2
 
 RANGE_SIZE = 70
 
