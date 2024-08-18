@@ -11,7 +11,10 @@ from operation.operation_parameter import get_operation_config
 # 梯度裁剪
 clip_value = 0.5
 
-patience = 60
+patience = 5
+
+# 连续没有改善的epoch数
+epochs_without_improvement_threshold = 2
 
 
 def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
@@ -33,7 +36,7 @@ def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloa
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
     # 添加 ReduceLROnPlateau 学习率调度器
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=15, factor=0.5)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=1, factor=0.5)
     best_loss = float('inf')
     epochs_without_improvement = 0
 
@@ -72,14 +75,20 @@ def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloa
         validation_loss = evaluate_operation_on_validation_set(model, version, criterion, days)
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Validation Loss: {validation_loss}")
 
+        final_path = tp.model_save_path.format(days)
         # Early stopping
         if validation_loss < best_loss:
             best_loss = validation_loss
             epochs_without_improvement = 0
-            final_path = tp.model_save_path.format(days)
             torch.save(model.state_dict(), final_path)
         else:
             epochs_without_improvement += 1
+            if epochs_without_improvement >= epochs_without_improvement_threshold:
+                print(f"No improvement in {epochs_without_improvement_threshold} epochs. Reloading best model.")
+                # 加载最好的模型
+                model.load_state_dict(torch.load(final_path))
+                # 重置 epochs_without_improvement
+                epochs_without_improvement = 0
             if epochs_without_improvement >= patience:
                 print(f"Early stopping at epoch {epoch + 1}")
                 return

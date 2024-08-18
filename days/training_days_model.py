@@ -31,8 +31,9 @@ def training_days_model(version="v1", days=1):
     criterion = nn.MSELoss()
     optimizer = optim.AdamW(model.parameters(), lr=tp.learning_rate)
 
-    dataset = StockDatasetDays(feature_columns=dp.feature_columns, target_column=dp.target_column, batch_size=tp.batch_size,
-                           num_epochs=tp.num_epochs, data_version=data_version, days=days)
+    dataset = StockDatasetDays(feature_columns=dp.feature_columns, target_column=dp.target_column,
+                               batch_size=tp.batch_size,
+                               num_epochs=tp.num_epochs, data_version=data_version, days=days)
     dataloader = create_dataloader(dataset, tp.batch_size)
 
     # 使用训练数据训练模型

@@ -3,6 +3,7 @@ from typing import List
 import torch.nn as nn
 
 from operation.LSTMTransformer.config import config_lstm_transformer_operation_model
+from operation.LSTMTransformerV2.config import config_LSTMAttentionTransformerV2_model
 
 
 @dataclass
@@ -62,6 +63,7 @@ def load_config(cfg, name: str):
 
 
 load_config(config_lstm_transformer_operation_model, "lstmTransformer")
+load_config(config_LSTMAttentionTransformerV2_model, "lstmTransformerV2")
 
 
 def get_operation_config(model_name: str) -> ModelConfig:

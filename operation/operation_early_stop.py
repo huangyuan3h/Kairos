@@ -3,8 +3,6 @@ import random
 import torch
 
 from data.data_merging.training_predict import get_random_v2_data_by_type
-from days.days_parameter import get_days_config
-from days.get_days_data import get_xy_days_data_from_df
 from models.LSTMTransformer import LSTMAttentionTransformer
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from operation.get_operation_data import get_xy_operation_data_from_df

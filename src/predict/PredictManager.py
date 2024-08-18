@@ -11,7 +11,7 @@ class PredictManager:
         self.feature_scaler = FeatureStandardScaler(data_version="v2")
         self.predictor_day1 = DaysPredictor(version="lstmTransformerV2", days=1)
         self.predictor_day2 = DaysPredictor(version="lstmTransformerV2", days=2)
-        self.predictor_day3 = DaysPredictor(version="lstmTransformer", days=3)
+        self.predictor_day3 = DaysPredictor(version="lstmTransformerV2", days=3)
         self.trend_predictor = TrendPredictor(version="lstmTransformer")
         self.operation_day1 = OperationPredictor(version="lstmTransformer", days=1)
         self.operation_day2 = OperationPredictor(version="lstmTransformer", days=2)
