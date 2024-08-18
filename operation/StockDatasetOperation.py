@@ -6,7 +6,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from operation.RandomStockDataOperation import RandomStockDataOperation
 
 length_of_stock = 128
-steps_per_epoch = 1000
+steps_per_epoch = 10000
 
 
 class StockDatasetOperation(IterableDataset):
