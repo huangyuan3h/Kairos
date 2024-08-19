@@ -2,7 +2,7 @@
 from trend.evaluate_trend import compare_trend_models, get_trend_data
 
 # 比较两个模型的性能
-comparison_df = compare_trend_models("LSTMTransformerV2", "lstmTransformer", get_trend_data)
+comparison_df = compare_trend_models("lstmTransformerV2", "lstmTransformer", get_trend_data)
 df = comparison_df[["RMSE", "MAE", "MSE", "R2", "Accuracy"]]
 print(df)
 

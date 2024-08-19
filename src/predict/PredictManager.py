@@ -14,7 +14,7 @@ class PredictManager:
         self.predictor_day3 = DaysPredictor(version="lstmTransformerV2", days=3)
         self.trend_predictor = TrendPredictor(version="lstmTransformer")
         self.operation_day1 = OperationPredictor(version="lstmTransformerV2", days=1)
-        self.operation_day2 = OperationPredictor(version="lstmTransformer", days=2)
+        self.operation_day2 = OperationPredictor(version="lstmTransformerV2", days=2)
 
     def predict_all(self, stock_data: pd.DataFrame):
         if stock_data is None or stock_data.empty or len(stock_data) != 60:
