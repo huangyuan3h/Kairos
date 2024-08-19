@@ -2,7 +2,7 @@
 from operation.evaluate_operation import compare_operation_models, get_operation_data
 
 # 比较两个模型的性能
-comparison_df = compare_operation_models("lstmTransformerV2", "lstmTransformer", get_operation_data, days=1)
+comparison_df = compare_operation_models("lstmTransformerV2", "lstmTransformer", get_operation_data, days=2)
 df = comparison_df[["RMSE", "MAE", "MSE", "R2", "Accuracy"]]
 print(df)
 
