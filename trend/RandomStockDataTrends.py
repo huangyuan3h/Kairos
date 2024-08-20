@@ -8,7 +8,7 @@ from trend.get_trend_data import get_xy_trend_data_from_df
 
 learn_limit = 100
 
-CACHE_LIMIT = 10
+CACHE_LIMIT = 2
 
 RANGE_SIZE = 70
 
