@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 
 
-class LSTMAttentionTransformerV2(nn.Module):
+class LSTMAttentionTransformer(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_layers, num_heads, dropout_rate=0.2):
-        super(LSTMAttentionTransformerV2, self).__init__()
+        super(LSTMAttentionTransformer, self).__init__()
 
         self.lstm = nn.LSTM(input_size=input_dim,
                             hidden_size=hidden_dim,

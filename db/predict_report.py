@@ -18,7 +18,9 @@ class PredictReport(Base):
     change_1d = Column(Float)  # 1天涨幅
     change_2d = Column(Float)  # 2天涨幅
     change_3d = Column(Float)  # 3天涨幅
-    trend = Column(Float)  # 3天涨幅
+    trend = Column(Float)  # 4-10天涨幅
+    operation_1d = Column(Float)  # 后一天买，1天卖的涨幅
+    operation_2d = Column(Float)  # 后一天买，2天卖的涨幅
 
 
 def bulk_insert_predict_report(db: Session, df: pd.DataFrame):

@@ -3,10 +3,13 @@ import torch
 from sklearn.metrics import r2_score
 
 from data.data_merging.training_predict import get_random_v2_data_by_type
-from days.days_parameter import get_days_config
-from days.days_predict import DaysPredictor
-from days.get_days_data import get_xy_days_data_from_df
+
+
 from sklearn.metrics import accuracy_score
+
+from operation.get_operation_data import get_xy_operation_data_from_df
+from operation.operation_parameter import get_operation_config
+from operation.operation_predict import OperationPredictor
 
 
 def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
@@ -20,7 +23,7 @@ def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
     Returns:
         dict: 包含评估指标的字典。
     """
-    predictor = DaysPredictor(model_name, days)
+    predictor = OperationPredictor(model_name, days)
     X, y_true = get_data_func(model_name, days)
     # 使用模型进行预测
     predictions = []
@@ -50,7 +53,7 @@ def evaluate_model(model_name: str, get_data_func, days=1) -> dict:
     }
 
 
-def compare_days_models(model_1_name: str, model_2_name: str, get_data_func, days=1) -> pd.DataFrame:
+def compare_operation_models(model_1_name: str, model_2_name: str, get_data_func, days=1) -> pd.DataFrame:
     """
     使用提供的数据获取函数比较两个模型的性能。
 
@@ -73,15 +76,15 @@ y_list = []
 batch_size = 2000
 
 
-def get_days_data(model_name="v1", days=1):
-    config = get_days_config(model_name)
+def get_operation_data(model_name="v1", days=1):
+    config = get_operation_config(model_name)
     # 获取模型参数
     dp = config.data_params
     if len(x_list) == 0:
         for i in range(batch_size):
             random_data = get_random_v2_data_by_type("test")
             eval_data = random_data.tail(70)
-            x, y = get_xy_days_data_from_df(eval_data, dp.feature_columns, dp.target_column, days)
+            x, y = get_xy_operation_data_from_df(eval_data, dp.feature_columns, days)
             x_list.append(x)
             y_list.append(y)
 

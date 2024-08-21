@@ -2,10 +2,11 @@ import torch
 from torch.utils.data import DataLoader
 
 from days.StockDatasetDays import steps_per_epoch
-from days.days_parameter import get_days_config
-from days.early_stop import evaluate_on_validation_set
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+
+from operation.operation_early_stop import evaluate_operation_on_validation_set
+from operation.operation_parameter import get_operation_config
 
 # 梯度裁剪
 clip_value = 0.5
@@ -16,8 +17,8 @@ patience = 5
 epochs_without_improvement_threshold = 2
 
 
-def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
-                     days=1):
+def train_operation_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer,
+                          days=1):
     """
     训练模型。
 
@@ -29,7 +30,7 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
         optimizer: 优化器。
         days: training day
     """
-    config = get_days_config(version)
+    config = get_operation_config(version)
     tp = config.training_params
     model.train()
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
@@ -71,11 +72,11 @@ def train_days_model(model: LSTMAttentionTransformer, version: str, dataloader: 
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Loss: {epoch_loss}, lr = {scheduler.get_last_lr()[0]}")
 
         # 在每个 epoch 结束后评估验证集
-        validation_loss = evaluate_on_validation_set(model, version, criterion, days)
+        validation_loss = evaluate_operation_on_validation_set(model, version, criterion, days)
         print(f"Epoch {epoch + 1}/{tp.num_epochs}, Validation Loss: {validation_loss}")
 
-        # Early stopping
         final_path = tp.model_save_path.format(days)
+        # Early stopping
         if validation_loss < best_loss:
             best_loss = validation_loss
             epochs_without_improvement = 0

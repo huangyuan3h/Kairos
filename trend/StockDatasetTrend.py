@@ -6,7 +6,7 @@ from models.standardize.FeatureStandardScaler import FeatureStandardScaler
 from trend.RandomStockDataTrends import RandomStockDataTrends
 
 length_of_stock = 128
-steps_per_epoch = 1000
+steps_per_epoch = 10000
 
 
 class StockDatasetTrend(IterableDataset):

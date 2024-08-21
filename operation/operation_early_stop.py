@@ -5,15 +5,15 @@ import torch
 from data.data_merging.training_predict import get_random_v2_data_by_type
 from models.LSTMTransformer import LSTMAttentionTransformer
 from models.standardize.FeatureStandardScaler import FeatureStandardScaler
-from trend.get_trend_data import get_xy_trend_data_from_df
-from trend.trend_parameter import get_trend_config
+from operation.get_operation_data import get_xy_operation_data_from_df
+from operation.operation_parameter import get_operation_config
 
-SIZE_OF_VERIFY = 2000
+SIZE_OF_VERIFY = 300
 
 validate_list = []
 
 
-def evaluate_on_validation_trend_set(model: LSTMAttentionTransformer, version: str, criterion):
+def evaluate_operation_on_validation_set(model: LSTMAttentionTransformer, version: str, criterion, days):
     """
     使用验证集评估模型性能。
 
@@ -21,11 +21,12 @@ def evaluate_on_validation_trend_set(model: LSTMAttentionTransformer, version: s
         model
         version: 要评估的模型。
         criterion: 损失函数。
+        days (int): 预测的天数。
 
     Returns:
         float: 验证集上的平均损失。
     """
-    config = get_trend_config(version)
+    config = get_operation_config(version)
     # 获取模型参数
 
     dp = config.data_params
@@ -41,7 +42,7 @@ def evaluate_on_validation_trend_set(model: LSTMAttentionTransformer, version: s
         for _ in range(SIZE_OF_VERIFY):
             df = get_random_v2_data_by_type("verify")
             left_len = len(df) - 70
-            for idx in range(2):
+            for idx in range(10):
                 idx = random.randint(0, left_len)
                 target_df = df[idx:idx + 70]
                 validate_list.append(target_df)
@@ -49,7 +50,7 @@ def evaluate_on_validation_trend_set(model: LSTMAttentionTransformer, version: s
     with torch.no_grad():
         for idx in range(len(validate_list)):
             df = validate_list[idx]
-            x, y_true = get_xy_trend_data_from_df(df, dp.feature_columns, dp.target_column)
+            x, y_true = get_xy_operation_data_from_df(df, dp.feature_columns, days)
             y_true = torch.tensor(y_true).float().to(device)
             scaled_df = feature_scaler.transform(x)
             x = torch.tensor(scaled_df).float().to(device)

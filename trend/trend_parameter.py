@@ -3,6 +3,7 @@ from typing import List
 import torch.nn as nn
 
 from trend.LSTMTransformer.config import config_lstm_transformer_trend_model
+from trend.LSTMTransformerV2.config import config_LSTMAttentionTransformerV2_model
 
 
 @dataclass
@@ -62,6 +63,7 @@ def load_config(cfg, name: str):
 
 
 load_config(config_lstm_transformer_trend_model, "lstmTransformer")
+load_config(config_LSTMAttentionTransformerV2_model, "lstmTransformerV2")
 
 
 def get_trend_config(model_name: str) -> ModelConfig:

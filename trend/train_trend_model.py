@@ -1,10 +1,11 @@
 import torch
 from torch.utils.data import DataLoader
 
-from days.StockDatasetDays import steps_per_epoch
+
 from models.LSTMTransformer.LSTMTransformerModel import LSTMAttentionTransformer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+from trend.StockDatasetTrend import steps_per_epoch
 from trend.early_stop_trend import evaluate_on_validation_trend_set
 from trend.trend_parameter import get_trend_config
 
@@ -12,6 +13,8 @@ from trend.trend_parameter import get_trend_config
 clip_value = 0.5
 
 patience = 60
+
+epochs_without_improvement_threshold = 2
 
 
 def train_trend_model(model: LSTMAttentionTransformer, version: str, dataloader: DataLoader, criterion, optimizer):
@@ -77,6 +80,12 @@ def train_trend_model(model: LSTMAttentionTransformer, version: str, dataloader:
             torch.save(model.state_dict(), tp.model_save_path)
         else:
             epochs_without_improvement += 1
+            if epochs_without_improvement >= epochs_without_improvement_threshold:
+                print(f"No improvement in {epochs_without_improvement_threshold} epochs. Reloading best model.")
+                # 加载最好的模型
+                model.load_state_dict(torch.load(tp.model_save_path))
+                # 重置 epochs_without_improvement
+                epochs_without_improvement = 0
             if epochs_without_improvement >= patience:
                 print(f"Early stopping at epoch {epoch + 1}")
                 return

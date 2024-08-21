@@ -1,7 +1,8 @@
-from days.evaluate_days import get_days_data, compare_days_models
+
+from operation.evaluate_operation import compare_operation_models, get_operation_data
 
 # 比较两个模型的性能
-comparison_df = compare_days_models("lstmTransformerV2", "lstmTransformer", get_days_data, days=3)
+comparison_df = compare_operation_models("lstmTransformerV2", "lstmTransformer", get_operation_data, days=2)
 df = comparison_df[["RMSE", "MAE", "MSE", "R2", "Accuracy"]]
 print(df)
 
