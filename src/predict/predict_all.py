@@ -48,6 +48,7 @@ def predict_all(stock_list: list, date_object: datetime = None):
         data = get_df_by_code_date(stock_code, date_object)
         result = pm.predict_all(data)
         if result is None:
+            print("predict stock error, code:" + stock_code)
             continue
         predict_data = {
             'report_date': date_object,

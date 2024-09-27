@@ -16,7 +16,7 @@ def import_single_financial_by_code(code: str)-> bool:
 
     today = datetime.date.today()
     three_months_ago = today - datetime.timedelta(days=90)
-    if last_date is not None and last_date <= datetime.datetime.combine(three_months_ago, datetime.datetime.min.time()):
+    if last_date is None or last_date > datetime.datetime.combine(three_months_ago, datetime.datetime.min.time()):
         return False
 
     profit = get_stock_profit_sheet_data(code)
